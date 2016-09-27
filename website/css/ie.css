@@ -1,0 +1,3 @@
+.slider-nav{behavior: url(js/PIE.htc);}
+.button{behavior: url(js/PIE.htc); position:relative;}
+body{min-width:960px;}
