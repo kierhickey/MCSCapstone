@@ -55,8 +55,9 @@ time{display:block; font:normal 24px/29px 'Open Sans Condensed', sans-serif; col
 .alignmiddle *{vertical-align:middle}
 .img-indent{float:left; margin-right:20px;}
 .img-indent2{float:left; margin-right:10px;}
+.img-resize{max-width: 100%}
 .last-item{margin-right:0 !important; margin-bottom:0 !important;}
-
+.pad-bottom{margin-bottom: 20px;}
 .caption{font-size:12px; line-height:15px; color:#4f4f4f;}
 .lable{display:block; float:left; width:28px; margin-right:3px; font:18px/22px Arial, Helvetica, sans-serif; color:#191919; text-transform:uppercase;}
 .font-1{line-height:18px;}
@@ -73,7 +74,7 @@ time{display:block; font:normal 24px/29px 'Open Sans Condensed', sans-serif; col
 	.box1 .indents1{padding:13px 19px 16px;}
 	.box1 h6{display:inline;}
 	.box1 a:hover{text-decoration:none; color:#83c00b;}
-.box2{background:#e6e6e6; font:13px/18px Arial, Helvetica, sans-serif; color:#787878; cursor:default;}
+.box2{float: left; margin: 10px 10px 10px 10px; background:#e6e6e6; font:13px/18px Arial, Helvetica, sans-serif; color:#787878; cursor:default; width: 30%; min-width: 278px;}
 	.box2:hover{background:#191919;}
 		.box2:hover h6{color:#fff;}
 	.box2 .indents1{padding:10px 11px 15px;}
