@@ -27,7 +27,7 @@ h3{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; bord
 h4{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; padding-top:7px;}
 h5{font-weight:normal; color:#b4b4b4;}
 h6{font-weight:bold; color:#191919;}
-	h6 a{color:#191919;}
+	/*h6 a{color:#191919;}*/
 p, .p3-1{margin-bottom:18px}
 	.p0{margin-bottom:0;}
 	.p1{margin-bottom:5px;}		.p1-1{margin-bottom:8px;}
@@ -75,7 +75,7 @@ time{display:block; font:normal 24px/29px 'Open Sans Condensed', sans-serif; col
 	.box1 a:hover{text-decoration:none; color:#83c00b;}
 .box2{background:#e6e6e6; font:13px/18px Arial, Helvetica, sans-serif; color:#787878; cursor:default;}
 	.box2:hover{background:#191919;}
-		.box2:hover h6 a{color:#fff;}
+		.box2:hover h6{color:#fff;}
 	.box2 .indents1{padding:10px 11px 15px;}
 	.box2 h6{font-weight:normal; text-transform:uppercase;}
 /*---------- Lists -----------*/
