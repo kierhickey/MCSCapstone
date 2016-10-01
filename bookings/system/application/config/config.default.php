@@ -1,7 +1,7 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 // Full URL to your installation
-$config['base_url'] = 'http://localhost/projects/crbs1/';
+$config['base_url'] = 'http://mcstest.herokuapp.com/bookings/';
 
 
 // Empty string if using .htaccess mod_rewrite
@@ -30,7 +30,7 @@ $config['sess_table_name']		= '';
 $config['sess_match_ip']		= TRUE;
 $config['sess_match_useragent']	= TRUE;
 $config['cookie_prefix']	= '';
-$config['cookie_domain']	= ''; 
+$config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
 $config['global_xss_filtering'] = TRUE;
 $config['enable_hooks'] = False;
