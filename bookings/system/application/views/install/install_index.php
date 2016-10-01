@@ -19,9 +19,9 @@ echo form_open('install/submit', array('id' => 'install', 'class' => 'cssform') 
 
 
 
-<fieldset><legend accesskey="I" tabindex="<?php echo $t; $t++; ?>">School Information</legend>
+<fieldset><legend accesskey="I" tabindex="<?php echo $t; $t++; ?>">Business Information</legend>
 	<p>
-	  <label for="schoolname" class="required">School name</label>
+	  <label for="schoolname" class="required">Business name</label>
 	  <?php
 		$schoolname = @field($this->validation->schoolname, NULL);
 		echo form_input(array(
@@ -36,8 +36,8 @@ echo form_open('install/submit', array('id' => 'install', 'class' => 'cssform') 
 		?>
 	</p>
 	<?php echo @field($this->validation->schoolname_error); ?>
-	
-	
+
+
 	<p>
 	  <label for="website">Website address</label>
 	  <?php
@@ -76,8 +76,8 @@ echo form_open('install/submit', array('id' => 'install', 'class' => 'cssform') 
 		?><p class="hint">Between 4 and 20 characters</p>
 	</p>
 	<?php echo @field($this->validation->username_error); ?>
-	
-	
+
+
 	<p>
 	  <label for="password1" class="required">Password</label>
 	  <?php
@@ -94,8 +94,8 @@ echo form_open('install/submit', array('id' => 'install', 'class' => 'cssform') 
 		?><p class="hint">Between 6 and 20 characters</p>
 	</p>
 	<?php echo @field($this->validation->password1_error); ?>
-	
-	
+
+
 	<p>
 	  <label for="password2" class="required">Password (again)</label>
 	  <?php
@@ -112,8 +112,8 @@ echo form_open('install/submit', array('id' => 'install', 'class' => 'cssform') 
 		?>
 	</p>
 	<?php echo @field($this->validation->password2_error); ?>
-	
-	
+
+
 	<p>
 	  <label for="email">Email address</label>
 	  <?php
