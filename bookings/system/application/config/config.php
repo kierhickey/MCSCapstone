@@ -6,7 +6,7 @@ $config['base_url'] = 'http://mcstest.herokuapp.com/bookings/';
 
 // Empty string if using .htaccess mod_rewrite
 #$config['index_page'] = '';
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 // You shouldn't need to change any of these.
 $config['layout'] = 'layout';
