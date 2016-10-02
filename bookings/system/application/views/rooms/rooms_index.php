@@ -12,7 +12,7 @@ $jscript = '';
 		<td class="h" title="I">Icon</td>
 		<td class="h" title="Name">Name</td>
 		<td class="h" title="Location">Location</td>
-		<td class="h" title="Teacher">Teacher</td>
+		<td class="h" title="Teacher">User</td>
 		<!-- <td class="h" title="Notes">Notes</td> -->
 		<td class="h" title="Photo">Photo</td>
 		<td class="n" title="X"></td>
@@ -48,7 +48,7 @@ $jscript = '';
 		} else {
 			echo '&nbsp;';
 		}*/
-		
+
 		if( $room->photo != '' ){
 			$photo = 'webroot/images/roomphotos/640/'.$room->photo;
 			$photo_sm = 'webroot/images/roomphotos/160/'.$room->photo;
@@ -80,6 +80,6 @@ $jscript = '';
 <?php
 $jsst['name'] = 'st1';
 $jsst['id'] = 'jsst-rooms';
-$jsst['cols'] = array("Icon", "Name", "Location", "Teacher", "Notes", "Photo", "None");
+$jsst['cols'] = array("Icon", "Name", "Location", "User", "Notes", "Photo", "None");
 $this->load->view('partials/js-sorttable', $jsst);
 ?>

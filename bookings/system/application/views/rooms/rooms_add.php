@@ -55,7 +55,7 @@ $t = 1;
 
 
 <p>
-  <label for="user_id">Teacher</label>
+  <label for="user_id">User</label>
   <?php
 	$userlist['0'] = '(None)';
   foreach($users as $user){
@@ -93,7 +93,7 @@ $t = 1;
   <?php
 	#$photo = @field($this->validation->name, $room->name);
 	$bookable = @field($this->validation->bookable, $room->bookable);
-	echo form_checkbox( array( 
+	echo form_checkbox( array(
 		'name' => 'bookable',
 		'id' => 'bookable',
 		'value' => '1',
@@ -146,7 +146,7 @@ The main photo will be resized to 640x480, and small thumbnails will be created.
 	/*$photo_file = 'webroot/images/roomphotos/'.$room_id.'.jpg';
 	if( file_exists( $photo_file ) ) {
 		#echo '<a href="'.$photo_file.'" title="View Photo"><img src="webroot/images/ui/picture.png" width="16" height="16" alt="View Photo" /></a>';
-		echo '<img src="'.$photo_file.'" width="160" height="120" style="padding:1px;border:1px solid #ccc" />';		
+		echo '<img src="'.$photo_file.'" width="160" height="120" style="padding:1px;border:1px solid #ccc" />';
 	} else {
 		echo '<em>None</em>';
 	}*/
@@ -177,7 +177,7 @@ The main photo will be resized to 640x480, and small thumbnails will be created.
   <label for="photo_delete">Delete photo?</label>
   <?php
 	#$photo = @field($this->validation->name, $room->name);
-	echo form_checkbox( array( 
+	echo form_checkbox( array(
 		'name' => 'photo_delete',
 		'id' => 'photo_delete',
 		'value' => 'true',
@@ -189,7 +189,7 @@ The main photo will be resized to 640x480, and small thumbnails will be created.
 	<p class="hint">Tick this box to <span>delete the current photo</span>. If you are uploading a new photo this will be done automatically.</p>
 </p>
 
- 
+
 </fieldset>
 
 
@@ -197,21 +197,21 @@ The main photo will be resized to 640x480, and small thumbnails will be created.
 <?php if ($fields): ?>
 
 <fieldset>
-	
+
 	<legend accesskey="F" tabindex="<?php echo $t; $t++; ?>">Fields</legend>
 
 	<?php
 	$tabindex = 12;
-	
+
 	foreach($fields as $field){
 
 	echo '<p>';
 	echo '<label>'.$field->name.'</label>';
 
 		switch($field->type){
-		
+
 			case 'TEXT':
-			
+
 				$value = @field($fieldvalues[$field->field_id], NULL);
 				echo form_input(array(
 					'name' => 'f'.$field->field_id,
@@ -222,24 +222,24 @@ The main photo will be resized to 640x480, and small thumbnails will be created.
 					'value' => $value,	#$location,
 				));
 				break;
-			
-			
+
+
 			case 'SELECT':
-			
+
 				$value = @field($fieldvalues[$field->field_id], NULL);
 				$options = $field->options;
 				foreach($options as $option){
-					$opts[$option->option_id] = $option->value; 
+					$opts[$option->option_id] = $option->value;
 				}
 				echo form_dropdown('f'.$field->field_id, $opts, $value, 'tabindex="'.$t.'"');
 				unset($opts);
 				break;
-				
-				
+
+
 			case 'CHECKBOX':
 
 				$value = ( @field($fieldvalues[$field->field_id], NULL) == '1') ? true : false;
-				echo form_checkbox( array( 
+				echo form_checkbox( array(
 					'name' => 'f'.$field->field_id,
 					'id' => 'f'.$field->field_id,
 					'value' => '1',
@@ -248,15 +248,15 @@ The main photo will be resized to 640x480, and small thumbnails will be created.
 				));
 				break;
 
-				
+
 			}
 		echo '</p>';
-		
+
 		$t++;
-				
+
 	}  // endforeach
 	?>
-	
+
 </fieldset>
 
 <?php endif; ?>

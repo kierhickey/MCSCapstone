@@ -152,7 +152,7 @@ Please use this section to upload a business logo. Thumbnails will be created of
 	));
 	$t++;
 	?>
-	<p class="hint">How many days in advance users can make their own bookings. Enter 0 for unlimited (within the academic year).</p>
+	<p class="hint">How many days in advance users can make their own bookings. Enter 0 for unlimited (within the business year).</p>
 </p>
 <?php echo @field($this->validation->bia_error) ?>
 

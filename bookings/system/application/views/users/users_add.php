@@ -70,7 +70,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
   <label for="authlevel" class="required">Type</label>
   <?php
 	$authlevel = @field($this->validation->authlevel, $user->authlevel);
-	$data = array('1' => 'Administrator', '2' => 'Teacher');
+	$data = array('1' => 'Administrator', '2' => 'User');
 	echo form_dropdown(
 		'authlevel',
 		$data,
@@ -87,7 +87,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
   <label for="enabled">Enabled</label>
   <?php
 	$enabled = @field($this->validation->enabled, $user->enabled);
-	echo form_checkbox(array( 
+	echo form_checkbox(array(
 		'name' => 'enabled',
 		'id' => 'enabled',
 		'value' => '1',

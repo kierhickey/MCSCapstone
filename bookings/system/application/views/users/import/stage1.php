@@ -57,7 +57,7 @@ echo form_open_multipart('users/import2', array('class' => 'cssform', 'id' => 'u
 <p>
   <label for="authlevel" class="required">Type</label>
   <?php
-	$data = array('1' => 'Administrator', '2' => 'Teacher');
+	$data = array('1' => 'Administrator', '2' => 'User');
 	echo form_dropdown(
 		'authlevel',
 		$data,
@@ -73,7 +73,7 @@ echo form_open_multipart('users/import2', array('class' => 'cssform', 'id' => 'u
 <p>
   <label for="enabled">Enabled</label>
   <?php
-	echo form_checkbox(array( 
+	echo form_checkbox(array(
 		'name' => 'enabled',
 		'id' => 'enabled',
 		'value' => '1',

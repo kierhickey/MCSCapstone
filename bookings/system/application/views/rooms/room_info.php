@@ -20,7 +20,7 @@
 
 			<?php if($room->username){ ?>
 			<tr>
-			<td width="50%" valign="top"><strong>Teacher:</strong></td>
+			<td width="50%" valign="top"><strong>User:</strong></td>
 			<td><?php echo $room->username ?></td>
 			</tr>
 			<?php } ?>

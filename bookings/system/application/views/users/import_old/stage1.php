@@ -67,7 +67,7 @@ echo form_open_multipart('users/import', array('class' => 'cssform', 'id' => 'us
   <label for="csvcols">CSV column headings</label>
   <?php
 	$csvcols = @field($this->validation->csvcols, $_POST['csvcols']);
-	echo form_checkbox(array( 
+	echo form_checkbox(array(
 		'name' => 'csvcols',
 		'id' => 'csvcols',
 		'value' => "1",
@@ -84,7 +84,7 @@ echo form_open_multipart('users/import', array('class' => 'cssform', 'id' => 'us
   <label for="skiperrors">Skip errors</label>
   <?php
 	$skiperrors = @field($this->validation->skiperrors, $_POST['skiperrors']);
-	echo form_checkbox(array( 
+	echo form_checkbox(array(
 		'name' => 'skiperrors',
 		'id' => 'skiperrors',
 		'value' => "1",
@@ -126,7 +126,7 @@ echo form_open_multipart('users/import', array('class' => 'cssform', 'id' => 'us
 <p>
   <label for="authlevel" class="required">Type</label>
   <?php
-	$data = array('1' => 'Administrator', '2' => 'Teacher');
+	$data = array('1' => 'Administrator', '2' => 'User');
 	echo form_dropdown(
 		'authlevel',
 		$data,
@@ -142,7 +142,7 @@ echo form_open_multipart('users/import', array('class' => 'cssform', 'id' => 'us
 <p>
   <label for="enabled">Enabled</label>
   <?php
-	echo form_checkbox(array( 
+	echo form_checkbox(array(
 		'name' => 'enabled',
 		'id' => 'enabled',
 		'value' => '1',

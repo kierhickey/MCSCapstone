@@ -36,7 +36,7 @@ $this->load->view('partials/iconbar', $icondata);
 		<td><?php
 		if($user->lastlogin == '0000-00-00 00:00:00'){
 			$lastlogin = 'Never';
-		} else { 
+		} else {
 			$lastlogin = date("d/m/Y, H:i", strtotime($user->lastlogin));
 		}
 		echo $lastlogin;
@@ -58,6 +58,6 @@ $this->load->view('partials/iconbar', $icondata);
 <?php
 $jsst['name'] = 'st1';
 $jsst['id'] = 'jsst-users';
-$jsst['cols'] = array("Icon", "Name", "Location", "Teacher", "Notes", "Photo", "None");
+$jsst['cols'] = array("Icon", "Name", "Location", "User", "Notes", "Photo", "None");
 $this->load->view('partials/js-sorttable', $jsst);
 ?>
