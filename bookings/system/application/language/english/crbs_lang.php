@@ -11,5 +11,6 @@ $lang['crbs_action_modified'] = '<strong>%s</strong> has been modified successfu
 $lang['crbs_action_deleted'] = 'The item has been deleted successfully.';
 
 $lang['colour_invalid'] = 'You entered an invalid colour value.';
+$lang['invalid_user_id'] = 'The user who\'s profile you are trying to access does not exist.'
 
 ?>

@@ -13,6 +13,7 @@ $this->load->view('partials/iconbar', $icondata);
 		<td class="h" title="Username">Username</td>
 		<td class="h" title="Name">Display name</td>
 		<td class="h" title="Lastlogin">Last login</td>
+		<td class="h" title="ProfileLink">Profile</td>
 		<td class="n" title="X"></td>
 	</tr>
 	</thead>
@@ -41,6 +42,9 @@ $this->load->view('partials/iconbar', $icondata);
 		}
 		echo $lastlogin;
 		?></td>
+		<td>
+			<a href="profile/<?php echo $user->user_id?>">Link</a>
+		</td>
 		<td width="45" class="n"><?php
 			$actions['edit'] = 'users/edit/'.$user->user_id;
 			$actions['delete'] = 'users/delete/'.$user->user_id;

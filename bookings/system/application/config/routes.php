@@ -43,6 +43,7 @@ $route['remote']					= 'remote/index';
 $route['reports']					= 'reports/index';
 $route['bookings']					= 'bookings/index';
 $route['profile']					= 'profile/index';
+$route['profile/(:num)']            = 'profile/index/$1';
 
 
 // Help ;-)

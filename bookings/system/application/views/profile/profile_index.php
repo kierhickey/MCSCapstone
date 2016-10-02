@@ -7,10 +7,11 @@ $this->load->view('partials/iconbar', $icondata);
 
 <?php if($myroom){ ?>
 <h3>Staff bookings in my rooms</h3>
-<table>
+<table class="bookings-table">
 	<tr>
-		<th>Room</th>
 		<th>Date</th>
+		<th>Room</th>
+		<th>User</th>
 		<th>Time</th>
 		<th>Notes</th>
 	</tr>
@@ -19,7 +20,7 @@ foreach($myroom as $booking){
 	$string = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</tr>';
 	if($booking->notes){ $booking->notes = '('.$booking->notes.')'; }
 	if(!$booking->displayname){ $booking->displayname = $booking->username; }
-	echo sprintf($string, $booking->name, date("d/m/Y", strtotime($booking->date)), $booking->displayname, $booking->periodname, $booking->notes);
+	echo sprintf($string, date("d/m/Y", strtotime($booking->date)), $booking->name, $booking->displayname, $booking->periodname, $booking->notes);
 }
 ?>
 </table>
@@ -28,7 +29,7 @@ foreach($myroom as $booking){
 
 
 <?php if($mybookings){ ?>
-<h3>My bookings</h3>
+<h3>Bookings</h3>
 <table class="bookings-table">
 	<colgroup>
 		<col span="1" class="col-date" />
@@ -58,7 +59,7 @@ foreach($mybookings as $booking){
 <?php } ?>
 
 
-<h3>My total bookings</h3>
+<h3>Total bookings</h3>
 <ul>
 	<li>Number of bookings made this week: <?php echo $total['week'] ?></li>
 	<li>Number of bookings this year: <?php echo $total['yeartodate'] ?></li>
