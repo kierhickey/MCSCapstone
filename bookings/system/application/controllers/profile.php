@@ -36,7 +36,12 @@ class Profile extends Controller {
 
   function index($targetUserId = null){
   	// Get User ID from session
-  	$this->targetUserId = $targetUserId ?? $this->session->userdata("user_id");
+  	if ($targetUserId == null) {
+        $this->targetUserId = $this->session->userdata("user_id");
+    } else {
+        $this->targetUserId = $targetUserId;
+    }
+  	$this->targetUserId =
     $this->viewingUserId = $this->session->userdata("user_id");
 
     $user = null;
