@@ -26,12 +26,12 @@ $menu[$i]['href'] = '';
 // Menu items for Administrators
 
 $i = 0;
-$school[$i]['text'] = 'School Details';
+$school[$i]['text'] = 'Business Details';
 $school[$i]['icon'] = 'school_manage_details.gif';
 $school[$i]['href'] = site_url('school/details');
 
 $i++;
-$school[$i]['text'] = 'The School Day';
+$school[$i]['text'] = 'The Business Day';
 $school[$i]['icon'] = 'school_manage_times.gif';
 $school[$i]['href'] = site_url('periods');
 
@@ -93,7 +93,7 @@ dotable($menu);
 
 // Check if user is admin
 if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){
-	echo '<h2>School-related</h2>';
+	echo '<h2>Business-related</h2>';
 	dotable($school);
 	echo '<h2>Management</h2>';
 	dotable($admin);

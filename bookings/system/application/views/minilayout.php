@@ -4,8 +4,7 @@
 	<title>classroombookings | <?php echo strtolower($title) ?></title>
 	<base href="<?php echo $this->config->config['base_url'] ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<meta name="keywords" content="classroom, booking, room, school, education, schedule, timetable, room booking software" />
-	<meta name="description" content="ClassroomBookings; the new classroom booking website for schools." />
+	<meta name="description" content="Melbourne Consulting Suites booking system. Credit to Craig Rodway's ClassroomBookings software for the backbone." />
 	<meta name="author" content="Craig Rodway" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/style.css" />
 	<link rel="stylesheet" type="text/css" media="print" href="webroot/print.css" />

@@ -5,11 +5,11 @@ $t = 1;
 ?>
 
 
-<fieldset><legend accesskey="I" tabindex="<?php echo $t; $t++; ?>">School Information</legend>
+<fieldset><legend accesskey="I" tabindex="<?php echo $t; $t++; ?>">Business Information</legend>
 
 
 <p>
-  <label for="schoolname" class="required">School name</label>
+  <label for="schoolname" class="required">Business name</label>
   <?php
 	$schoolname = @field($this->validation->schoolname, $info->name);
 	echo form_input(array(
@@ -50,10 +50,10 @@ $t = 1;
 
 
 
-<fieldset><legend accesskey="L" tabindex="<?php echo $t; $t++; ?>">School Logo</legend>
+<fieldset><legend accesskey="L" tabindex="<?php echo $t; $t++; ?>">Business Logo</legend>
 
 
-Please use this section to upload a school logo. Thumbnails will be created of large images.
+Please use this section to upload a business logo. Thumbnails will be created of large images.
 
 
 <p>
