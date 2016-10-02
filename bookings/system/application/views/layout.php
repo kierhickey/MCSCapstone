@@ -6,7 +6,7 @@ if($this->loggedin){
 	$menu[1]['text'] = '<img src="webroot/images/ui/link_controlpanel.gif" hspace="4" align="top" alt=" " />Control Panel';
 	$menu[1]['href'] = site_url('controlpanel');
 	$menu[1]['title'] = 'Tasks';
-	
+
 	#$menu[2]['text'] = '<img src="webroot/images/ui/link_help.gif" hspace="4" align="top" alt=" " />Help';
 	#$menu[2]['href'] = site_url('help'.ereg_replace('help(/)', '', $this->uri->uri_string()));
 	#$menu[2]['title'] = 'Get help on this page';
@@ -14,13 +14,13 @@ if($this->loggedin){
 	if($this->userauth->CheckAuthLevel(ADMINISTRATOR)){ $icon = 'user_administrator.gif'; } else { $icon = 'user_teacher.gif'; }
 	$menu[3]['text'] = '<img src="webroot/images/ui/logout.gif" hspace="4" align="top" alt=" " />Logout';
 	$menu[3]['href'] = site_url('logout');
-	$menu[3]['title'] = 'Close your current classroombookings session';
+	$menu[3]['title'] = 'Close your current session';
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>classroombookings | <?php echo strtolower($title) ?></title>
+	<title>MCS Bookings | <?php echo strtolower($title) ?></title>
 	<base href="<?php echo $this->config->config['base_url'] ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<meta name="keywords" content="classroom, booking, room, school, education, schedule, timetable, room booking software" />
@@ -35,7 +35,7 @@ if($this->loggedin){
 	$js_cpicker = array('weeks', 'school');
 	if(in_array($this->uri->segment(1), $js_cpicker)){
 		echo "\n".'<link rel="stylesheet" type="text/css" media="screen" href="webroot/cpicker/js_color_picker_v2.css" />';
-		echo "\n".'<script type="text/javascript" src="webroot/cpicker/color_functions.js"></script>';		
+		echo "\n".'<script type="text/javascript" src="webroot/cpicker/color_functions.js"></script>';
 		echo "\n".'<script type="text/javascript" src="webroot/cpicker/js_color_picker_v2.js"></script>';
 	}
 	$js_datepicker = array('holidays', 'weeks', 'bookings');
@@ -57,9 +57,9 @@ if($this->loggedin){
 </head>
 <body <?php echo $body_attr ?>>
 	<div class="outer">
-	
+
 		<div class="header">
-		
+
 			<div class="nav-box">
 				<?php if(!$this->loggedin){ echo '<br /><br />'; } ?>
 				<?php
@@ -76,9 +76,9 @@ if($this->loggedin){
 				<p class="normal">Logged in as <?php echo (strlen($this->session->userdata('displayname')) > 1) ? $this->session->userdata('displayname') : $this->session->userdata('username'); ?></p>
 				<?php } ?>
 			</div>
-			
+
 			<br />
-			
+
 			<span class="title">
 				<?php
 				if($this->session->userdata('schoolname')){
@@ -89,20 +89,20 @@ if($this->loggedin){
 				}
 				?>
 			</span>
-		
+
 		</div>
-		
+
 		<?php if(isset($midsection)){ ?>
 		<div class="mid-section" align="center">
 			<h1 style="font-weight:normal"><?php echo $midsection ?></h1>
 		</div>
 		<?php } ?>
-		
+
 		<div class="content_area">
 			<?php if(isset($showtitle)){ echo '<h2>'.$showtitle.'</h2>'; } ?>
 			<?php echo $body ?>
 		</div>
-		
+
 		<div class="footer">
 		<br />
 
