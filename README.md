@@ -8,7 +8,7 @@ The current authors include;
 * Georgia Kee
 
 ## Minor Changes
-When making minor changes, the following process should be observed;
+When making minor changes, the following process should be observed;  
 1. Pull changes from the "master" branch
 2. Make local changes
 3. Push changes with
@@ -18,7 +18,7 @@ When making minor changes, the following process should be observed;
     * "Remove unused page 'blah.html'"
 
 ## Major changes
-When making major changes, the following process should be observed;
+When making major changes, the following process should be observed;  
 1. Pull changes from the "master" branch
 2. Create a new branch, with a title that describes the purpose of the branch
   * HomePageFixes
