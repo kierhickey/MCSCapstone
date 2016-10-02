@@ -6,7 +6,7 @@
 <h5>
 	<a href="<?php echo site_url('school/details') ?>">
 		<img src="webroot/images/ui/school_manage_details.png" hspace="4" align="top" width="16" height="16" />
-		School details
+		Business details
 	</a>
 </h5>
 
@@ -20,7 +20,7 @@
 <h5>
 	<a href="<?php echo site_url('periods') ?>">
 		<img src="webroot/images/ui/school_manage_times.png" hspace="4" align="top" width="16" height="16" />
-		The School Day
+		The Business Day
 	</a>
 </h5>
 
@@ -44,5 +44,3 @@
 		School timetable
 	</a>
 </h5> -->
-
-

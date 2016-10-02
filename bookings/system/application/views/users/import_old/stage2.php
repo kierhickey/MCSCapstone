@@ -99,7 +99,7 @@ To automatically generate usernames for the imported users, type the format you'
 	<strong>%x</strong> Extension<br />
 	<strong>%n</strong> Display name<br />
 	<strong>%d</strong> Department<br />
-	<strong>%t</strong> Type (Teacher or Administrator)
+	<strong>%t</strong> Type (User or Administrator)
 </p>
 
 

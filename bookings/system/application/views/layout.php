@@ -23,8 +23,7 @@ if($this->loggedin){
 	<title>MCS Bookings | <?php echo strtolower($title) ?></title>
 	<base href="<?php echo $this->config->config['base_url'] ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<meta name="keywords" content="classroom, booking, room, school, education, schedule, timetable, room booking software" />
-	<meta name="description" content="ClassroomBookings; the new classroom booking website for schools." />
+	<meta name="description" content="Melbourne Consulting Suites booking system. Credit to Craig Rodway's ClassroomBookings software for the backbone." />
 	<meta name="author" content="Craig Rodway" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/style.css" />
 	<link rel="stylesheet" type="text/css" media="print" href="webroot/print.css" />
@@ -113,7 +112,7 @@ if($this->loggedin){
 					echo '<img src="webroot/images/blank.png" width="16" height="10" alt=" " />'."\n";
 				} }
 				?>
-				<br /><br /><span style="font-size:90%;color:#678;">&copy; Copyright 2006 Craig Rodway.<br />This page was loaded in <?php echo $this->benchmark->elapsed_time() ?> seconds.</span><br />
+				<br /><br /><span style="font-size:90%;color:#678;">&copy; Copyright 2006 Craig Rodway.<br /></span><br />
 			<br />
 			</div>
 		</div>

@@ -1,12 +1,12 @@
 <fieldset><legend accesskey="D" tabindex="6">Week Dates</legend>
 
-<div>Please select the week-commencing (Monday) dates within the current academic year that this week applies to.</div>
+<div>Please select the week-commencing (Monday) dates within the current business year that this week applies to.</div>
 
 <!-- <p>
   <label for="try_automatic">Fill in automatically</label>
   <?php
 	#$photo = @field($this->validation->name, $room->name);
-	echo form_checkbox( array( 
+	echo form_checkbox( array(
 		'name' => 'try_automatic',
 		'id' => 'try_automatic',
 		'value' => 'true',
@@ -49,13 +49,13 @@ foreach($mondays as $monday){
 		$fgcol = '#'.$weekdata[$monday['week_id']]['fgcol'];
 	}
 	if($row == 0){ echo '<tr>'; }
-	
+
 	if(isset($monday['week_id']) && ($monday['week_id'] == @field($week->week_id)) && isset($week->week_id)){
 		$checked = 'checked="checked"';
 	} else {
 		$checked = '';
 	}
-	
+
 	echo '<td style="'.$cell_style.'padding:4px;" width="'.round(100/$weekscount).'%">';
 	echo '<input type="checkbox" name="dates[]" value="'.$monday['date'].'" id="'.$monday['date'].'" '.$checkbox_disabled.' '.$checked.' /> ';
 	echo '<label class="ni" for="'.$monday['date'].'" style="color:'.$fgcol.'">';

@@ -4,7 +4,7 @@ echo form_open('weeks/saveacademicyear', array('class' => 'cssform', 'id' => 'sa
 ?>
 
 
-<fieldset style="width:50%"><legend accesskey="A" tabindex="1">Academic year</legend>
+<fieldset style="width:50%"><legend accesskey="A" tabindex="1">Business year</legend>
 
 <p>
   <label for="date_start" class="required">Start date:</label>
