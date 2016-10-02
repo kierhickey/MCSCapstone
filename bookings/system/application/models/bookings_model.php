@@ -119,8 +119,8 @@ class Bookings_model extends Model{
 
 			// No bookings
 			$book_url = site_url('bookings/book/'.$url);
-  		$cell['class'] = 'free';
-  		$cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
+    		$cell['class'] = 'free';
+    		$cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
 			if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){
 				$cell['body'] .= '<input type="checkbox" name="recurring[]" value="'.$url.'" />';
 			}
@@ -943,8 +943,6 @@ class Bookings_model extends Model{
 								."JOIN periods ON periods.period_id=bookings.period_id "
 								."WHERE bookings.user_id='$user_id' AND bookings.cancelled=0 "
 								."AND bookings.date Is Not NULL "
-								."AND bookings.date <= '$maxdate' "
-								."AND bookings.date >= '$today' "
 								."ORDER BY bookings.date asc, periods.time_start asc";
 		$query = $this->db->query($query_str);
 		if($query->num_rows() > 0){
@@ -985,6 +983,14 @@ class Bookings_model extends Model{
 		$query_str = "SELECT * FROM bookings WHERE user_id='$user_id' AND date >= '$today'";
 		$query = $this->db->query($query_str);
 		$total['active'] = $query->num_rows();
+
+		// All bookings for the current calendar week
+		$mondayDate = date('Y-m-d', strtotime("monday this week"));
+		$sundayDate = date('Y-m-d', strtotime("sunday this week"));
+
+		$query_str = "SELECT * FROM bookings WHERE user_id='$user_id' AND date >= '$mondayDate' AND date <= '$sundayDate'";
+		$query = $this->db->query($query_str);
+		$total["week"] = $query->num_rows();
 
 		return $total;
 	}

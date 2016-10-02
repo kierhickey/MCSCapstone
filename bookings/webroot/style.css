@@ -463,3 +463,25 @@ table.bookings td.holiday{ background:#f6f6f6; color:#333; border:1px solid #ccc
 
 table.bookings td.free a{ color:#00f;text-decoration:none; display:block;}
 table.bookings td.free a:hover{ color:#f00;text-decoration:none; }
+
+.bookings-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.bookings-table th {
+	text-align: left;
+	border-bottom: 1px solid #000;
+}
+
+.bookings-table td {
+	padding: 2px;
+}
+
+.col-date {
+	width: 80px;
+}
+
+.col-time {
+	width: 140px;
+}
