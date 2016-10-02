@@ -12,7 +12,7 @@ h1{float:left; padding-left:54px;}
 #content{width:100%; padding:76px 0 61px; border-bottom:1px solid #c7c7c7;}
 	#page1 #content{ padding:59px 0 61px;}
 /* ---------- Tags ---------*/
-h3{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; border-bottom:1px solid #c7c7c7; /*padding:7px 0 17px 53px;*/}
+h3{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; border-bottom:1px solid #c7c7c7; padding:7px 0 17px 0px;}
 	/*h3.icon-1{background:url(../images/title-icon1.png) 0 0 no-repeat;}
 	h3.icon-2{background:url(../images/title-icon2.png) 0 0 no-repeat;}
 	h3.icon-3{background:url(../images/title-icon3.png) 0 0 no-repeat;}
