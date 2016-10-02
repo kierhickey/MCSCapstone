@@ -12,8 +12,8 @@ h1{float:left; padding-left:54px;}
 #content{width:100%; padding:76px 0 61px; border-bottom:1px solid #c7c7c7;}
 	#page1 #content{ padding:59px 0 61px;}
 /* ---------- Tags ---------*/
-h3{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; border-bottom:1px solid #c7c7c7; padding:7px 0 17px 53px;}
-	h3.icon-1{background:url(../images/title-icon1.png) 0 0 no-repeat;}
+h3{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; border-bottom:1px solid #c7c7c7; padding:7px 0 17px 0px;}
+	/*h3.icon-1{background:url(../images/title-icon1.png) 0 0 no-repeat;}
 	h3.icon-2{background:url(../images/title-icon2.png) 0 0 no-repeat;}
 	h3.icon-3{background:url(../images/title-icon3.png) 0 0 no-repeat;}
 	#page3 h3.icon-3{background-position:0 3px; padding-bottom:17px;}
@@ -23,7 +23,7 @@ h3{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; bord
 	h3.icon-7{background:url(../images/title-icon7.png) 0 3px no-repeat;}
 	h3.icon-8{background:url(../images/title-icon8.png) 0 3px no-repeat;}
 	h3.icon-9{background:url(../images/title-icon9.png) 0 3px no-repeat;}
-	#page3 h3, #page4 h3, #page6 h3{font-size:40px; padding:5px 0 19px 53px;}
+	#page3 h3, #page4 h3, #page6 h3{font-size:40px; padding:5px 0 19px 53px;}*/
 h4{font: normal 35px/42px 'Open Sans Condensed', sans-serif; color:#191919; padding-top:7px;}
 h5{font-weight:normal; color:#b4b4b4;}
 h6{font-weight:bold; color:#191919;}
