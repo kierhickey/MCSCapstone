@@ -192,8 +192,8 @@ Please use this section to upload a business logo. Thumbnails will be created of
 	$t++;
 	?>
 	<p class="hint">Select how users view the bookings page.<br />
-		<strong><span>One day at a time</span></strong> - all periods and rooms are shown for the selected date.<br />
-		<strong><span>One room at a time</span></strong> - all periods and days of the week are shown for the selected room.
+		<strong><span>One day at a time</span></strong> - all sessions and rooms are shown for the selected date.<br />
+		<strong><span>One room at a time</span></strong> - all sessions and days of the week are shown for the selected room.
 	</p>
 </p>
 <?php echo @field($this->validation->displaytype_error) ?>
@@ -205,7 +205,7 @@ Please use this section to upload a business logo. Thumbnails will be created of
 	$columns = @field($this->validation->columns, $info->columns);
 	?>
 	<select name="d_columns" id="d_columns" tabinde="<?php echo $t; $t++; ?>">
-		<option value="periods" class="day room">Periods</option>
+		<option value="periods" class="day room">Sessions</option>
 		<option value="rooms" class="day">Rooms</option>
 		<option value="days" class="room">Days</option>
 	</select>

@@ -1,6 +1,6 @@
 <?php echo $this->session->flashdata('saved') ?>
 <?php
-$icondata[0] = array('periods/add', 'Add Period', 'add.gif' );
+$icondata[0] = array('periods/add', 'Add Session', 'add.gif' );
 $this->load->view('partials/iconbar', $icondata);
 ?>
 <table width="100%" cellpadding="2" cellspacing="2" border="0" class="sort-table" id="jsst-periods">
@@ -61,7 +61,7 @@ $this->load->view('partials/iconbar', $icondata);
 	</tr>
 	<?php $i++; }
 	} else {
-		echo '<td colspan="7" align="center" style="padding:16px 0">No periods exist!</td>';
+		echo '<td colspan="7" align="center" style="padding:16px 0">No sessions exist!</td>';
 	}
 	?>
 	</tbody>

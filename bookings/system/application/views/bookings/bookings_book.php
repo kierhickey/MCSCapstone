@@ -65,7 +65,7 @@ $t = 1;
 
 
 <p>
-  <label for="period_id" class="required">Period:</label>
+  <label for="period_id" class="required">Session:</label>
   <?php
   foreach($periods as $period){
   	$periodlist[$period->period_id] = $period->name . ' ('.date('G:i', strtotime($period->time_start)).' - '.date('G:i', strtotime($period->time_end)).')';
@@ -109,7 +109,7 @@ $t = 1;
 <p>
 	<label for="recurring">Recurring?</label>
   <?php
-	echo form_checkbox(array( 
+	echo form_checkbox(array(
 		'name' => 'recurring',
 		'id' => 'recurring',
 		'value' => '1',
@@ -134,7 +134,7 @@ $t = 1;
 	$t++;
 	?>
 </p>
-<?php echo @field($this->validation->day_num_error); ?> 
+<?php echo @field($this->validation->day_num_error); ?>
 
 
 <p>

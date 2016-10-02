@@ -6,7 +6,7 @@ echo form_open('periods/save', array('class' => 'cssform', 'id' => 'schoolday_ad
 $t = 1;
 ?>
 
-<fieldset><legend accesskey="R" tabindex="<?php echo $t; $t++; ?>">Period details</legend>
+<fieldset><legend accesskey="R" tabindex="<?php echo $t; $t++; ?>">Session details</legend>
 <p>
   <label for="name" class="required">Name</label>
   <?php
@@ -79,7 +79,7 @@ $t = 1;
   	$is_sel = ($days_bitmask->bit_isset($day_num)) ? 'selected="selected"' : '';
 		echo sprintf('<option value="%s" %s>%s</option>', $day_num, $is_sel, $day_name) . "\n";
   }
-  
+
 	#echo form_dropdown('days[]', $days, $selected, 'multiple="multiple" size="7"');
 	/*foreach( $days as $day_num => $day_name ){
 		#echo $ifid." = ".$ifname."<br>";
@@ -103,7 +103,7 @@ $t = 1;
   <?php
 	#$photo = @field($this->validation->name, $room->name);
 	$bookable = @field($this->validation->bookable, $period->bookable);
-	echo form_checkbox( array( 
+	echo form_checkbox( array(
 		'name' => 'bookable',
 		'id' => 'bookable',
 		'value' => '1',
@@ -112,7 +112,7 @@ $t = 1;
 	));
 	$t++;
 	?>
-	<p class="hint">Tick this box to allow bookings for this period</p>
+	<p class="hint">Tick this box to allow bookings for this session</p>
 </p>
 
 </fieldset>
