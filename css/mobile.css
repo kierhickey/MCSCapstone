@@ -1,0 +1,168 @@
+@media only screen and (max-width: 995px) {
+    img {
+        width: 100%;
+        height: auto;
+    }
+
+    .hide1 {
+        display: none;
+    }
+
+    .img-indent-none1 {
+        float: none;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    p, .p3, .p3-1 {
+        margin-bottom: 13px
+    }
+
+    .p0 {
+        margin-bottom: 0;
+    }
+
+    .p1, .p1-1 {
+        margin-bottom: 5px;
+    }
+
+    .p2, .p2-1 {
+        margin-bottom: 5px;
+    }
+
+    .p4, .p4-1 {
+        margin-bottom: 15px;
+    }
+
+    .p5, .p5-1 {
+        margin-bottom: 20px;
+    }
+
+    .p6, .p6-1 {
+        margin-bottom: 20px;
+    }
+
+    .p7, .p7-1 {
+        margin-bottom: 25px;
+    }
+
+    .p8, .p8-1 {
+        margin-bottom: 25px;
+    }
+
+    .p9, .p9-1 {
+        margin-bottom: 25px;
+    }
+
+    .col-2x {
+        width: 108px;
+    }
+
+    h1 {
+        padding-left: 40px;
+    }
+
+    h3 {
+        font-size: 35px;
+    }
+
+    .box2 {
+        height: 340px;
+        overflow: hidden;
+    }
+
+    .map iframe {
+        width: 234px;
+    }
+
+    .indent-right4, .indent-right6 {
+        padding-right: 0;
+    }
+
+    .indent-left1-1 {
+        padding-left: 0;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .grid_1,
+    .grid_2,
+    .grid_3,
+    .grid_4,
+    .grid_5,
+    .grid_6,
+    .grid_7,
+    .grid_8,
+    .grid_9,
+    .extra-marg-bot {
+        margin-bottom: 40px;
+    }
+
+    .hide2 {
+        display: none;
+    }
+
+    .last-col {
+        margin-bottom: 0 !important;
+    }
+
+    .even-last-item {
+        margin-right: 0 !important;
+    }
+
+    .img-indent-none2 {
+        float: none;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .col-2x {
+        width: 200px;
+    }
+
+    header .indent-bottom {
+        padding-bottom: 0;
+    }
+
+    h1 {
+        float: none;
+        padding-bottom: 40px;
+        padding-left: 25px;
+    }
+
+    .icon-1 {
+        letter-spacing: 0;
+        word-spacing: 0;
+    }
+
+    .button {
+        padding: 8px 15px 10px;
+    }
+
+    .box2 {
+        height: auto;
+    }
+
+    .map iframe {
+        width: 418px;
+    }
+}
+@media only screen and (max-width: 479px) {
+    .bookRoom a {
+        left: 20px;
+        top: 115px;
+        padding: 5px 10px;
+    }
+
+    .hide3 {
+        display: none;
+    }
+
+    .col-2x {
+        width: 140px;
+    }
+
+    .map iframe {
+        width: 298px;
+    }
+}
