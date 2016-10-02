@@ -27,7 +27,7 @@ foreach($myroom as $booking){
 <?php
 foreach($mybookings as $booking){
 	$string = '<li>%s is booked on %s for %s. %s.</li>';
-	if($booking->notes){ $notes = '('.$booking->notes.')'; }
+	if($booking->notes){ $notes = '('.$booking->notes.')'; } else {$notes = 'No note';}
 	echo sprintf($string, $booking->name, date("d/m/Y", strtotime($booking->date)), $booking->periodname, $notes);
 }
 ?>
