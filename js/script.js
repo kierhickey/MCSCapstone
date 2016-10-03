@@ -25,3 +25,12 @@ $(function(){$('.social-icons a')
 	.mouseover(function(){$(this).stop().animate({opacity:0.5}, 200)})
 	.mouseout(function(){$(this).stop().animate({opacity:1}, 200)});
 });
+
+
+$(function printYear(){
+    
+    var currentDate = new Date();
+    var currentYear = String(currentDate.getFullYear());
+    document.getElementsByClassName("date")[0].innerHTML = currentYear;
+    
+});

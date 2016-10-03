@@ -19,7 +19,7 @@ $this->load->view('partials/iconbar', $icondata);
 foreach($myroom as $booking){
 	$string = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</tr>';
 	if($booking->notes){ $booking->notes = '('.$booking->notes.')'; }
-	if(!$booking->displayname){ $booking->displayname = $booking->username; }
+	if(!$booking->displayname){ $booking->displayname = $booking->username;}
 	echo sprintf($string, date("d/m/Y", strtotime($booking->date)), $booking->name, $booking->displayname, $booking->periodname, $booking->notes);
 }
 ?>
@@ -51,7 +51,7 @@ foreach($mybookings as $booking){
 				<td>%s - %s</td>
 				<td>%s</td>
 			   </tr>';
-	if($booking->notes){ $notes = '('.$booking->notes.')'; }
+	if($booking->notes){ $notes = '('.$booking->notes.')'; } else {$notes =''}
 	echo sprintf($string, date("d/m/Y", strtotime($booking->date)), $booking->name, $booking->time_start, $booking->time_end, $notes);
 }
 ?>

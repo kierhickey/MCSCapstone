@@ -478,3 +478,8 @@ footer a {
 	text-decoration: none;
 	background-color: #9DE793;
 }
+
+.date {
+    display: inline-block;
+    width: auto;
+}
