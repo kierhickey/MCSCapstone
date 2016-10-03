@@ -51,7 +51,7 @@ class Periods extends Controller {
 		$body['periods'] = $this->M_periods->Get();	//$this->session->userdata('schoolcode'));
 		$body['days_list'] = $this->M_periods->days;
 		$body['days_bitmask'] = $this->M_periods->days_bitmask;
-		$layout['title'] = 'The School Day';
+		$layout['title'] = 'Room Hire Hours';
 		$layout['showtitle'] = $layout['title'];	// . ' ('.$section.')';
 		$layout['body'] = $this->load->view('periods/periods_index', $body, True);
 		$this->load->view('layout', $layout );
