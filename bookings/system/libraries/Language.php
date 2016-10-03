@@ -1,4 +1,4 @@
-<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /**
  * Code Igniter
  *
@@ -13,7 +13,7 @@
  * @filesource
  */
 
-// ------------------------------------------------------------------------
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Language Class
@@ -31,7 +31,6 @@ class CI_Language {
 
 	/**
 	 * Constructor
-	 *
 	 * @access	public
 	 */
 	function CI_Language()
@@ -39,11 +38,8 @@ class CI_Language {
 		log_message('debug', "Language Class Initialized");
 	}
 
-	// --------------------------------------------------------------------
-
 	/**
 	 * Load a language file
-	 *
 	 * @access	public
 	 * @param	mixed	the name of the language file to be loaded. Can be an array
 	 * @param	string	the language (english, etc.)
@@ -102,8 +98,6 @@ class CI_Language {
 		return TRUE;
 	}
 
-	// --------------------------------------------------------------------
-
 	/**
 	 * Fetch a single line of text from the language array
 	 *
@@ -117,5 +111,4 @@ class CI_Language {
 	}
 
 }
-// END Language Class
 ?>
