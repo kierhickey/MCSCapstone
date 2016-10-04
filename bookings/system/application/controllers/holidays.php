@@ -48,7 +48,7 @@ class Holidays extends Controller {
 	function index(){
   	$body['holidays'] = $this->M_holidays->Get(NULL, $this->school_id);	//$this->session->userdata('schoolcode'));
   	
-		$layout['title'] = 'Holidays';
+		$layout['title'] = 'School Holidays';
 		$layout['showtitle'] = $layout['title'];
 		$layout['body'] = $this->load->view('holidays/holidays_index', $body, True);
 		$this->load->view('layout', $layout);
