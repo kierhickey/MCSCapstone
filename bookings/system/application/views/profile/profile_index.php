@@ -51,7 +51,7 @@ foreach($mybookings as $booking){
 				<td>%s - %s</td>
 				<td>%s</td>
 			   </tr>';
-	if($booking->notes){ $notes = '('.$booking->notes.')'; } else {$notes =''}
+	if($booking->notes){ $notes = '('.$booking->notes.')'; } else {$notes ='';}
 	echo sprintf($string, date("d/m/Y", strtotime($booking->date)), $booking->name, $booking->time_start, $booking->time_end, $notes);
 }
 ?>
