@@ -42,7 +42,7 @@ class School extends Controller {
 	function installed(){
 		$query_str = "SHOW TABLES";
 		$query = $this->db->query($query_str);
-		if($query->num_rows() == 0){
+		if(!$query || $query->num_rows() == 0) {
 			redirect('install');
 		}
 	}

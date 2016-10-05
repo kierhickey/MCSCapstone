@@ -21,7 +21,6 @@ if ($host == "localhost") {
     $db['default']['database'] = substr($url["host"], 1);
 }
 
-
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['active_r'] = TRUE;
@@ -29,5 +28,7 @@ $db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = FALSE;
 $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = 'dbcache';
+
+echo json_encode($db);
 
 ?>
