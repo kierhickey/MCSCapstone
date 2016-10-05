@@ -27,20 +27,31 @@ class Bookings extends Controller
         // Loading everything we need.
         $this->load->script('bitmask');
         $this->load->model('crud_model', 'crud');
-        $this->load->model('rooms_model', 'M_rooms');
-        $this->load->model('periods_model', 'M_periods');
-        $this->load->model('weeks_model', 'M_weeks');
-        $this->load->model('users_model', 'M_users');
-        $this->load->model('bookings_model', 'M_bookings');
+        $this->load->model('rooms_model', 'roomsProvider');
+        $this->load->model('periods_model', 'sessionProvider');
+        $this->load->model('weeks_model', 'weeksProvider');
+        $this->load->model('users_model', 'userProvider');
+        $this->load->model('bookings_model', 'bookingsProvider');
 
-        $school['users'] = $this->M_users->Get();
-        $school['days_list'] = $this->M_periods->days;
-        $school['days_bitmask'] = $this->M_periods->days_bitmask;
+        $school['users'] = $this->userProvider->Get();
+        $school['days_list'] = $this->sessionProvider->days;
+        $school['days_bitmask'] = $this->sessionProvider->days_bitmask;
         $this->school = $school;
     }
 
+    /**
+     * Gives a summary of total bookings made over the past 2 months
+     */
     public function summary()
     {
+        $startDate = new DateTime($_POST["startDate"]);
+        $endDate = new DateTime($_POST["endDate"]);
+
+        $bookingsForMonth = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+    }
+
+    public function summaryPage() {
+
     }
 
     public function index()
@@ -55,7 +66,7 @@ class Bookings extends Controller
             $day_num = date('w', strtotime($uri['date']));
         }
 
-        $room_of_user = $this->M_rooms->GetByUser($this->school_id, $this->session->userdata('user_id'));
+        $room_of_user = $this->roomsProvider->GetByUser($this->school_id, $this->session->userdata('user_id'));
 
         if (isset($uri['room'])) {
             $uri['room'] = $uri['room'];
@@ -65,7 +76,7 @@ class Bookings extends Controller
             $uri['room'] = false;
         }
 
-        $body['html'] = $this->M_bookings->html(
+        $body['html'] = $this->bookingsProvider->html(
             $this->school_id,
             null,
             null,
@@ -87,7 +98,7 @@ class Bookings extends Controller
     */
     public function load()
     {
-        $style = $this->M_bookings->BookingStyle($this->school_id);
+        $style = $this->bookingsProvider->BookingStyle($this->school_id);
 
         // Validation rules
         $vrules['chosen_date'] = 'max_length[10]|callback__is_valid_date';
@@ -186,11 +197,11 @@ class Bookings extends Controller
 
             // Lookups we need if an admin user
             if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-                $body['days'] = $this->M_periods->days;
-                $body['rooms'] = $this->M_rooms->Get(null, $this->school_id);
-                $body['periods'] = $this->M_periods->Get();
-                $body['weeks'] = $this->M_weeks->Get();
-                $body['users'] = $this->M_users->Get();
+                $body['days'] = $this->sessionProvider->days;
+                $body['rooms'] = $this->roomsProvider->Get(null, $this->school_id);
+                $body['periods'] = $this->sessionProvider->Get();
+                $body['weeks'] = $this->weeksProvider->Get();
+                $body['users'] = $this->userProvider->Get();
             }
 
             $layout['body'] = $this->load->view('bookings/bookings_book', $body, true);
@@ -244,7 +255,7 @@ class Bookings extends Controller
             $data['notes'] = $this->input->post('notes');
             $data['week_id'] = $booking['week'];
             $data['day_num'] = $booking['day'];
-            if (!$this->M_bookings->Add($data)) {
+            if (!$this->bookingsProvider->Add($data)) {
                 ++$errcount;
             }
         }
@@ -271,7 +282,7 @@ class Bookings extends Controller
         $uri = $this->session->userdata('uri');
         $booking_id = $this->uri->segment(3);
 
-        if ($this->M_bookings->Cancel($this->school_id, $booking_id)) {
+        if ($this->bookingsProvider->Cancel($this->school_id, $booking_id)) {
             $msg = $this->load->view('msgbox/info', 'The booking has been <strong>cancelled</strong>.', true);
         } else {
             $msg = $this->load->view('msgbox/error', 'An error occured cancelling the booking.', true);
@@ -292,15 +303,15 @@ class Bookings extends Controller
         $uri = $this->session->userdata('uri');
         $booking_id = $this->uri->segment(3);
 
-        $booking = $this->M_bookings->Get();
+        $booking = $this->bookingsProvider->Get();
 
         // Lookups we need if an admin user
         if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-            $body['days'] = $this->M_periods->days;
-            $body['rooms'] = $this->M_rooms->Get($this->school_id, null);
-            $body['periods'] = $this->M_periods->Get();
-            $body['weeks'] = $this->M_weeks->Get();
-            $body['users'] = $this->M_users->Get();
+            $body['days'] = $this->sessionProvider->days;
+            $body['rooms'] = $this->roomsProvider->Get($this->school_id, null);
+            $body['periods'] = $this->sessionProvider->Get();
+            $body['weeks'] = $this->weeksProvider->Get();
+            $body['users'] = $this->userProvider->Get();
         }
 
         $layout['body'] = $this->load->view('bookings/bookings_book', $body, true);
@@ -371,14 +382,14 @@ class Bookings extends Controller
             // Now see if we are editing or adding
             if ($booking_id == 'X') {
                 // No ID, adding new record
-                if (!$this->M_bookings->Add($data)) {
+                if (!$this->bookingsProvider->Add($data)) {
                     $flashmsg = $this->load->view('msgbox/error', sprintf($this->lang->line('dberror'), 'adding', 'booking'), true);
                 } else {
                     $flashmsg = $this->load->view('msgbox/info', 'The booking has been made.', true);
                 }
             } else {
                 // We have an ID, updating existing record
-                if (!$this->M_bookings->Edit($booking_id, $data)) {
+                if (!$this->bookingsProvider->Edit($booking_id, $data)) {
                     $flashmsg = $this->load->view('msgbox/error', sprintf($this->lang->line('dberror'), 'editing', 'booking'), true);
                 } else {
                     $flashmsg = $this->load->view('msgbox/info', 'The booking has been updated.', true);

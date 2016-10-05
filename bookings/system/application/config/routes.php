@@ -1,8 +1,11 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+// API
+$route['api/bookings/summary']       = 'bookings/summary';
+
 // Bookings
 $route['bookings']					= 'bookings/index';
-$route['bookings/summary']          = 'bookings/summary';
+$route['bookings/summary']          = 'bookings/summaryPage';
 
 // ClassroomBookings-specific
 $route['contact']					= 'site/contact';
