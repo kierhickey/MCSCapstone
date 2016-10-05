@@ -234,7 +234,7 @@ dynamicSelect('displaytype', 'd_columns');
 
 <?php
 $submit['submit'] = array('Save', $t);
-$submit['cancel'] = array('Cancel', $t+1, 'controlpanel');
+$submit['cancel'] = array('Cancel', $t+1, 'dashboard');
 $this->load->view('partials/submit', $submit);
 echo form_close();
 ?>

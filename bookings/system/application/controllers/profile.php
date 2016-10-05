@@ -52,14 +52,14 @@ class Profile extends Controller {
         // User must be admin
         if (!$this->userauth->CheckAuthLevel(ADMINISTRATOR)) {
             $this->session->set_flashdata('auth', $this->load->view('msgbox/error', $this->lang->line('crbs_mustbeadmin'), True));
-            redirect('controlpanel', 'location');
+            redirect('dashboard', 'location');
         }
 
         $user = $this->M_users->Get($this->targetUserId);
 
         if (!$user) {
             $this->session->set_flashdata('baddata', $this->load->view('msgbox/error', $this->lang->line('invalid_user_id'), true));
-            redirect('controlpanel', 'location');
+            redirect('dashboard', 'location');
         }
 
         if ($user->displayname != "") {

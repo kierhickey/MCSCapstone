@@ -78,7 +78,7 @@ class Login extends Controller {
 			if( $this->userauth->trylogin($username, $password) ){
 			
 				// Success! Redirect to control panel
-				redirect('controlpanel', 'location');
+				redirect('dashboard', 'location');
 				
 			} else {
 			

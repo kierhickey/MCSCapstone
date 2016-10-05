@@ -3,18 +3,19 @@
 $mobile = $this->agent->is_mobile();
 
 if($this->loggedin){
-	$menu[1]['text'] = '<img src="webroot/images/ui/link_controlpanel.gif" hspace="4" align="top" alt=" " />Control Panel';
-	$menu[1]['href'] = site_url('controlpanel');
-	$menu[1]['title'] = 'Tasks';
+	$menu[1] = [
+		"url" => site_url("dashboard"),
+		"img" => "dashboard-white-x24.svg",
+		"title" => "Dashboard"
+	];
 
-	#$menu[2]['text'] = '<img src="webroot/images/ui/link_help.gif" hspace="4" align="top" alt=" " />Help';
-	#$menu[2]['href'] = site_url('help'.ereg_replace('help(/)', '', $this->uri->uri_string()));
-	#$menu[2]['title'] = 'Get help on this page';
+	$menu[2] = [
+		"url" => site_url("logout"),
+		"img" => "power-white-x24.svg",
+		"title" => "Logout"
+	];
 
 	if($this->userauth->CheckAuthLevel(ADMINISTRATOR)){ $icon = 'user_administrator.gif'; } else { $icon = 'user_teacher.gif'; }
-	$menu[3]['text'] = '<img src="webroot/images/ui/logout.gif" hspace="4" align="top" alt=" " />Logout';
-	$menu[3]['href'] = site_url('logout');
-	$menu[3]['title'] = 'Close your current session';
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -46,50 +47,55 @@ if($this->loggedin){
 	if(in_array($this->uri->segment(1), $js_imagepreview)){
 		echo "\n".'<script type="text/javascript" src="webroot/js/imagepreview.js"></script>';
 	}
-	if(!$mobile){
-		$bg = (isset($this->school_id)) ? $this->school_id : 'global';
-		$body_attr = 'style="background-image:url(\'webroot/images/bg/'.$bg.'.png\')"';
-	} else {
-		$body_attr = '';
-	}
 	?>
 </head>
-<body <?php echo $body_attr ?>>
-	<div class="outer">
-
-		<div class="header">
-
+<body>
+	<div class="header-fix"></div>
+	<header>
+		<div class="container">
+			<div class="title">
+				<?php
+					if($this->session->userdata('schoolname')){
+						echo '<a href="'.$this->session->userdata('schoolurl').'">'.$this->session->userdata('schoolname').'</a>';
+					} else {
+						// There must be a way to make this not hard-coded
+						echo '<a href="'.$this->config->item('base_url').'">Melbourne Consulting Suites</a>';
+					}
+				?>
+			</div>
 			<div class="nav-box">
 				<?php if(!$this->loggedin){ echo '<br /><br />'; } ?>
 				<?php
-				$i=0;
-				if(isset($menu)){
-					foreach( $menu as $link ){
-						echo "\n".'<a href="'.$link['href'].'" title="'.$link['title'].'">'.$link['text'].'</a>'."\n";
-						if( $i < count($menu)-1 ){ echo '<img src="webroot/images/blank.png" width="16" alt=" " />'."\n\t\t"; }
-						$i++;
+					$i=0;
+					if(isset($menu)){
+						foreach($menu as $link){
+							$url = $link["url"];
+							$title = $link["title"];
+							$img = $link["img"];
+
+							echo "<div class='nav-item'>
+										<a class='nav-item-link' href='$url' title='$title'>
+											<img class='nav-item-img' src='webroot/images/ui/material/$img' alt='$title' />
+											<span class='nav-item-text'>$title</span>
+										</a>
+									</div>";
+						}
 					}
-				}
-				?><br />
-				<?php if($this->loggedin){ ?>
-				<p class="normal">Logged in as <?php echo (strlen($this->session->userdata('displayname')) > 1) ? $this->session->userdata('displayname') : $this->session->userdata('username'); ?></p>
+
+				?>
+				<?php if($this->loggedin){
+						$url = site_url('profile');
+				?>
+					<div class="profile nav-item">
+						<a class="nav-item-link" href="<?php echo $url ?>" title="Profile">
+							<img class="nav-item-img" src="webroot/images/ui/material/profile-white-x24.svg" alt="Profile" />
+						</a>
+					</div>
 				<?php } ?>
 			</div>
-
-			<br />
-
-			<span class="title">
-				<?php
-				if($this->session->userdata('schoolname')){
-					echo '<a href="'.$this->session->userdata('schoolurl').'">'.$this->session->userdata('schoolname').'</a>';
-				} else {
-					echo '<a href="'.$this->config->item('base_url').'" title="Classroom Bookings" style="font-weight:normal;color:#0081C2;letter-spacing:-2px">classroom<span style="color:#ff6400;font-weight:bold">bookings</span></a>';
-					echo '<sup style="font-weight:bold;color:#555;letter-spacing:-1px;font-size:12pt">BETA</sup>';
-				}
-				?>
-			</span>
-
 		</div>
+	</header>
+	<div class="container">
 
 		<?php if(isset($midsection)){ ?>
 		<div class="mid-section" align="center">

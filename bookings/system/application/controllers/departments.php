@@ -24,7 +24,7 @@ class Departments extends Controller {
 			$this->loggedin = True;
 			if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){
 				$this->session->set_flashdata('auth', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeadmin'), True));
-				redirect('controlpanel', 'location');
+				redirect('dashboard', 'location');
 			}
 		}
 		
