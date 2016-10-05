@@ -1,11 +1,21 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-// Full URL to your installation
-$config['base_url'] = 'http://mcstest.herokuapp.com/bookings/';
+//
+// Are we a dev environment, or is this Fantasy?
+// If $host == "localhost" -- no ssl
+//
+$host = $_SERVER["SERVER_NAME"];
+$https = $host == "localhost"
+    ? ""
+    : "s";
 
+//
+// Abstracting logic. Sharkbait, HOO HAH HAH.
+// NOTE: This line MUST include a trailing slash.
+//
+$config['base_url'] = "http$https://$host/bookings/";
 
 // Empty string if using .htaccess mod_rewrite
-#$config['index_page'] = '';
 $config['index_page'] = '';
 
 // You shouldn't need to change any of these.
