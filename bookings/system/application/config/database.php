@@ -18,7 +18,7 @@ if ($host == "localhost") {
     $db['default']['hostname'] = $url["host"];
     $db['default']['username'] = $url["user"];
     $db['default']['password'] = $url["pass"];
-    $db['default']['database'] = substr($url["host"], 1);
+    $db['default']['database'] = substr($url["path"], 1);
 }
 
 $db['default']['dbdriver'] = 'mysqli';
@@ -28,7 +28,5 @@ $db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = FALSE;
 $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = 'dbcache';
-
-echo json_encode($db);
 
 ?>
