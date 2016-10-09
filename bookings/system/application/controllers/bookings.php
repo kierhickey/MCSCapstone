@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../templates/Template.class.php";
 
 class Bookings extends Controller
 {
@@ -51,7 +52,25 @@ class Bookings extends Controller
     }
 
     public function summaryPage() {
+        $today = new DateTime();
 
+        $html = new Template("summary", "summary");
+
+        $summaryText = "This page presents a summary of information for "
+            ."export! You can filter by room, by person, or by both, and "
+            ."export information as it is displayed below!";
+
+        $layout["title"] = "Summary";
+        $layout["showtitle"] = "Summary";
+        $layout["body"] = $html->toHtml([
+            "summaryText" => $summaryText,
+            "roomOptions" => [
+                    "1" => "bruh",
+                    "2" => "does this work?"
+            ],
+        ]);
+
+        $this->load->view('layout', $layout);
     }
 
     public function index()
@@ -87,7 +106,7 @@ class Bookings extends Controller
         );
 
         $layout['title'] = 'Bookings';
-        $layout['showtitle'] = '';
+        $layout['showtitle'] = 'Bookings';
         $layout['body'] = $this->session->flashdata('saved');
         $layout['body'] .= $body['html'];
         $this->load->view('layout', $layout);
