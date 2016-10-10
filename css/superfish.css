@@ -11,7 +11,7 @@ nav{
 	margin-right:20px;
 	text-transform:uppercase;
 }
-	.sf-menu > li > a {color:#fff;}
+	.sf-menu > li > a {color:#f1f1f1;}
 		.sf-menu > li.sfHover > a,.sf-menu > li > a:hover, .sf-menu > li.current > a {
 			text-decoration:none; 
 			color:#000;
@@ -35,7 +35,7 @@ nav{
 	font:normal 11px/14px Arial, Helvetica, sans-serif;
 	text-transform:uppercase;
 }
-	.sf-menu li li a{color:#fff;}
+	.sf-menu li li a{color:#f1f1f1;}
 		.sf-menu li li > a:hover,.sf-menu li li.sfHover > a{
 			color:#000; 
 			text-decoration:none;
@@ -76,7 +76,7 @@ ul.sf-menu li li.sfHover li ul {
 	nav{float:none; background:#fff; padding:40px 0 0;}
 		#page1 nav{padding:40px 0 28px;}
 	.sf-menu > li {float:none; margin-right:0px; margin-bottom:5px;}
-	.sf-menu > li > a {display:block; background:#4183D7; color:#191919; padding:15px 20px;}
+	.sf-menu > li > a {display:block; background:#4183D7; color:#f1f1f1; padding:15px 20px;}
 		.sf-menu > li.sfHover > a,.sf-menu > li > a:hover, .sf-menu > li.current > a {color:#fff; background-color:#4183D7;}
 	/***submenu***/
 	.sf-menu ul {position:static; width:100%; padding:20px 0;}
