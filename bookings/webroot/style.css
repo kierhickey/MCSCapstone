@@ -101,6 +101,18 @@ header {
     margin: auto;
 }
 
+.page-title {
+	font-size: 220%;
+	color: #FFA500;
+	font-weight: normal;
+}
+
+.page-subtitle {
+	font-size: 160%;
+	color: #FFA500;
+	font-weight: normal;
+}
+
 .title {
 	float: left;
     font-family: "Helvetica Neue", "Segoe UI", "Open Sans", sans-serif;

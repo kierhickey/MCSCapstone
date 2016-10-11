@@ -57,7 +57,8 @@ class School extends Controller
     */
     public function manage()
     {
-        $layout['showtitle'] = 'Tasks';
+        $layout['title'] = 'Dashboard';
+        $layout['showtitle'] = 'Dashboard';
 
         // Initialise with empty string
         $layout['body'] = '';
@@ -76,7 +77,7 @@ class School extends Controller
     {
         if (!$this->userauth->loggedin()) {
             $this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), true));
-            redirect('site/home', 'location');
+            redirect('login', 'location');
         } else {
             if (!$this->userauth->CheckAuthLevel(ADMINISTRATOR)) {
                 $this->session->set_flashdata('auth', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeadmin'), true));

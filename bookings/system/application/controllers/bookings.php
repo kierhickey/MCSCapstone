@@ -19,7 +19,7 @@ class Bookings extends Controller
         // Check user is logged in
         if (!$this->userauth->loggedin()) {
             $this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), true));
-            redirect('site/home', 'location');
+            redirect('login', 'location');
         } else {
             $this->loggedin = true;
             $this->authlevel = $this->userauth->GetAuthLevel($this->session->userdata('user_id'));
@@ -68,6 +68,10 @@ class Bookings extends Controller
                     "1" => "bruh",
                     "2" => "does this work?"
             ],
+            "userOptions" => [
+                "1" => "Administrator",
+                "2" => "Testuser1"
+            ]
         ]);
 
         $this->load->view('layout', $layout);

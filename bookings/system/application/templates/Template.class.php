@@ -33,8 +33,6 @@
         }
 
         private function parseArgument($dom, $id, $value) {
-            echo "Parsing $id<br/>";
-
             $forEachEnd = "{{/each}}";
 
             $tplId = "{{".$id."}}";
@@ -59,13 +57,12 @@
                 $newDom = "";
 
                 foreach ($value as $key => $val) {
-                    echo "Adding $key;$value";
                     $newDom .= str_replace("{{key}}", $key, $this->str_replace_first("{{display}}", $val, $toReplace));
                 }
 
-                $dom = str_replace($forEachId, "", $dom);
-                $dom = str_replace($forEachEnd, "", $dom);
-                $dom = str_replace($toReplace, $newDom, $dom);
+                $dom = $this->str_replace_first($forEachId, "", $dom);
+                $dom = $this->str_replace_first($forEachEnd, "", $dom);
+                $dom = $this->str_replace_first($toReplace, $newDom, $dom);
             }
 
             return $dom;

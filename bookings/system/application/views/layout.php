@@ -104,7 +104,7 @@ if($this->loggedin){
 		<?php } ?>
 
 		<div class="content_area">
-			<?php if(isset($showtitle)){ echo '<h2>'.$showtitle.'</h2>'; } ?>
+			<?php if(isset($showtitle)){ echo '<h2 class="page-title">'.$showtitle.'</h2>'; } ?>
 			<?php echo $body ?>
 		</div>
 

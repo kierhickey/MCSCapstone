@@ -11,7 +11,6 @@ $route['bookings/summary']          = 'bookings/summaryPage';
 $route['contact']					= 'site/contact';
 $route['faq']						= 'site/faq';
 $route['features']					= 'site/features';
-$route['site']						= 'site/home';
 
 // School Management
 $route['dashboard']				    = 'school/manage';

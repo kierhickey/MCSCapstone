@@ -20,7 +20,7 @@ class Rooms extends Controller {
     if($this->uri->segment(2) != 'info'){
 	    if(!$this->userauth->loggedin()){
 	    	$this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), True) );
-				redirect('site/home', 'location');
+				redirect('login', 'location');
 			} else {
 				$this->loggedin = True;
 				if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){

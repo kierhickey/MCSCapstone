@@ -6,19 +6,25 @@ echo $this->session->flashdata('saved');
 
 // Menu for all users
 $i = 0;
-$menu[$i]['text'] = 'Bookings';
-$menu[$i]['icon'] = 'school_manage_bookings.gif';
-$menu[$i]['href'] = site_url('bookings');
+$menu[$i] = [
+	'text' => 'Bookings',
+	'icon' => 'school_manage_bookings.gif',
+	'href' => site_url('bookings')
+];
 
 $i++;
-$menu[$i]['text'] = 'My Profile';
-$menu[$i]['icon'] = ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) ? 'user_administrator.gif' : 'user_teacher.gif';
-$menu[$i]['href'] = site_url('profile');
+$menu[$i] = [
+	'text' => 'My Profile',
+	'icon' => ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) ? 'user_administrator.gif' : 'user_teacher.gif',
+	'href' => site_url('profile')
+];
 
 $i++;
-$menu[$i]['text'] = '';
-$menu[$i]['icon'] = 'blank.png';
-$menu[$i]['href'] = '';
+$menu[$i] = [
+	'text' => '',
+	'icon' => 'blank.png',
+	'href' => ''
+];
 
 
 
@@ -26,34 +32,46 @@ $menu[$i]['href'] = '';
 // Menu items for Administrators
 
 $i = 0;
-$school[$i]['text'] = 'Business Details';
-$school[$i]['icon'] = 'school_manage_details.gif';
-$school[$i]['href'] = site_url('school/details');
+$school[$i] = [
+	'text' => 'Business Details',
+	'icon' => 'school_manage_details.gif',
+	'href' => site_url('school/details')
+];
 
 $i++;
-$school[$i]['text'] = 'The Business Day';
-$school[$i]['icon'] = 'school_manage_times.gif';
-$school[$i]['href'] = site_url('periods');
+$school[$i] = [
+	'text' => 'The Business Day',
+	'icon' => 'school_manage_times.gif',
+	'href' => site_url('periods')
+];
 
 $i++;
-$school[$i]['text'] = 'Week Cycle';
-$school[$i]['icon'] = 'school_manage_weeks.gif';
-$school[$i]['href'] = site_url('weeks');
+$school[$i] = [
+	'text' => 'Week Cycle',
+	'icon' => 'school_manage_weeks.gif',
+	'href' => site_url('weeks')
+];
 
 $i++;
-$school[$i]['text'] = 'Holidays';
-$school[$i]['icon'] = 'school_manage_holidays.gif';
-$school[$i]['href'] = site_url('holidays');
+$school[$i] = [
+	'text' => 'Holidays',
+	'icon' => 'school_manage_holidays.gif',
+	'href' => site_url('holidays')
+];
 
 $i++;
-$school[$i]['text'] = 'Rooms';
-$school[$i]['icon'] = 'school_manage_rooms.gif';
-$school[$i]['href'] = site_url('rooms');
+$school[$i] = [
+	'text' => 'Rooms',
+	'icon' => 'school_manage_rooms.gif',
+	'href' => site_url('rooms')
+];
 
 $i++;
-$school[$i]['text'] = 'Departments';
-$school[$i]['icon'] = 'school_manage_departments.gif';
-$school[$i]['href'] = site_url('departments');
+$school[$i] = [
+	'text' => 'Departments',
+	'icon' => 'school_manage_departments.gif',
+	'href' => site_url('departments')
+];
 
 
 $i = 0;
@@ -66,14 +84,25 @@ $admin[$i]['href'] = site_url('reports');
 */
 
 $i++;
-$admin[$i]['text'] = 'Users';
-$admin[$i]['icon'] = 'school_manage_users.gif';
-$admin[$i]['href'] = site_url('users');
+$admin[$i] = [
+	'text' => 'Users',
+	'icon' => 'school_manage_users.gif',
+	'href' => site_url('users')
+];
 
 $i++;
-$admin[$i]['text'] = '';
-$admin[$i]['icon'] = 'blank.png';
-$admin[$i]['href'] = '';
+$admin[$i] = [
+	'text' => 'Summary',
+	'icon' => 'blank.png',
+	'href' => site_url("bookings/summary")
+];
+
+$i++;
+$admin[$i] = [
+	'text' => '',
+	'icon' => 'blank.png',
+	'href' => ''
+];
 
 /*$i++;
 $admin[$i]['text'] = 'Settings';
@@ -93,9 +122,9 @@ dotable($menu);
 
 // Check if user is admin
 if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){
-	echo '<h2>Business-related</h2>';
+	echo '<h3 class="page-subtitle">Business-related</h3>';
 	dotable($school);
-	echo '<h2>Management</h2>';
+	echo '<h3 class="page-subtitle">Management</h3>';
 	dotable($admin);
 }
 
@@ -119,8 +148,11 @@ function dotable($array){
 		echo '</h5>';
 		echo '</td>';
 		echo "\n";
-		if($row == 2){ echo '</tr>'."\n\n"; $row = -1; }
-		$row++;
+		if ($row == 2) {
+			echo '</tr>'."\n\n"; $row = 0;
+		} else {
+			$row++;
+		}
 	}
 
 	echo '</tbody>';
