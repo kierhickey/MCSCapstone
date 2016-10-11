@@ -15,7 +15,7 @@ body {
 header {
     width: 100%;
     position: relative;
-    background: #191919;
+    background: #4183D7;
     padding: 40px 0 0;
 	box-sizing: border-box;
 }
@@ -406,14 +406,15 @@ time {
 footer {
     width: 100%;
     font: 12px/15px Arial, Helvetica, sans-serif;
-    color: #989898;
+    color: #f1f1f1;
     text-align: center;
     text-transform: uppercase;
     padding: 21px 0 35px;
 	box-sizing: border-box;
+    background: #4183D7;
 }
 footer a {
-    color: #989898;
+    color: #f1f1f1;
 }
 /*--------- social icons -------*/
 

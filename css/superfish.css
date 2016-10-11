@@ -7,12 +7,17 @@ nav{
 .sf-menu > li {
 	position:relative;
 	float:left;
-	font:normal 14px/17px  Arial, Helvetica, sans-serif;
+	font:normal 16px/20px  Arial, Helvetica, sans-serif;
 	margin-right:20px;
 	text-transform:uppercase;
 }
-	.sf-menu > li > a {color:#fff;}
-		.sf-menu > li.sfHover > a,.sf-menu > li > a:hover, .sf-menu > li.current > a {text-decoration:none; color:#83c00b;}
+	.sf-menu > li > a {
+		color:#f1f1f1;
+	}
+	.sf-menu > li > a:hover, .sf-menu > li.sfHover > a, .sf-menu > li > a.current {
+			text-decoration:none; 
+			color:#000;
+	}
 /***submenu***/
 .sf-menu ul {
 	position:absolute;
@@ -21,17 +26,20 @@ nav{
 	width:175px; 
 	display:none;
 	padding:0 0 20px;
-	background:#191919;
+	background:#4183D7;
 }
 .sf-menu li li{
 	padding:0 15px 0 20px;
 	margin-bottom:11px;
 	position:relative;
-	font:normal 11px/14px Arial, Helvetica, sans-serif;
+	font:normal 14px/16px Arial, Helvetica, sans-serif;
 	text-transform:uppercase;
 }
-	.sf-menu li li a{color:#fff;}
-		.sf-menu li li > a:hover,.sf-menu li li.sfHover > a{color:#83c00b; text-decoration:none;}
+	.sf-menu li li a{color:#f1f1f1;}
+		.sf-menu li li > a:hover,.sf-menu li li.sfHover > a{
+			color:#000; 
+			text-decoration:none;
+		}
 .sf-menu li:hover ul,
 .sf-menu li.sfHover ul {
 	left:-21px;
@@ -56,27 +64,89 @@ ul.sf-menu li li.sfHover li ul {
 
 /* Design for a width of 768px */
 @media only screen and (max-width: 995px){
-	nav{padding-right:30px;}
-	.sf-menu > li > a .arrow{ display:block; width:100%; height:4px; background:url(../images/menu-arrow.gif) center top no-repeat; position:absolute; left:0; top:20px;}
-		.sf-menu > li.sfHover > a .arrow,.sf-menu > li > a:hover .arrow, .sf-menu > li.current > a .arrow{ background-position:center -10px;}
+	nav{
+		padding-right:30px;
+	}
+	.sf-menu > li > a .arrow{
+	 display:block; 
+	 width:100%; 
+	 height:4px; 
+	 background:url(../images/menu-arrow.gif) center top no-repeat; 
+	 position:absolute; 
+	 left:0; 
+	 top:20px;
+	}
+		.sf-menu > li.sfHover > a .arrow,.sf-menu > li > a:hover .arrow, .sf-menu > li.current > a .arrow{
+		 background-position:center -10px;
+		}
 }
 
 /* Design for a width of 480px*/
 @media only screen and (max-width: 767px) {
-	nav{float:none; background:#fff; padding:40px 0 0;}
-		#page1 nav{padding:40px 0 28px;}
-	.sf-menu > li {float:none; margin-right:0px; margin-bottom:5px;}
-	.sf-menu > li > a {display:block; background:#c7c7c7; color:#191919; padding:15px 20px;}
-		.sf-menu > li.sfHover > a,.sf-menu > li > a:hover, .sf-menu > li.current > a {color:#fff; background-color:#8fb342;}
+	nav{
+		float:none; 
+		background:#fff; 
+		padding: 0 0 0 0;
+	}
+	.sf-menu > li {
+		float:none; 
+		margin-right:0px; 
+		margin-bottom:0em;
+	}
+	.sf-menu > li > a {
+		display:block; 
+		background:#4183D7; 
+		color:#f1f1f1; 
+		text-align: center;
+		padding:10px 5px;
+	}
+	.sf-menu > li.sfHover > a,.sf-menu > li > a:hover, .sf-menu > li.current > a {
+		background-color:#4183D7;
+	}
 	/***submenu***/
-	.sf-menu ul {position:static; width:100%; padding:20px 0;}
-	.sf-menu > li > a .arrow{display:inline-block; width:7px; overflow:hidden; background:url(../images/menu-arrow2.gif) center top no-repeat; position:static; margin-left:10px; vertical-align:2px;}
-		.sf-menu > li.sfHover > a .arrow,.sf-menu > li > a:hover .arrow, .sf-menu > li.current > a .arrow{background-position:center -15px;}
+	.sf-menu ul {
+		position:static;
+		width:100%;
+		padding:20px 0;
+		text-align: center;
+		}
+	.sf-menu > li > a .arrow{
+		display:inline-block;
+		width:7px;
+		overflow:hidden;
+		background:url(../images/menu-arrow2.gif) center top no-repeat;
+	  	position:static;
+	  	margin-left:10px;
+	   	vertical-align:2px;
+	   }
+	.sf-menu > li > ul > li {
+		padding-bottom: 1em;
+	}
+	.sf-menu > li.sfHover > a .arrow,.sf-menu > li > a:hover .arrow, .sf-menu > li.current > a .arrow{
+		background-position:center -15px;
+	}
 	/***subsubmenu***/
-	.sf-menu ul ul{width:100%;}
-	.sf-menu li li > a .arrow{display:inline-block; width:7px; height:4px; overflow:hidden; background:url(../images/menu-arrow.gif) center top no-repeat; margin-left:10px; vertical-align:2px;}
-		.sf-menu li li.sfHover > a .arrow,.sf-menu li li > a:hover .arrow, .sf-menu li li.current > a .arrow{ background-position:center -10px;}
+	.sf-menu ul ul{
+		width:100%;
+	}
+	.sf-menu li li > a .arrow{
+		display:inline-block;
+		width:7px; 
+		height:4px; 
+		overflow:hidden; 
+		background:url(../images/menu-arrow.gif) 
+		center top no-repeat; 
+		margin-left:10px; 
+		vertical-align:2px;
+	}
+		.sf-menu li li.sfHover > a .arrow,.sf-menu li li > a:hover .arrow, .sf-menu li li.current > a .arrow{ 
+			background-position:center -10px;
+		}
 }
 
 /* Design for a width of 320px */
-@media only screen and (max-width: 479px){nav{padding:20px 0;}}
+@media only screen and (max-width: 479px){
+	nav{
+		padding:20px 0;
+		}
+	}
