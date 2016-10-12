@@ -3,7 +3,7 @@ var Calendar = function ($config) {
     var me = this;
 
     me.month = $config.month || (new Date()).getMonth();
-    me.year = $config.year || (new Date()).getYear();
+    me.year = $config.year || (new Date()).getFullYear();
     me.renderTo = $config.renderTo || null;
     me.userIds = $config.userIds || [];
     me.roomIds = $config.roomIds || [];
@@ -84,33 +84,97 @@ var Calendar = function ($config) {
         return months[me.month - 1];
     };
 
+    me.getCurrentYear = function() {
+        return me.year;
+    };
+
+    var getCalendarRows = function () {
+        var rows = [];
+
+        for (var i = 0; i < 5; i++) {
+            var week = "";
+
+            if (i === 0) week = "one";
+            if (i === 1) week = "two";
+            if (i === 2) week = "three";
+            if (i === 3) week = "four";
+            if (i === 4) week = "five";
+
+            rows.push($("<tr></tr>", {
+                class: "week-" + week,
+                html: [
+                    "<td class=\"calendar-day-cell\"></td>",
+                    "<td class=\"calendar-day-cell\"></td>",
+                    "<td class=\"calendar-day-cell\"></td>",
+                    "<td class=\"calendar-day-cell\"></td>",
+                    "<td class=\"calendar-day-cell\"></td>",
+                    "<td class=\"calendar-day-cell\"></td>",
+                    "<td class=\"calendar-day-cell\"></td>"
+                ]
+            }));
+        }
+
+        return rows;
+    };
+
     // Renders the calendar
     me.render = function () {
+        var calendarRows = getCalendarRows();
         var calendar = $("<table></table>", {
             class: me.cls,
             html: [
-                $("<tr></tr>", {
-                    class: me.headerCls,
+                $("<thead></thead>", {
                     html: [
-                        $("<a></a>", {
-                            class: "calendar-prev-arrow",
-                            html: "&lt;",
-                            on: {
-                                click: me.prevMonth
-                            }
+                        $("<tr></tr>", {
+                            class: me.headerCls,
+                            html: [
+                                $("<th></th>", {
+                                    colspan: 7,
+                                    html: [
+                                        $("<a></a>", {
+                                            class: "calendar-prev-arrow",
+                                            html: "&lt;",
+                                            on: {
+                                                click: me.prevMonth
+                                            }
+                                        }),
+                                        $("<span></span>", {
+                                            class: "calendar-month",
+                                            text: me.getCurrentMonth() + " " + me.getCurrentYear()
+                                        }),
+                                        $("<a></a>", {
+                                            class: "calendar-next-arrow",
+                                            html: "&gt;",
+                                            on: {
+                                                click: me.nextMonth
+                                            }
+                                        })
+                                    ]
+                                })
+                            ]
                         }),
-                        $("<span></span>", {
-                            class: "calendar-month",
-                            text: me.getCurrentMonth
+
+                        $("<tr></tr>", {
+                            class: "calendar-day-gutter",
+                            html: $("<th></th>", {
+                                colspan: 7,
+                                html: [
+                                    "<div class=\"calendar-day\">Monday</div>",
+                                    "<div class=\"calendar-day\">Tuesday</div>",
+                                    "<div class=\"calendar-day\">Wednesday</div>",
+                                    "<div class=\"calendar-day\">Thursday</div>",
+                                    "<div class=\"calendar-day\">Friday</div>",
+                                    "<div class=\"calendar-day\">Saturday</div>",
+                                    "<div class=\"calendar-day\">Sunday</div>",
+                                ]
+                            })
                         }),
-                        $("<a></a>", {
-                            class: "calendar-next-arrow",
-                            html: "&gt;",
-                            on: {
-                                click: me.nextMonth
-                            }
-                        })
                     ]
+                }),
+
+                $("<tbody></tbody>", {
+                    class: "calendar-container",
+                    html: calendarRows
                 })
             ]
         });

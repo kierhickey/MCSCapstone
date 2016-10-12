@@ -1,5 +1,6 @@
 .calendar-table {
     width: 100%;
+    border-collapse: collapse;
 }
 
 .calendar-header {
@@ -21,6 +22,50 @@
     height: 30px;
     line-height: 30px;
     text-align: center;
+    color: #fff;
+}
+
+.calendar-day-gutter {
+    height: 20px;
+    font-weight: normal;
+    color: #fff;
+    background-color: #509ed7;
+    padding: 0;
+}
+
+.calendar-day-gutter > th {
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.calendar-day {
+    float: left;
+    width: calc(100% / 7);
+    font-weight: normal;
+    font-size: 10pt;
+    text-align: center;
+    height: 20px;
+    line-height: 20px;
+}
+
+.calendar-day-cell {
+    height: 60px;
+    background-color: rgb(199, 231, 255);
+    cursor: pointer;
+}
+
+.calendar-day-cell:hover {
+    background-color: rgba(199, 231, 255, 0.5);
+}
+
+.calendar-day-cell:nth-child(odd) {
+    cursor: pointer;
+    background-color: rgb(221, 240, 254);
+}
+
+.calendar-day-cell:nth-child(odd):hover {
+    background-color: rgba(221, 240, 254, 0.5);
 }
 
 .calendar-prev-arrow, .calendar-next-arrow {
@@ -29,4 +74,13 @@
     line-height: 30px;
     text-align: center;
     cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    user-select: none;
+}
+
+.calendar-prev-arrow:hover, .calendar-next-arrow:hover {
+    background-color: #509ed7;
+    color: #fff;
+    user-select: none;
 }
