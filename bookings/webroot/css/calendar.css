@@ -51,8 +51,15 @@
 
 .calendar-day-cell {
     height: 60px;
+    line-height: 60px;
     background-color: rgb(199, 231, 255);
     cursor: pointer;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.report-download > img {
+    width: 50px;
 }
 
 .calendar-day-cell:hover {

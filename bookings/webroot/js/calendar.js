@@ -2,6 +2,7 @@
 var Calendar = function ($config) {
     var me = this;
 
+    me.day = $config.day || (new Date()).getDay();
     me.month = $config.month || (new Date()).getMonth();
     me.year = $config.year || (new Date()).getFullYear();
     me.renderTo = $config.renderTo || null;
@@ -43,26 +44,38 @@ var Calendar = function ($config) {
 
     // Displays the next month
     me.nextMonth = function () {
-        if (me.month === 12) {
-            me.month = 1;
-            me.year++;
+        var y,m;
+
+        y = me.year;
+
+        if (me.month === 11) {
+            m = 0;
+            y = me.year + 1;
         } else {
-            me.month++;
+            m = me.month + 1;
         }
 
-        me.render();
+        me.setDate(y, m, 1);
+
+        me.update();
     };
 
     // Displays the previous month
     me.prevMonth = function () {
-        if (me.month === 1) {
-            me.month = 12;
-            me.year--;
+        var y,m;
+
+        y = me.year;
+
+        if (me.month === 0) {
+            m = 12;
+            y = me.year - 1;
         } else {
-            me.month--;
+            m = me.month - 1;
         }
 
-        me.render();
+        me.setDate(y, m, 1);
+
+        me.update();
     };
 
     me.getCurrentMonth = function () {
@@ -81,7 +94,7 @@ var Calendar = function ($config) {
             "December"
         ];
 
-        return months[me.month - 1];
+        return months[me.month];
     };
 
     me.getCurrentYear = function() {
@@ -101,7 +114,7 @@ var Calendar = function ($config) {
             if (i === 4) week = "five";
 
             rows.push($("<tr></tr>", {
-                class: "week-" + week,
+                class: "week-" + week + " week",
                 html: [
                     "<td class=\"calendar-day-cell\"></td>",
                     "<td class=\"calendar-day-cell\"></td>",
@@ -109,12 +122,77 @@ var Calendar = function ($config) {
                     "<td class=\"calendar-day-cell\"></td>",
                     "<td class=\"calendar-day-cell\"></td>",
                     "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>"
+                    "<td class=\"calendar-day-cell\"></td>",
                 ]
             }));
         }
 
         return rows;
+    };
+
+    me.getDay = function (dayIndex = me.day) {
+        var days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
+
+        return days[dayIndex];
+    }
+
+    me.setDate = function (y,m,d) {
+        if (y <= 1900 || m < 0 || d < 0 || m > 11 || d > 30) {
+            throw new Exception("Date out of range");
+        }
+
+        me.year = y;
+        me.month = m;
+        me.day = d;
+
+        $(me.cls).trigger(new Event("datechanged"));
+
+        me.update();
+    };
+
+    var updateWeeks = function () {
+        var weeks = $(".week");
+        var weekIndex = 0;
+
+        var trueStartDay = (new Date(me.year, me.month, 1)).getDay();
+        var calendarStartDay = trueStartDay === 0
+            ? 6
+            : trueStartDay - 1;
+
+        var dateDay = 1;
+        var lastDay = me.getLastDayOfMonth();
+
+        for (weekIndex = 0; weekIndex < weeks.length; weekIndex++) {
+            var week = weeks[weekIndex];
+            var days = $(week).children(".calendar-day-cell");
+            var dayIndex = 0;
+
+            for (dayIndex = 0; dayIndex < days.length; dayIndex++) {
+                var day = days[dayIndex];
+
+                if (!(weekIndex === 0 && dayIndex < calendarStartDay) && (dateDay <= lastDay)) {
+                    debugger;
+                    $(day).text(dateDay);
+                    dateDay++;
+                } else {
+                    $(day).empty();
+                }
+            }
+        }
+    };
+
+    me.update = function () {
+        $(".calendar-month").text(me.getCurrentMonth() + " " + me.getCurrentYear());
+
+        updateWeeks();
     };
 
     // Renders the calendar
@@ -140,7 +218,6 @@ var Calendar = function ($config) {
                                         }),
                                         $("<span></span>", {
                                             class: "calendar-month",
-                                            text: me.getCurrentMonth() + " " + me.getCurrentYear()
                                         }),
                                         $("<a></a>", {
                                             class: "calendar-next-arrow",
@@ -181,5 +258,7 @@ var Calendar = function ($config) {
 
         $(me.renderTo).empty();
         $(me.renderTo).append(calendar);
+
+        me.update();
     };
 };
