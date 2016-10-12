@@ -1,0 +1,32 @@
+.calendar-table {
+    width: 100%;
+}
+
+.calendar-header {
+    height: 30px;
+    background-color: #5bbaff;
+}
+
+.calendar-prev-arrow {
+    float: left;
+}
+
+.calendar-next-arrow {
+    float: right;
+}
+
+.calendar-month {
+    display: inline-block;
+    width: calc(100% - 60px);
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.calendar-prev-arrow, .calendar-next-arrow {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+}

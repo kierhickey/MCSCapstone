@@ -19,4 +19,6 @@
 <div class="selected-summary">
 
 </div>
+<script src="webroot/js/jquery.min.js" type="text/javascript"></script>
 <script src="webroot/js/calendar.js" type="text/javascript"></script>
+<script src="webroot/js/summary.js" type="text/javascript"></script>

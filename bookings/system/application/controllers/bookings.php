@@ -43,12 +43,43 @@ class Bookings extends Controller
     /**
      * Gives a summary of total bookings made over the past 2 months
      */
-    public function summary()
+    public function bookingsForPeriod()
     {
-        $startDate = new DateTime($_POST["startDate"]);
-        $endDate = new DateTime($_POST["endDate"]);
+        if ($_POST["startDate"] != null) {
+            $startDate = new DateTime($_POST["startDate"]);
+        } else {
+            $startDate = new DateTime();
+        }
 
-        $bookingsForMonth = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        if ($_POST["endDate"] != null) {
+            $endDate = new DateTime($_POST["endDate"]);
+        } else {
+            $endDate = (new DateTime())->add(new DateInterval("P1M"));
+        }
+
+        $userId = $_POST['userId'];
+        $roomId = $_POST['roomId'];
+
+        $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+
+        $filteredBookings = [];
+
+        foreach ($bookingsForPeriod as $booking) {
+            $forRoom = true;
+            $forUser = true;
+
+            if ($roomId != null && $booking["room_id"] != $roomId) {
+                $forRoom = false;
+            } else if ($userId != null && $booking["user_id"] != $userId) {
+                $forUser = false;
+            }
+
+            if ($forRoom && $forUser) {
+                array_push($filteredBookings, $booking);
+            }
+        }
+
+        echo json_encode($filteredBookings, JSON_PRETTY_PRINT);
     }
 
     public function summaryPage() {
