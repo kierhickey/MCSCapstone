@@ -16,7 +16,11 @@
 
         // Requests
         userIds: [],
-        roomIds: []
+        roomIds: [],
+        onDateChanged: function (e) {
+            console.log("Previous Date:" + e.previousDate);
+            console.log("Current Date:" + e.currentDate);
+        }
     };
 
     var calendar = new Calendar($config);

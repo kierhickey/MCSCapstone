@@ -1,7 +1,9 @@
-// Calendar class;
+/*jshint laxbreak: true*/
 var Calendar = function ($config) {
-    var me = this;
+    'use strict';
+    var me = {};
 
+    // Variables
     me.day = $config.day || (new Date()).getDay();
     me.month = $config.month || (new Date()).getMonth();
     me.year = $config.year || (new Date()).getFullYear();
@@ -10,6 +12,13 @@ var Calendar = function ($config) {
     me.roomIds = $config.roomIds || [];
     me.cls = $config.cls || "calendar-table";
     me.headerCls = $config.headerCls || "calendar-header";
+    me.rendered = false;
+
+    // Events
+    me.onDateChanged = $config.onDateChanged || function () {};
+    me.onDayChanged = $config.onDayChanged || function () {};
+    me.onMonthChanged = $config.onMonthChanged || function () {};
+    me.onYearChanged = $config.onYearChanged || function () {};
 
     // Inject CSS
     $("head").append($("<link/>", {
@@ -20,6 +29,8 @@ var Calendar = function ($config) {
 
     // Gets the last day of the current month
     me.getLastDayOfMonth = function() {
+        var day;
+
         switch (me.month) {
             case 4:
             case 6:
@@ -130,7 +141,9 @@ var Calendar = function ($config) {
         return rows;
     };
 
-    me.getDay = function (dayIndex = me.day) {
+    me.getDay = function (dayIndex) {
+        dayIndex = dayIndex || me.day;
+
         var days = [
             "Sunday",
             "Monday",
@@ -142,6 +155,10 @@ var Calendar = function ($config) {
         ];
 
         return days[dayIndex];
+    };
+
+    me.getDate = function () {
+        return new Date(me.year, me.month, me.day);
     }
 
     me.setDate = function (y,m,d) {
@@ -149,14 +166,49 @@ var Calendar = function ($config) {
             throw new Exception("Date out of range");
         }
 
+        // The previous date
+        var prevDate = me.getDate();
+
         me.year = y;
         me.month = m;
         me.day = d;
 
-        $(me.cls).trigger(new Event("datechanged"));
+        // The current date
+        var currDate = me.getDate();
 
+        // Has our date changed?
+        var dateChanged = false;
+
+        // Year changed
+        if (prevDate.getFullYear() !== currDate.getFullYear()) {
+            me.onYearChanged();
+            dateChanged = true;
+        }
+        // Month changed
+        if (prevDate.getMonth() !== currDate.getMonth()) {
+            me.onMonthChanged();
+            dateChanged = true;
+        }
+        // Day changed
+        if (prevDate.getDay() !== prevDate.getDay()) {
+            me.onDayChanged();
+            dateChanged = true;
+        }
+
+        // No change, no need to do anything.
+        if (!dateChanged) return;
+
+        // Our date changed event.
+        me.onDateChanged({
+            previousDate: prevDate,
+            currentDate: currDate
+        });
+
+        // Update the UI
         me.update();
     };
+
+    me.map = [];
 
     var updateWeeks = function () {
         var weeks = $(".week");
@@ -175,11 +227,16 @@ var Calendar = function ($config) {
             var days = $(week).children(".calendar-day-cell");
             var dayIndex = 0;
 
+            // Set our week to an empty array
+            me.map[weekIndex] = [];
+
             for (dayIndex = 0; dayIndex < days.length; dayIndex++) {
                 var day = days[dayIndex];
 
                 if (!(weekIndex === 0 && dayIndex < calendarStartDay) && (dateDay <= lastDay)) {
-                    debugger;
+                    // Map our dates to an array behind the scene.
+                    me.map[weekIndex][dayIndex] = dateDay;
+
                     $(day).text(dateDay);
                     dateDay++;
                 } else {
@@ -187,6 +244,8 @@ var Calendar = function ($config) {
                 }
             }
         }
+
+        console.log(me.map);
     };
 
     me.update = function () {
@@ -197,6 +256,8 @@ var Calendar = function ($config) {
 
     // Renders the calendar
     me.render = function () {
+        if (me.rendered) me.update();
+
         var calendarRows = getCalendarRows();
         var calendar = $("<table></table>", {
             class: me.cls,
@@ -261,4 +322,6 @@ var Calendar = function ($config) {
 
         me.update();
     };
+
+    return me;
 };
