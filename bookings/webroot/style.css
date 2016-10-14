@@ -771,9 +771,12 @@ table.bookings td.free a:hover {
     Date:15/10/2016
 */
 
-.dashboard>td {
+.dashboard li {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
     background-color: #FF9800;
 }
-.dashboard>td>h5 {
+.dashboard h5 {
     color: #fff;
 }
