@@ -109,8 +109,8 @@ function dotable($array){
 	$row = 0;
 
 	foreach($array as $link){
-		if($row == 0){ echo '<tr>'; }
-		echo '<td width="33%">';
+		if($row == 0){ echo '<tr class="dashboard">'; }
+		echo '<td width="33%" class="colour-'.$row.'">';
 		echo '<h5 style="margin:14px 0px">';
 		echo '<a href="'.$link['href'].'">';
 		echo '<img src="webroot/images/ui/'.$link['icon'].'" alt="'.$link['text'].'" hspace="4" align="top" width="16" height="16" />';

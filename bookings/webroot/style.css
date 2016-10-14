@@ -765,3 +765,15 @@ table.bookings td.free a:hover {
 .col-time {
     width: 140px;
 }
+
+/* Material Design Dashboard 
+    Author: Kieran Hickey 
+    Date:15/10/2016
+*/
+
+.dashboard>td {
+    background-color: #FF9800;
+}
+.dashboard>td>h5 {
+    color: #fff;
+}
