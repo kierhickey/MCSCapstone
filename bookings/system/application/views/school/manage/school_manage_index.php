@@ -131,6 +131,6 @@ function dotable($array){
 
 	// echo '</tbody>';
 	// echo '</table>'.
-	echo "\n\n";
+	echo "</ul>\n\n";
 }
 ?>
