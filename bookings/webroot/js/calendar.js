@@ -13,6 +13,7 @@ var Calendar = function ($config) {
     me.cls = $config.cls || "calendar-table";
     me.headerCls = $config.headerCls || "calendar-header";
     me.rendered = false;
+    me.map = [];
 
     // Events
     me.onDateChanged = $config.onDateChanged || function () {};
@@ -26,6 +27,106 @@ var Calendar = function ($config) {
         "href": "webroot/css/calendar.css",
         "type": "text/css"
     }));
+
+    $(document).on(
+        "click", ".calendar-day-cell", function (ev) {
+            var self = ev.target;
+            var parent = self.parentElement;
+            var ptNumRegex = /^week-([^\s]*)$/
+            var weekNum = alphaToNum(parent.classList[0].match(ptNumRegex)[1]);
+            var dayNum = alphaToNum(self.classList[1]);
+            var dayDate = me.map[weekNum - 1][dayNum - 1];
+
+            if (dayDate === undefined) return;
+
+            me.setDate(me.year, me.month, dayDate);
+        }
+    );
+
+    var alphaToNum = function (text) {
+        var store = {
+            one: 1,
+            two: 2,
+            three: 3,
+            four: 4,
+            five: 5,
+            six: 6,
+            seven: 7,
+            eight: 8,
+            nine: 9
+        };
+
+        return store[text] || 0;
+    }
+
+    var getCalendarRows = function () {
+        var rows = [];
+
+        for (var i = 0; i < 5; i++) {
+            var week = "";
+
+            if (i === 0) week = "one";
+            if (i === 1) week = "two";
+            if (i === 2) week = "three";
+            if (i === 3) week = "four";
+            if (i === 4) week = "five";
+
+            rows.push($("<tr></tr>", {
+                class: "week-" + week + " week",
+                html: [
+                    "<td class=\"calendar-day-cell one\"></td>",
+                    "<td class=\"calendar-day-cell two\"></td>",
+                    "<td class=\"calendar-day-cell three\"></td>",
+                    "<td class=\"calendar-day-cell four\"></td>",
+                    "<td class=\"calendar-day-cell five\"></td>",
+                    "<td class=\"calendar-day-cell six\"></td>",
+                    "<td class=\"calendar-day-cell seven\"></td>",
+                ]
+            }));
+        }
+
+        return rows;
+    };
+
+    var updateWeeks = function () {
+        var weeks = $(".week");
+        var weekIndex = 0;
+
+        var trueStartDay = (new Date(me.year, me.month, 1)).getDay();
+        var calendarStartDay = trueStartDay === 0
+            ? 6
+            : trueStartDay - 1;
+
+        var dateDay = 1;
+        var lastDay = me.getLastDayOfMonth();
+
+        for (weekIndex = 0; weekIndex < weeks.length; weekIndex++) {
+            var week = weeks[weekIndex];
+            var days = $(week).children(".calendar-day-cell");
+            var dayIndex = 0;
+
+            // Set our week to an empty array
+            me.map[weekIndex] = [];
+
+            for (dayIndex = 0; dayIndex < days.length; dayIndex++) {
+                var day = days[dayIndex];
+
+                if (!(weekIndex === 0 && dayIndex < calendarStartDay) && (dateDay <= lastDay)) {
+                    // Map our dates to an array behind the scene.
+                    me.map[weekIndex][dayIndex] = dateDay;
+
+                    $(day).text(dateDay);
+                    dateDay++;
+                } else {
+                    $(day).empty();
+                }
+            }
+        }
+    };
+
+    me.getDayAt = function(x,y) {
+        return me.map[x][y];
+    };
 
     // Gets the last day of the current month
     me.getLastDayOfMonth = function() {
@@ -78,7 +179,7 @@ var Calendar = function ($config) {
         y = me.year;
 
         if (me.month === 0) {
-            m = 12;
+            m = 11;
             y = me.year - 1;
         } else {
             m = me.month - 1;
@@ -112,34 +213,6 @@ var Calendar = function ($config) {
         return me.year;
     };
 
-    var getCalendarRows = function () {
-        var rows = [];
-
-        for (var i = 0; i < 5; i++) {
-            var week = "";
-
-            if (i === 0) week = "one";
-            if (i === 1) week = "two";
-            if (i === 2) week = "three";
-            if (i === 3) week = "four";
-            if (i === 4) week = "five";
-
-            rows.push($("<tr></tr>", {
-                class: "week-" + week + " week",
-                html: [
-                    "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>",
-                    "<td class=\"calendar-day-cell\"></td>",
-                ]
-            }));
-        }
-
-        return rows;
-    };
 
     me.getDay = function (dayIndex) {
         dayIndex = dayIndex || me.day;
@@ -162,8 +235,8 @@ var Calendar = function ($config) {
     }
 
     me.setDate = function (y,m,d) {
-        if (y <= 1900 || m < 0 || d < 0 || m > 11 || d > 30) {
-            throw new Exception("Date out of range");
+        if (y <= 1900 || m < 0 || d < 1 || m > 11 || d > 31) {
+            throw "Date out of range";
         }
 
         // The previous date
@@ -190,7 +263,7 @@ var Calendar = function ($config) {
             dateChanged = true;
         }
         // Day changed
-        if (prevDate.getDay() !== prevDate.getDay()) {
+        if (prevDate.getDate() !== currDate.getDate()) {
             me.onDayChanged();
             dateChanged = true;
         }
@@ -206,46 +279,6 @@ var Calendar = function ($config) {
 
         // Update the UI
         me.update();
-    };
-
-    me.map = [];
-
-    var updateWeeks = function () {
-        var weeks = $(".week");
-        var weekIndex = 0;
-
-        var trueStartDay = (new Date(me.year, me.month, 1)).getDay();
-        var calendarStartDay = trueStartDay === 0
-            ? 6
-            : trueStartDay - 1;
-
-        var dateDay = 1;
-        var lastDay = me.getLastDayOfMonth();
-
-        for (weekIndex = 0; weekIndex < weeks.length; weekIndex++) {
-            var week = weeks[weekIndex];
-            var days = $(week).children(".calendar-day-cell");
-            var dayIndex = 0;
-
-            // Set our week to an empty array
-            me.map[weekIndex] = [];
-
-            for (dayIndex = 0; dayIndex < days.length; dayIndex++) {
-                var day = days[dayIndex];
-
-                if (!(weekIndex === 0 && dayIndex < calendarStartDay) && (dateDay <= lastDay)) {
-                    // Map our dates to an array behind the scene.
-                    me.map[weekIndex][dayIndex] = dateDay;
-
-                    $(day).text(dateDay);
-                    dateDay++;
-                } else {
-                    $(day).empty();
-                }
-            }
-        }
-
-        console.log(me.map);
     };
 
     me.update = function () {

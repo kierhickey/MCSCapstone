@@ -79,7 +79,19 @@ class Bookings extends Controller
             }
         }
 
-        echo json_encode($filteredBookings, JSON_PRETTY_PRINT);
+        $response = [
+            "requestData" => [
+                "userId" => $userId,
+                "roomId" => $roomId,
+                "startDate" => $startDate,
+                "endDate" => $endDate
+            ],
+            "responseData" => $filteredBookings
+        ];
+
+        header('Content-Type: application/json');
+
+        echo json_encode($response, JSON_PRETTY_PRINT);
     }
 
     public function summaryPage() {

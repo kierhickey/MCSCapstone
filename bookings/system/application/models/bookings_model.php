@@ -31,7 +31,7 @@ class Bookings_model extends Model
 		$startDate = $startDate;
 		$endDate = $endDate;
 
-		$queryString = "SELECT * FROM bookings WHERE school_id = '$schoolId' AND date > '$startDate' AND date < '$endDate' AND cancelled != 1";
+		$queryString = "SELECT * FROM bookings WHERE school_id = '$schoolId' AND date >= '$startDate' AND date <= '$endDate' AND cancelled != 1";
 
 		$query = $this->db->query($queryString);
 		$results = $query->result_array();
