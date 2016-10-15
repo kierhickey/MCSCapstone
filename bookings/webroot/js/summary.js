@@ -72,7 +72,6 @@
                             booking.bookingDate = e.currentDate;
                         });
                         summaryTable.setBookings(response.responseData);
-                        summaryTable.render();
                     },
                     failure: function (response) {
                         console.log(response);

@@ -29,6 +29,7 @@ var SummaryTable = function (config) {
     }
 
     var createRow = function (booking) {
+        console.log(booking.paid);
         return $("<tr></tr>", {
             class: "booking-row",
             id: booking.bookingId,
@@ -55,7 +56,7 @@ var SummaryTable = function (config) {
                 }),
                 $("<td></td>", {
                     class: "booking-paid",
-                    text: booking.paid || false
+                    text: booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid"
                 }),
             ]
         });
@@ -181,7 +182,10 @@ var SummaryTable = function (config) {
         render: function () {
             var me = this;
 
-            if (me.rendered) return me.update();
+            if (me.rendered) {
+                me.update();
+                return;
+            }
 
             me.init();
 

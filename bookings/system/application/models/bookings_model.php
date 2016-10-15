@@ -33,11 +33,14 @@ class Bookings_model extends Model
 
 		$queryString = "SELECT b.booking_id AS bookingId
                               ,u.user_id AS userId
-                              ,u.username
+                              ,u.username AS username
                               ,u.displayname AS displayName
                               ,b.date AS bookingDate
                               ,p.time_start AS bookingStart
                               ,p.time_end AS bookingEnd
+                              ,(case when b.paid = 0 then 'false'
+                                     when b.paid = 1 then 'true'
+                                end) AS paid
                         FROM bookings b
                         INNER JOIN periods p
                         ON b.period_id = p.period_id
@@ -909,7 +912,7 @@ class Bookings_model extends Model
         $maxdate = date('Y-m-d', strtotime('+14 days', Now()));
         $today = date('Y-m-d');
         // All current bookings for this user between today and 2 weeks' time
-        $query_str = 'SELECT rooms.*, bookings.*, periods.name as periodname, periods.time_start, periods.time_end '
+        $query_str = 'SELECT rooms.*, bookings.*, periods.name as periodname, periods.time_start, periods.time_end, bookings.paid '
                                 .'FROM bookings '
                                 .'JOIN rooms ON rooms.room_id=bookings.room_id '
                                 .'JOIN periods ON periods.period_id=bookings.period_id '

@@ -41,7 +41,7 @@ class Profile extends Controller {
     } else {
         $this->targetUserId = $targetUserId;
     }
-    
+
     $this->viewingUserId = $this->session->userdata("user_id");
 
     $user = null;

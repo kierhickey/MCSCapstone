@@ -42,6 +42,7 @@ foreach($myroom as $booking){
 		<th>Room</th>
 		<th>Time</th>
 		<th>Notes</th>
+		<th>Paid</th>
 	</tr>
 <?php
 foreach($mybookings as $booking){
@@ -50,9 +51,10 @@ foreach($mybookings as $booking){
 				<td>%s</td>
 				<td>%s - %s</td>
 				<td>%s</td>
+				<td>%s</td>
 			   </tr>';
 	if($booking->notes){ $notes = '('.$booking->notes.')'; } else {$notes ='';}
-	echo sprintf($string, date("d/m/Y", strtotime($booking->date)), $booking->name, $booking->time_start, $booking->time_end, $notes);
+	echo sprintf($string, date("d/m/Y", strtotime($booking->date)), $booking->name, $booking->time_start, $booking->time_end, $notes, $booking->paid == "false" ? "Paid" : "Not Paid");
 }
 ?>
 </table>
