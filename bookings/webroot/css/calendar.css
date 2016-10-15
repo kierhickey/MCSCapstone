@@ -1,6 +1,7 @@
 .calendar-table {
     width: 100%;
     border-collapse: collapse;
+    box-shadow: 1px 1px 3px #a3a3a3;
 }
 
 .calendar-header {

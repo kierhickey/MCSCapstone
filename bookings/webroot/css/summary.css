@@ -6,6 +6,15 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 50px;
+    box-shadow: 1px 1px 3px #a3a3a3;
+}
+
+.booking-row:nth-child(even) {
+    background-color: #eee;
+}
+
+.booking-row:nth-child(odd) {
+    background-color: #fff;
 }
 
 .header-cell {
