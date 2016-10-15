@@ -82,22 +82,6 @@ var SummaryTable = function (config) {
         })(props[i]);
     }
 
-    // sorts["username"] = function (a,b) {
-    //     if (a.username < b.username) return -1;
-    //     if (a.username > b.username) return 1;
-    //     return 0;
-    // };
-    //
-    // sorts["displayname"] = function (a,b) {
-    //     if (a.displayname < b.displayname) return -1;
-    //     if (a.displayname > b.displayname) return 1;
-    //     return 0;
-    // };
-    //
-    // sorts["start"] = function (a,b) {
-    //     if (a.bookingStart < b.bookingStart) return -1;
-    // }
-
     return {
         renderTo: config.renderTo || null,
         bookings: config.bookings || [],
