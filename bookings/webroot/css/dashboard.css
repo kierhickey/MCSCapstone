@@ -25,6 +25,11 @@
     text-align: center;
     position: relative;
     box-shadow: 1px 1px 3px #707070;
+    transition: background-color 0.5s ease;
+}
+
+.dashboard-tile:hover {
+    background-color: #FFA500;
 }
 
 .tile-text {
