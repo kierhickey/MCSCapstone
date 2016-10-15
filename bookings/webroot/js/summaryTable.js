@@ -26,7 +26,65 @@ var SummaryTable = function (config) {
         retVal += y
 
         return retVal;
+    };
+
+    /**
+     * Gets the day suffix for the given day
+     * @param  {[type]} day [description]
+     * @return {[type]}     [description]
+     */
+    var _getDaySuffix = function (day) {
+        var nst = /1$/;
+        var nnd = /2$/;
+        var nrd = /3$/;
+
+        if (nst.test(day)) return "st";
+        if (nnd.test(day)) return "nd";
+        if (nrd.test(day)) return "rd";
+        return "th";
     }
+
+    /**
+     * Gets the date as "{DayName} the {d}{suffix} of {monthName}, {y}}"
+     * @param  {[type]} date [description]
+     * @return {[type]}      [description]
+     */
+    var _dateAsReadable = function (date) {
+        var y = date.getFullYear();
+        var m = date.getMonth();
+        var d = date.getDate();
+        var dow = date.getDay();
+
+        var days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
+        var months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ]
+
+        var dayName = days[dow];
+        var suffix = _getDaySuffix(d);
+        var monthName = months[m];
+
+        return dayName + " the " + d + "<sup>" + suffix + "</sup> of " + monthName + ", " + y;
+    };
 
     var createRow = function (booking) {
         console.log(booking.paid);
@@ -35,27 +93,23 @@ var SummaryTable = function (config) {
             id: booking.bookingId,
             html: [
                 $("<td></td>", {
-                    class: "booking-date",
-                    text: _formatDate(booking.bookingDate)
-                }),
-                $("<td></td>", {
-                    class: "booking-username",
+                    class: "booking-username booking-cell",
                     text: booking.username
                 }),
                 $("<td></td>", {
-                    class: "booking-displayname",
+                    class: "booking-displayname booking-cell",
                     text: booking.displayname
                 }),
                 $("<td></td>", {
-                    class: "booking-start",
+                    class: "booking-start booking-cell",
                     text: booking.bookingStart
                 }),
                 $("<td></td>", {
-                    class: "booking-end",
+                    class: "booking-end booking-cell",
                     text: booking.bookingEnd
                 }),
                 $("<td></td>", {
-                    class: "booking-paid",
+                    class: "booking-paid booking-cell",
                     text: booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid"
                 }),
             ]
@@ -91,6 +145,7 @@ var SummaryTable = function (config) {
         headerCls: config.headerCls || "summary-header",
         bodyCls: config.bodyCls || "summary-body",
         emptyText: "No bookings for the selected date...",
+        date: new Date(),
 
         init: function () {
             var me = this;
@@ -119,7 +174,7 @@ var SummaryTable = function (config) {
                 rows.push($("<tr></tr>", {
                     html: $("<td></td>", {
                         class: "summary-empty",
-                        colspan: 6,
+                        colspan: 5,
                         text: me.emptyText
                     })
                 }));
@@ -168,6 +223,19 @@ var SummaryTable = function (config) {
             me.update();
         },
 
+        setDate: function (d) {
+            var me = this;
+
+            me.date = d;
+            me.update();
+        },
+
+        getDate: function () {
+            var me = this;
+
+            return me.date;
+        },
+
         update: function () {
             var me = this;
 
@@ -177,6 +245,7 @@ var SummaryTable = function (config) {
 
             $("." + me.bodyCls).empty();
             $("." + me.bodyCls).append(rows);
+            $(".summary-date").html("Bookings for " + _dateAsReadable(me.getDate()));
         },
 
         render: function () {
@@ -196,34 +265,40 @@ var SummaryTable = function (config) {
                 html: [
                     $("<thead></thead>", {
                         class: me.headerCls,
-                        html: $("<tr></tr>", {
-                            html: [
-                                $("<th></th>", {
-                                    class: "header-date header-cell",
-                                    text: "Date"
-                                }),
-                                $("<th></th>", {
-                                    class: "header-username header-cell",
-                                    text: "Username"
-                                }),
-                                $("<th></th>", {
-                                    class: "header-displayname header-cell",
-                                    text: "Display Name"
-                                }),
-                                $("<th></th>", {
-                                    class: "header-start header-cell",
-                                    text: "Start Time"
-                                }),
-                                $("<th></th>", {
-                                    class: "header-end header-cell",
-                                    text: "End Time"
-                                }),
-                                $("<th></th>", {
-                                    class: "header-paid header-cell",
-                                    text: "Paid"
-                                }),
-                            ]
-                        })
+                        html: [
+                            $("<tr></tr>", {
+                                html: $("<th></th>", {
+                                    colspan: 5,
+                                    class: "summary-date",
+                                    html: "Bookings for " + _dateAsReadable(me.getDate())
+                                })
+                            }),
+                            $("<tr></tr>", {
+                                class: "summary-col-headers",
+                                html: [
+                                    $("<th></th>", {
+                                        class: "header-username header-cell",
+                                        text: "Username"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-displayname header-cell",
+                                        text: "Display Name"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-start header-cell",
+                                        text: "Start Time"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-end header-cell",
+                                        text: "End Time"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-paid header-cell",
+                                        text: "Paid"
+                                    }),
+                                ]
+                            })
+                        ]
                     }),
                     $("<tbody></tbody>", {
                         class: me.bodyCls,

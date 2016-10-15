@@ -62,7 +62,7 @@ var Calendar = function (config) {
     var getCalendarRows = function () {
         var rows = [];
 
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < 6; i++) {
             var week = "";
 
             if (i === 0) week = "one";
@@ -70,6 +70,7 @@ var Calendar = function (config) {
             if (i === 2) week = "three";
             if (i === 3) week = "four";
             if (i === 4) week = "five";
+            if (i === 5) week = "six";
 
             rows.push($("<tr></tr>", {
                 class: "week-" + week + " week",
@@ -132,7 +133,7 @@ var Calendar = function (config) {
     me.getLastDayOfMonth = function() {
         var day;
 
-        switch (me.month) {
+        switch (me.month + 1) {
             case 4:
             case 6:
             case 9:
@@ -140,7 +141,7 @@ var Calendar = function (config) {
                 day = 30;
                 break;
             case 2:
-                if (date.getYear() % 4 === 0) {
+                if (me.year % 4 === 0) {
                     day = 29;
                 } else {
                     day = 28;
@@ -230,6 +231,20 @@ var Calendar = function (config) {
         return days[dayIndex];
     };
 
+    me.getCellFromDate = function () {
+        debugger;
+        for (var y = 0; y < me.map.length; y++) {
+            for (var x = 0; x < me.map[y].length; x++) {
+                if (me.map[y][x] == me.day) {
+                    var week = $(".week")[y];
+                    var cell = $(week).children(".calendar-day-cell")[x];
+
+                    return cell;
+                }
+            }
+        }
+    };
+
     me.getDate = function () {
         return new Date(me.year, me.month, me.day);
     }
@@ -287,6 +302,10 @@ var Calendar = function (config) {
         $(".calendar-month").text(me.getCurrentMonth() + " " + me.getCurrentYear());
 
         updateWeeks();
+
+        var cell = me.getCellFromDate();
+        $("." + me.cls + " .selected").removeClass("selected");
+        $(cell).addClass("selected");
     };
 
     // Renders the calendar

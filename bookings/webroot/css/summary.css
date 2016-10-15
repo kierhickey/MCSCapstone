@@ -7,6 +7,15 @@
     border-collapse: collapse;
     margin-top: 50px;
     box-shadow: 1px 1px 3px #a3a3a3;
+    table-layout: fixed;
+}
+
+.summary-date {
+    text-align: center;
+}
+
+.summary-col-headers {
+    background-color: #509ed7;
 }
 
 .booking-row:nth-child(even) {
@@ -17,11 +26,19 @@
     background-color: #fff;
 }
 
-.header-cell {
-    cursor: pointer;
+.booking-cell {
+    text-overflow: ellipsis;
 }
 
-.summary-table td, .summary-table th {
+.header-cell {
+    box-sizing: border-box;
+    height: 20px;
+    font-weight: normal;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.summary-table td {
     box-sizing: border-box;
     padding: 0 5px;
     height: 30px;
@@ -39,16 +56,11 @@
 .summary-header {
     background-color: #5bbaff;
     color: #fff;
-    height: 30px;
+    height: 50px;
     line-height: 30px;
-    text-align: left;
-}
-
-.booking-date, .header-date {
-    text-align: right;
-    width: 90px;
+    text-align: center;
 }
 
 .booking-row {
-    text-align: left;
+    text-align: center;
 }

@@ -71,6 +71,7 @@
                         response.responseData.each(function (booking) {
                             booking.bookingDate = e.currentDate;
                         });
+                        summaryTable.setDate(e.currentDate);
                         summaryTable.setBookings(response.responseData);
                     },
                     failure: function (response) {

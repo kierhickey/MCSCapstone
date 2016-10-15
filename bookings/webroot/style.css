@@ -75,6 +75,7 @@ header {
 	left: 0;
 	top: 0;
 	box-shadow: 1px 1px 3px 1px #acacac;
+	z-index: 10000;
 }
 
 .header-fix {

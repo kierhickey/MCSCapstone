@@ -76,6 +76,10 @@
     background-color: rgba(221, 240, 254, 0.5);
 }
 
+.selected {
+    background-color: #5bbaff !important;
+}
+
 .calendar-prev-arrow, .calendar-next-arrow {
     width: 30px;
     height: 30px;
