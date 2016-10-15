@@ -16,7 +16,6 @@
  */
 
 .dashboard-tile {
-    float: left;
     display: inline-block;
     list-style-type: none;
     height: 130px;
