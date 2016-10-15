@@ -122,7 +122,7 @@ if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){
 function dotable($array){
 	$col = 0;
 
-	echo '<ul class="dashboard">';
+	echo '<ul>';
 
 	foreach($array as $link){
 		echo '<li class="dashboard-tile">'.

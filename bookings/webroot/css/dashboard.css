@@ -11,11 +11,12 @@
 
 /**
  * Material Design Dashboard
- * Author: Kieran Hickey
+ * Author: Kieran Hickey & Aaron Marshall
  * Date:15/10/2016
  */
 
 .dashboard-tile {
+    float: left;
     display: inline-block;
     list-style-type: none;
     height: 130px;
@@ -57,17 +58,4 @@
     right: 0;
     top: 0;
     bottom: 0;
-}
-
-.colour-0 {
-    background-color: #3F51B5;
-}
-.colour-1 {
-    background-color: #FF80AB;
-}
-.colour-2 {
-    background-color: #303F9F;
-}
-.colour-3 {
-    background-color: #FF4081;
 }
