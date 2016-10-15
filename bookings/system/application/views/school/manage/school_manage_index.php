@@ -116,8 +116,8 @@ function dotable($array){
 
 	foreach($array as $link){
 		if($row == 0){ echo '<ul class="dashboard">'; }
-		echo '<li width="33%" class="colour-'.$row.'">';
-		echo '<h5 style="margin:14px 0px">';
+		echo '<li width="33%">';
+		echo '<h5 class="colour-'.$row.'" style="margin:14px 0px">';
 		echo '<a href="'.$link['href'].'">';
 		echo '<img src="webroot/images/ui/'.$link['icon'].'" alt="'.$link['text'].'" hspace="4" align="top" width="16" height="16" />';
 		echo $link['text'];
@@ -125,7 +125,7 @@ function dotable($array){
 		echo '</h5>';
 		echo '</li>';
 		echo "\n";
-		if($row == 2){ $row = -1; }//echo '</tr>'."\n\n";
+		// if($row == 2){ echo '</tr>'."\n\n"; $row = -1; }
 		$row++;
 	}
 

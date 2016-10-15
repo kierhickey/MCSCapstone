@@ -11,6 +11,33 @@
 
 
 */
+/* Material Design Dashboard 
+    Author: Kieran Hickey 
+    Date:15/10/2016
+*/
+
+.dashboard li {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+    
+}
+.dashboard h5 {
+    color: #fff;
+    
+}
+.colour-1 {
+    background-color: #3F51B5;
+}
+.colour-2 {
+    background-color: #FF80AB;
+}
+.colour-3 {
+    background-color: #303F9F;
+}
+.colour-4 {
+    background-color: #FF4081;
+}
 
 html, body {
 	width: 100%;
@@ -764,19 +791,4 @@ table.bookings td.free a:hover {
 
 .col-time {
     width: 140px;
-}
-
-/* Material Design Dashboard 
-    Author: Kieran Hickey 
-    Date:15/10/2016
-*/
-
-.dashboard li {
-    display: inline;
-    list-style-type: none;
-    padding-right: 20px;
-    background-color: #FF9800;
-}
-.dashboard h5 {
-    color: #fff;
 }
