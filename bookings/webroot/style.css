@@ -17,13 +17,14 @@
 */
 
 .dashboard li {
-    display: inline;
+   
     list-style-type: none;
     padding-right: 20px;
     
 }
 .dashboard h5 {
     width: 33%;
+    display: inline;
     color: white;
     
 }
