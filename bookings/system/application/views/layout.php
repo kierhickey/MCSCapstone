@@ -29,6 +29,7 @@ if($this->loggedin){
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/style.css" />
 	<link rel="stylesheet" type="text/css" media="print" href="webroot/print.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/sorttable.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/dashboard.css" />
 	<script type="text/javascript" src="webroot/js/prototype.lite.js"></script>
 	<script type="text/javascript" src="webroot/js/util.js"></script>
 	<script type="text/javascript" src="webroot/js/sorttable.js"></script><?php
@@ -114,8 +115,8 @@ if($this->loggedin){
 			<div id="footer">
 				<?php
 				if(isset($menu)){ foreach( $menu as $link ){
-					echo "\n".'<a href="'.$link['href'].'" title="'.$link['title'].'">'.$link['text'].'</a>'."\n";
-					echo '<img src="webroot/images/blank.png" width="16" height="10" alt=" " />'."\n";
+					echo "\n".'<a href="'.$link['href'].'" title="'.$link['title'].'">'.$link['text'].'</a>';
+					echo '<img src="webroot/images/blank.png" width="16" height="10" alt=" " />';
 				} }
 				?>
 				<br /><br /><span style="font-size:90%;color:#678;">&copy; Copyright 2006 Craig Rodway.<br /></span><br />

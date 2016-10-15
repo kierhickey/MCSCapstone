@@ -8,23 +8,18 @@ echo $this->session->flashdata('saved');
 $i = 0;
 $menu[$i] = [
 	'text' => 'Bookings',
-	'icon' => 'school_manage_bookings.gif',
+	'icon' => 'material/bookings-white-x48.svg',
 	'href' => site_url('bookings')
 ];
 
 $i++;
 $menu[$i] = [
 	'text' => 'My Profile',
-	'icon' => ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) ? 'user_administrator.gif' : 'user_teacher.gif',
+	'icon' => 'material/profile-white-x24.svg',
 	'href' => site_url('profile')
 ];
 
 $i++;
-$menu[$i] = [
-	'text' => '',
-	'icon' => 'blank.png',
-	'href' => ''
-];
 
 
 
@@ -34,42 +29,42 @@ $menu[$i] = [
 $i = 0;
 $school[$i] = [
 	'text' => 'Business Details',
-	'icon' => 'school_manage_details.gif',
+	'icon' => 'material/business-info-white-x48.svg',
 	'href' => site_url('school/details')
 ];
 
 $i++;
 $school[$i] = [
 	'text' => 'The Business Day',
-	'icon' => 'school_manage_times.gif',
+	'icon' => 'material/business-day-white-x48.svg',
 	'href' => site_url('periods')
 ];
 
 $i++;
 $school[$i] = [
 	'text' => 'Week Cycle',
-	'icon' => 'school_manage_weeks.gif',
+	'icon' => 'material/week-cycle-white-x48.svg',
 	'href' => site_url('weeks')
 ];
 
 $i++;
 $school[$i] = [
 	'text' => 'Holidays',
-	'icon' => 'school_manage_holidays.gif',
+	'icon' => 'material/holiday-white-x48.svg',
 	'href' => site_url('holidays')
 ];
 
 $i++;
 $school[$i] = [
 	'text' => 'Rooms',
-	'icon' => 'school_manage_rooms.gif',
+	'icon' => 'material/rooms-white-x48.svg',
 	'href' => site_url('rooms')
 ];
 
 $i++;
 $school[$i] = [
 	'text' => 'Departments',
-	'icon' => 'school_manage_departments.gif',
+	'icon' => 'material/business-white-x24.svg',
 	'href' => site_url('departments')
 ];
 
@@ -86,22 +81,15 @@ $admin[$i]['href'] = site_url('reports');
 $i++;
 $admin[$i] = [
 	'text' => 'Users',
-	'icon' => 'school_manage_users.gif',
+	'icon' => 'material/users-white-x48.svg',
 	'href' => site_url('users')
 ];
 
 $i++;
 $admin[$i] = [
 	'text' => 'Summary',
-	'icon' => 'material/chart-black-x24.svg',
+	'icon' => 'material/chart-white-x24.svg',
 	'href' => site_url("bookings/summary")
-];
-
-$i++;
-$admin[$i] = [
-	'text' => '',
-	'icon' => 'blank.png',
-	'href' => ''
 ];
 
 /*$i++;
@@ -132,37 +120,25 @@ if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){
 
 
 function dotable($array){
-// <ul id="navlist">
-// <li id="active"><a href="#" id="current">Item one</a></li>
-// <li><a href="#">Item two</a></li>
-// <li><a href="#">Item three</a></li>
-// <li><a href="#">Item four</a></li>
-// <li><a href="#">Item five</a></li>
-// </ul>
-	// echo '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
-	// echo '<tbody>';
-	$row = 0;
+	$col = 0;
+
+	echo '<ul class="dashboard">';
 
 	foreach($array as $link){
-		if($row == 0){ echo '<ul class="dashboard">'; }
-		echo '<li>';
-		echo '<h5 class="colour-'.$row.'" style="margin:14px 0px">';
-		echo '<a href="'.$link['href'].'">';
-		echo '<img src="webroot/images/ui/'.$link['icon'].'" alt="'.$link['text'].'" hspace="4" align="top" width="16" height="16" />';
-		echo $link['text'];
-		echo '</a>';
-		echo '</h5>';
-		echo '</li>';
-		echo "\n";
-		if ($row == 2) {
-			echo '</tr>'."\n\n"; $row = 0;
-		} else {
-			$row++;
-		}
+		echo '<li class="dashboard-tile">'.
+				'<a class="tile-link" href="'.$link['href'].'">'.
+				'<div class="dashboard-tile-inner">'.
+					'<img class="tile-icon" src="webroot/images/ui/'.$link['icon'].'" alt="'.$link['text'].'"/>'.
+					'<br />'.
+					'<span class="tile-text">'.
+						$link['text'].
+					'</span>'.
+				'</div>'.
+				'</a>'.
+			 '</li>';
+		$col++;
 	}
 
-	// echo '</tbody>';
-	// echo '</table>'.
-	echo "</ul>\n\n";
+	echo "</ul>";
 }
 ?>

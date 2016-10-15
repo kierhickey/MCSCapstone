@@ -1,46 +1,3 @@
-/*
-
-  Colours
-
-    #ffa500   Light orange (h1, h2)
-    #ff6400   Dark orange (title, border)
-    #0080c0   Dark blue (title)
-    #006699   Links
-    #15A300   Links-hover, column titles
-    #ffffaa   Highlight background
-
-
-*/
-/* Material Design Dashboard 
-    Author: Kieran Hickey 
-    Date:15/10/2016
-*/
-
-.dashboard li {
-    display: inline;
-    list-style-type: none;
-    padding-right: 20px;
-    
-}
-.dashboard h5 {
-    width: 33%;
-    display: inline;
-    color: white;
-    
-}
-.colour-0 {
-    background-color: #3F51B5;
-}
-.colour-1 {
-    background-color: #FF80AB;
-}
-.colour-2 {
-    background-color: #303F9F;
-}
-.colour-3 {
-    background-color: #FF4081;
-}
-
 html, body {
 	width: 100%;
 	height: 100%;
@@ -311,10 +268,6 @@ header {
     font-size: 10px;
     padding-left: 5px;
     text-align: left;
-}
-
-.content_area ul li {
-    margin: 3px 0;
 }
 
 p.breadcrumbs {
