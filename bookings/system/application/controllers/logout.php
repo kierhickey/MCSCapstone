@@ -10,7 +10,7 @@ class Logout extends Controller {
 	function index(){
 		$this->userauth->logout();
 		#$layout['title'] = 'Logout';
-		#$layout['body'] = '<h2>Logged out</h2>You have successfully logged out of Classroom Bookings.' . anchor('site/home','Home');
+		#$layout['body'] = '<h2>Logged out</h2>You have successfully logged out of Classroom Bookings.' . anchor('login','Home');
 		#$this->load->view('layout', $layout);
 		redirect('login', 'location');
 	}

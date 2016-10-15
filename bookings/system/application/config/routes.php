@@ -1,7 +1,9 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 // API
-$route['api/bookings/summary']       = 'bookings/summary';
+$route['api/bookings/summary']      = 'bookings/bookingsForPeriod';
+$route['api/users']                 = 'users/getAllBasic';
+$route['api/rooms']                 = 'rooms/getAllBasic';
 
 // Bookings
 $route['bookings']					= 'bookings/index';
@@ -11,7 +13,6 @@ $route['bookings/summary']          = 'bookings/summaryPage';
 $route['contact']					= 'site/contact';
 $route['faq']						= 'site/faq';
 $route['features']					= 'site/features';
-$route['site']						= 'site/home';
 
 // School Management
 $route['dashboard']				    = 'school/manage';

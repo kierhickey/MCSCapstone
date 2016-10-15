@@ -20,7 +20,7 @@ class Rooms extends Controller {
     if($this->uri->segment(2) != 'info'){
 	    if(!$this->userauth->loggedin()){
 	    	$this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), True) );
-				redirect('site/home', 'location');
+				redirect('login', 'location');
 			} else {
 				$this->loggedin = True;
 				if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){
@@ -31,9 +31,9 @@ class Rooms extends Controller {
 		}
 		// Load models
 		$this->load->model('crud_model', 'crud');
-    $this->load->model('school_model', 'M_school');
-    $this->load->model('rooms_model', 'M_rooms');
-    $this->load->model('users_model', 'M_users');
+    $this->load->model('school_model', 'schoolProvider');
+    $this->load->model('rooms_model', 'roomsProvider');
+    $this->load->model('users_model', 'userProvider');
     // Load the icon selector helper
     $this->load->helper('iconsel');
     // Load the image resizer script
@@ -50,15 +50,15 @@ class Rooms extends Controller {
   	$school_id = $this->uri->segment(3);
   	$room_id = $this->uri->segment(4);
 
-		$room['users'] = $this->M_users->Get(NULL, $this->school_id, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
+		$room['users'] = $this->userProvider->Get(NULL, $this->school_id, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
 
-		$room['fields'] = $this->M_rooms->GetFields(NULL, $school_id);
-		$room['fieldvalues'] = $this->M_rooms->GetFieldValues($room_id);
-		$room['room'] = $this->M_rooms->Get($room_id, $school_id);
+		$room['fields'] = $this->roomsProvider->GetFields(NULL, $school_id);
+		$room['fieldvalues'] = $this->roomsProvider->GetFieldValues($room_id);
+		$room['room'] = $this->roomsProvider->Get($room_id, $school_id);
 
-		#$room = $this->M_rooms->GetInfo($room_id, $school_id);
-		#$room['fields'] = $this->M_rooms->GetFields(NULL, $this->school_id);
-		#$room['fieldvalues'] = $this->M_rooms->GetFieldValues($room_id);
+		#$room = $this->roomsProvider->GetInfo($room_id, $school_id);
+		#$room['fields'] = $this->roomsProvider->GetFields(NULL, $this->school_id);
+		#$room['fieldvalues'] = $this->roomsProvider->GetFieldValues($room_id);
 
 		$layout['body'] = $this->load->view('rooms/room_info', $room, True);
 		$layout['title'] = $room['room']->name;
@@ -67,12 +67,16 @@ class Rooms extends Controller {
 	}
 
 
+    function getAllBasic() {
+        header("Content-Type: application/json");
 
+        echo json_encode($this->roomsProvider->getAllBasic());
+    }
 
 
 	function index(){
 		// Get list of rooms from database
-		$body['rooms'] = $this->M_rooms->Get(NULL, $this->school_id);	//$this->session->userdata('schoolcode'));
+		$body['rooms'] = $this->roomsProvider->Get(NULL, $this->school_id);	//$this->session->userdata('schoolcode'));
 		// Set main layout
 		$layout['title'] = 'Rooms';
 		$layout['showtitle'] = $layout['title'];
@@ -89,9 +93,9 @@ class Rooms extends Controller {
 	 */
 	function add(){
 		// Get list of users
-		$body['users'] = $this->M_users->Get( $this->session->userdata('schoolcode'), NULL, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
-		$body['users'] = $this->M_users->Get(NULL, NULL, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
-		$body['fields'] = $this->M_rooms->GetFields($this->session->userdata('schoolcode'));
+		$body['users'] = $this->userProvider->Get( $this->session->userdata('schoolcode'), NULL, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
+		$body['users'] = $this->userProvider->Get(NULL, NULL, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
+		$body['fields'] = $this->roomsProvider->GetFields($this->session->userdata('schoolcode'));
 		// Load view
 		$layout['title'] = 'Add Room';
 		$layout['showtitle'] = $layout['title'];
@@ -114,10 +118,10 @@ class Rooms extends Controller {
 	 */
 	function edit($id = NULL){
 		if($id == NULL){ $id = $this->uri->segment(3); }
-		$body['users'] = $this->M_users->Get(NULL, NULL, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
-		$body['fields'] = $this->M_rooms->GetFields($this->session->userdata('schoolcode'));
-		$body['fieldvalues'] = $this->M_rooms->GetFieldValues($id);
-		$body['room'] = $this->M_rooms->Get($id, $this->school_id);
+		$body['users'] = $this->userProvider->Get(NULL, NULL, array('user_id', 'username', 'displayname'), 'lastname asc, username asc' );
+		$body['fields'] = $this->roomsProvider->GetFields($this->session->userdata('schoolcode'));
+		$body['fieldvalues'] = $this->roomsProvider->GetFieldValues($id);
+		$body['room'] = $this->roomsProvider->Get($id, $this->school_id);
 		#print_r($body);
 		// Load view
 		$layout['title'] = 'Edit Room';
@@ -283,11 +287,11 @@ class Rooms extends Controller {
 
 			// If user clicked the 'delete photo' button on an edit, delete photo
 			if( $this->input->post('photo_delete') != NULL && $room_id != 'X'){
-				$this->M_rooms->delete_photo($room_id);
+				$this->roomsProvider->delete_photo($room_id);
 			}
 
 			$fieldvalues = array();
-			$fields = $this->M_rooms->GetFields($this->session->userdata('schoolcode'));
+			$fields = $this->roomsProvider->GetFields($this->session->userdata('schoolcode'));
 			$fields = (is_array($fields) ? $fields : array());
 			foreach($fields as $field){
 				$fieldvalues[$field->field_id] = $this->input->post('f'.$field->field_id);
@@ -297,16 +301,16 @@ class Rooms extends Controller {
 			// Now see if we are editing or adding
 			if($room_id == 'X'){
 				// No ID, adding new record
-				$room_id = $this->M_rooms->add($data);
-				$this->M_rooms->save_field_values($room_id, $fieldvalues);
+				$room_id = $this->roomsProvider->add($data);
+				$this->roomsProvider->save_field_values($room_id, $fieldvalues);
 				$this->session->set_flashdata('saved', $this->load->view('msgbox/info', $data['rooms.name'] . ' has been added.', True) );
 			} else {
 				// We have an ID, updating existing record
 				// Now we delete the CURRENT photo on the database before we do an update on the ID (and thus possibly changing the photo)
-				if( $upload == true ){$this->M_rooms->delete_photo($room_id); }
+				if( $upload == true ){$this->roomsProvider->delete_photo($room_id); }
 				// Update row with new details
-				$this->M_rooms->edit($room_id, $data);
-				$this->M_rooms->save_field_values($room_id, $fieldvalues);
+				$this->roomsProvider->edit($room_id, $data);
+				$this->roomsProvider->save_field_values($room_id, $fieldvalues);
 				$this->session->set_flashdata('saved', $this->load->view('msgbox/info', $data['rooms.name'] . ' has been modified.', True) );
 			}
 			// Go back to index
@@ -331,7 +335,7 @@ class Rooms extends Controller {
 		if( $this->input->post('id') ){
 			// Form has been submitted (so the POST value exists)
 			// Call model function to delete manufacturer
-			$this->M_rooms->delete($this->input->post('id'));
+			$this->roomsProvider->delete($this->input->post('id'));
 			$this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'The room has been deleted.', True) );
 			// Redirect to rooms again
 			redirect('rooms', 'redirect');
@@ -342,7 +346,7 @@ class Rooms extends Controller {
 			$body['cancel'] = 'rooms';
 			$body['text'] = 'If you delete this room, <strong>all bookings</strong> for this room will be <strong>permanently deleted</strong> as well.';
 			// Load page
-			$row = $this->M_rooms->Get($id, $this->school_id);
+			$row = $this->roomsProvider->Get($id, $this->school_id);
 			$layout['title'] = 'Delete Room ('.$row->name.')';
 			$layout['showtitle'] = $layout['title'];
 			$layout['body'] = $this->load->view('partials/deleteconfirm', $body, TRUE);
@@ -363,9 +367,9 @@ class Rooms extends Controller {
 
 
 	function fields_index(){
-		$body['options_list'] = $this->M_rooms->options;
+		$body['options_list'] = $this->roomsProvider->options;
 		// Get list of rooms from database
-		$body['fields'] = $this->M_rooms->GetFields($this->session->userdata('schoolcode'));
+		$body['fields'] = $this->roomsProvider->GetFields($this->session->userdata('schoolcode'));
 		// Set main layout
 		$layout['title'] = 'Room Fields';
 		$layout['showtitle'] = 'Define Room Fields';
@@ -378,7 +382,7 @@ class Rooms extends Controller {
 
 
 	function fields_add(){
-		$body['options_list'] = $this->M_rooms->options;
+		$body['options_list'] = $this->roomsProvider->options;
 		// Load view
 		$layout['title'] = 'Add Field';
 		$layout['showtitle'] = $layout['title'];
@@ -401,8 +405,8 @@ class Rooms extends Controller {
 	 */
 	function fields_edit($id = NULL){
 		if($id == NULL){ $id = $this->uri->segment(4); }
-		$body['field'] = $this->M_rooms->GetFields( $this->session->userdata('schoolcode'), $id );
-		$body['options_list'] = $this->M_rooms->options;
+		$body['field'] = $this->roomsProvider->GetFields( $this->session->userdata('schoolcode'), $id );
+		$body['options_list'] = $this->roomsProvider->options;
 		#print_r($body);
 		// Load view
 		$layout['title'] = 'Edit Field';
@@ -462,12 +466,12 @@ class Rooms extends Controller {
 			// Now see if we are editing or adding
 			if($field_id == 'X'){
 				// No ID, adding new record
-				$field_id = $this->M_rooms->field_add($data);
+				$field_id = $this->roomsProvider->field_add($data);
 				$this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'The <strong>'.$data['name'].'</strong> field has been added.', True) );
 			} else {
 				// We have an ID, updating existing record
 				// Update row with new details
-				$this->M_rooms->field_edit($field_id, $data);
+				$this->roomsProvider->field_edit($field_id, $data);
 				$this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'The <strong>'.$data['name'].'</strong> field has been modified.', True) );
 			}
 			// Go back to index
@@ -490,7 +494,7 @@ class Rooms extends Controller {
 		if( $this->input->post('id') ){
 			// Form has been submitted (so the POST value exists)
 			// Call model function to delete manufacturer
-			$this->M_rooms->field_delete($this->input->post('id'));
+			$this->roomsProvider->field_delete($this->input->post('id'));
 			$this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'The field has been deleted.', True) );
 			// Redirect to rooms again
 			redirect('rooms/fields', 'redirect');
@@ -501,7 +505,7 @@ class Rooms extends Controller {
 			$body['cancel'] = 'rooms/fields';
 			#$body['text'] = 'If you delete this field, <strong>all bookings</strong> for this room will be <strong>permanently deleted</strong> as well.';
 			// Load page
-			$row = $this->M_rooms->GetFields($id);
+			$row = $this->roomsProvider->GetFields($id);
 			$layout['title'] = 'Delete Field ('.$row->name.')';
 			$layout['showtitle'] = $layout['title'];
 			$layout['body'] = $this->load->view('partials/deleteconfirm', $body, TRUE);

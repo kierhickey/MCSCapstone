@@ -19,6 +19,7 @@ CREATE TABLE `bookings` (
   `date` date DEFAULT NULL,
   `notes` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `cancelled` tinyint(1) unsigned DEFAULT '0',
+  `paid` boolean DEFAULT FALSE,
   PRIMARY KEY (`booking_id`),
   KEY `school_id` (`school_id`,`period_id`,`room_id`,`user_id`)
 );

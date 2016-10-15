@@ -21,7 +21,7 @@ if($this->loggedin){
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>MCS Bookings | <?php echo strtolower($title) ?></title>
+	<title>MCS Bookings | <?php echo $title ?></title>
 	<base href="<?php echo $this->config->config['base_url'] ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<meta name="description" content="Melbourne Consulting Suites booking system. Credit to Craig Rodway's ClassroomBookings software for the backbone." />
@@ -104,7 +104,7 @@ if($this->loggedin){
 		<?php } ?>
 
 		<div class="content_area">
-			<?php if(isset($showtitle)){ echo '<h2>'.$showtitle.'</h2>'; } ?>
+			<?php if(isset($showtitle)){ echo '<h2 class="page-title">'.$showtitle.'</h2>'; } ?>
 			<?php echo $body ?>
 		</div>
 

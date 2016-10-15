@@ -19,7 +19,7 @@ class Weeks extends Controller {
     // Check user is logged in & is admin
     if(!$this->userauth->loggedin()){
     	$this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), True) );
-			redirect('site/home', 'redirect');
+			redirect('login', 'redirect');
 		} else {
 			$this->loggedin = True;
 			if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){

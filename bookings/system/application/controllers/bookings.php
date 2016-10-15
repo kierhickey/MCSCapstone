@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../templates/Template.class.php";
 
 class Bookings extends Controller
 {
@@ -18,7 +19,7 @@ class Bookings extends Controller
         // Check user is logged in
         if (!$this->userauth->loggedin()) {
             $this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), true));
-            redirect('site/home', 'location');
+            redirect('login', 'location');
         } else {
             $this->loggedin = true;
             $this->authlevel = $this->userauth->GetAuthLevel($this->session->userdata('user_id'));
@@ -42,16 +43,81 @@ class Bookings extends Controller
     /**
      * Gives a summary of total bookings made over the past 2 months
      */
-    public function summary()
+    public function bookingsForPeriod()
     {
-        $startDate = new DateTime($_POST["startDate"]);
-        $endDate = new DateTime($_POST["endDate"]);
+        if ($_POST["startDate"] != null) {
+            $startDate = new DateTime($_POST["startDate"]);
+        } else {
+            $startDate = new DateTime();
+        }
 
-        $bookingsForMonth = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+        if ($_POST["endDate"] != null) {
+            $endDate = new DateTime($_POST["endDate"]);
+        } else {
+            $endDate = (new DateTime())->add(new DateInterval("P1M"));
+        }
+
+        $userId = $_POST['userId'];
+        $roomId = $_POST['roomId'];
+
+        $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+
+        $filteredBookings = [];
+
+        foreach ($bookingsForPeriod as $booking) {
+            $forRoom = true;
+            $forUser = true;
+
+            if ($roomId != null && $booking["room_id"] != $roomId) {
+                $forRoom = false;
+            } else if ($userId != null && $booking["user_id"] != $userId) {
+                $forUser = false;
+            }
+
+            if ($forRoom && $forUser) {
+                array_push($filteredBookings, $booking);
+            }
+        }
+
+        $response = [
+            "requestData" => [
+                "userId" => $userId,
+                "roomId" => $roomId,
+                "startDate" => $startDate,
+                "endDate" => $endDate
+            ],
+            "responseData" => $filteredBookings
+        ];
+
+        header('Content-Type: application/json');
+
+        echo json_encode($response, JSON_PRETTY_PRINT);
     }
 
     public function summaryPage() {
+        $today = new DateTime();
 
+        $html = new Template("summary", "summary");
+
+        $summaryText = "This page presents a summary of information for "
+            ."export! You can filter by room, by person, or by both, and "
+            ."export information as it is displayed below!";
+
+        $layout["title"] = "Summary";
+        $layout["showtitle"] = "Summary";
+        $layout["body"] = $html->toHtml([
+            "summaryText" => $summaryText,
+            "roomOptions" => [
+                    "1" => "bruh",
+                    "2" => "does this work?"
+            ],
+            "userOptions" => [
+                "1" => "Administrator",
+                "2" => "Testuser1"
+            ]
+        ]);
+
+        $this->load->view('layout', $layout);
     }
 
     public function index()
@@ -87,7 +153,7 @@ class Bookings extends Controller
         );
 
         $layout['title'] = 'Bookings';
-        $layout['showtitle'] = '';
+        $layout['showtitle'] = 'Bookings';
         $layout['body'] = $this->session->flashdata('saved');
         $layout['body'] .= $body['html'];
         $this->load->view('layout', $layout);

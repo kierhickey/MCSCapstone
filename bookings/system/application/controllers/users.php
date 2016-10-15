@@ -19,7 +19,7 @@ class Users extends Controller {
     // Check user is logged in & is admin
     if( !$this->userauth->loggedin() ){
     	$this->session->set_flashdata('login', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeloggedin'), True) );
-			redirect('site/home', 'location');
+			redirect('login', 'location');
 		} else {
 			$this->loggedin = True;
 			if( !$this->userauth->CheckAuthLevel( ADMINISTRATOR ) ){
@@ -28,7 +28,7 @@ class Users extends Controller {
 			}
 		}
 		$this->load->model('crud_model', 'crud');
-    $this->load->model('users_model', 'M_users');
+    $this->load->model('users_model', 'userProvider');
     $this->load->helper('iconsel');
   }
 
@@ -58,7 +58,7 @@ class Users extends Controller {
 		$body['pagelinks'] = $this->pagination->create_links();
 		// Get list of rooms from database
 		$body['users'] = $this->crud->Get('users', NULL, NULL, $this->school_id, 'authlevel asc, enabled asc, username asc', $pages['per_page'], $start_at );
-		#$body['users'] = $this->M_users->Get();	//$this->session->userdata('school_id'));
+		#$body['users'] = $this->userProvider->Get();	//$this->session->userdata('school_id'));
 
 		// Set main layout
 		$layout['title'] = 'Manage Users';
@@ -72,7 +72,7 @@ class Users extends Controller {
 
 
   /* function index(){
-  	$body['users'] = $this->M_users->Get();	//$this->session->userdata('school_id'));
+  	$body['users'] = $this->userProvider->Get();	//$this->session->userdata('school_id'));
 
 		$layout['title'] = 'Manage Users';
 		$layout['showtitle'] = $layout['title'];
@@ -105,7 +105,7 @@ class Users extends Controller {
 
 	function edit($id = NULL){
 		if($id == NULL){ $id = $this->uri->segment(3); }
-		$body['user'] = $this->M_users->Get($id);
+		$body['user'] = $this->userProvider->Get($id);
 		#print_r($body);
 		$body['departments'] = $this->crud->Get('departments');
 
@@ -123,7 +123,10 @@ class Users extends Controller {
 	}
 
 
-
+    function getAllBasic() {
+        header("Content-Type: application/json");
+        echo json_encode($this->userProvider->getAllBasic());
+    }
 
 
 	/**
