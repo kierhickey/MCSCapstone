@@ -27,7 +27,7 @@ $menu[$i]['href'] = '';
 
 $i = 0;
 $school[$i]['text'] = 'Business Details';
-$school[$i]['icon'] = 'material/business-black-24px.svg';
+$school[$i]['icon'] = 'school_manage_details.gif';
 $school[$i]['href'] = site_url('school/details');
 
 $i++;
