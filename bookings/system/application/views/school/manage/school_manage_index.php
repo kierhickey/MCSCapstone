@@ -93,7 +93,7 @@ $admin[$i] = [
 $i++;
 $admin[$i] = [
 	'text' => 'Summary',
-	'icon' => 'blank.png',
+	'icon' => 'material/chart-black-x24.svg',
 	'href' => site_url("bookings/summary")
 ];
 
