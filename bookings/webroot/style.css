@@ -23,19 +23,20 @@
     
 }
 .dashboard h5 {
-    color: #fff;
+    width: 33%;
+    color: white;
     
 }
-.colour-1 {
+.colour-0 {
     background-color: #3F51B5;
 }
-.colour-2 {
+.colour-1 {
     background-color: #FF80AB;
 }
-.colour-3 {
+.colour-2 {
     background-color: #303F9F;
 }
-.colour-4 {
+.colour-3 {
     background-color: #FF4081;
 }
 
