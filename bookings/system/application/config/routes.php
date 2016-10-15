@@ -2,6 +2,8 @@
 
 // API
 $route['api/bookings/summary']      = 'bookings/bookingsForPeriod';
+$route['api/users']                 = 'users/getAllBasic';
+$route['api/rooms']                 = 'rooms/getAllBasic';
 
 // Bookings
 $route['bookings']					= 'bookings/index';

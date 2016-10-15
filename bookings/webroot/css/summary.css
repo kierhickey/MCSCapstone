@@ -1,0 +1,45 @@
+.summary-empty {
+    text-align: center;
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 50px;
+}
+
+.header-cell {
+    cursor: pointer;
+}
+
+.summary-table td, .summary-table th {
+    box-sizing: border-box;
+    padding: 0 5px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.asc::after {
+    content: "\25BC";
+}
+
+.desc::after {
+    content: "\25B2";
+}
+
+.summary-header {
+    background-color: #5bbaff;
+    color: #fff;
+    height: 30px;
+    line-height: 30px;
+    text-align: left;
+}
+
+.booking-date, .header-date {
+    text-align: right;
+    width: 90px;
+}
+
+.booking-row {
+    text-align: left;
+}

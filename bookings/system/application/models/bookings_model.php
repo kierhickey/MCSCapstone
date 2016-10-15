@@ -31,7 +31,23 @@ class Bookings_model extends Model
 		$startDate = $startDate;
 		$endDate = $endDate;
 
-		$queryString = "SELECT * FROM bookings WHERE school_id = '$schoolId' AND date >= '$startDate' AND date <= '$endDate' AND cancelled != 1";
+		$queryString = "SELECT b.booking_id AS bookingId
+                              ,u.user_id AS userId
+                              ,u.username
+                              ,u.displayname AS displayName
+                              ,b.date AS bookingDate
+                              ,p.time_start AS bookingStart
+                              ,p.time_end AS bookingEnd
+                        FROM bookings b
+                        INNER JOIN periods p
+                        ON b.period_id = p.period_id
+                        INNER JOIN users u
+                        ON b.user_id = u.user_id
+                        WHERE
+                            b.school_id = '$schoolId' AND
+                            b.date >= '$startDate' AND
+                            b.date <= '$endDate'
+                            AND b.cancelled != 1";
 
 		$query = $this->db->query($queryString);
 		$results = $query->result_array();

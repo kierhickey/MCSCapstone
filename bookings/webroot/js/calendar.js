@@ -1,25 +1,25 @@
 /*jshint laxbreak: true*/
-var Calendar = function ($config) {
+var Calendar = function (config) {
     'use strict';
     var me = {};
 
     // Variables
-    me.day = $config.day || (new Date()).getDay();
-    me.month = $config.month || (new Date()).getMonth();
-    me.year = $config.year || (new Date()).getFullYear();
-    me.renderTo = $config.renderTo || null;
-    me.userIds = $config.userIds || [];
-    me.roomIds = $config.roomIds || [];
-    me.cls = $config.cls || "calendar-table";
-    me.headerCls = $config.headerCls || "calendar-header";
+    me.day = config.day || (new Date()).getDay();
+    me.month = config.month || (new Date()).getMonth();
+    me.year = config.year || (new Date()).getFullYear();
+    me.renderTo = config.renderTo || null;
+    me.userIds = config.userIds || [];
+    me.roomIds = config.roomIds || [];
+    me.cls = config.cls || "calendar-table";
+    me.headerCls = config.headerCls || "calendar-header";
     me.rendered = false;
     me.map = [];
 
     // Events
-    me.onDateChanged = $config.onDateChanged || function () {};
-    me.onDayChanged = $config.onDayChanged || function () {};
-    me.onMonthChanged = $config.onMonthChanged || function () {};
-    me.onYearChanged = $config.onYearChanged || function () {};
+    me.onDateChanged = config.onDateChanged || function () {};
+    me.onDayChanged = config.onDayChanged || function () {};
+    me.onMonthChanged = config.onMonthChanged || function () {};
+    me.onYearChanged = config.onYearChanged || function () {};
 
     // Inject CSS
     $("head").append($("<link/>", {
@@ -282,6 +282,8 @@ var Calendar = function ($config) {
     };
 
     me.update = function () {
+        if (!me.rendered) return me.render();
+
         $(".calendar-month").text(me.getCurrentMonth() + " " + me.getCurrentYear());
 
         updateWeeks();
@@ -289,7 +291,7 @@ var Calendar = function ($config) {
 
     // Renders the calendar
     me.render = function () {
-        if (me.rendered) me.update();
+        if (me.rendered) return me.update();
 
         var calendarRows = getCalendarRows();
         var calendar = $("<table></table>", {
@@ -352,6 +354,8 @@ var Calendar = function ($config) {
 
         $(me.renderTo).empty();
         $(me.renderTo).append(calendar);
+
+        me.rendered = true;
 
         me.update();
     };
