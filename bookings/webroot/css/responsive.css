@@ -1,0 +1,49 @@
+/* Responsive Mobile view*/
+@media screen and (min-width: 960px) {
+   .nav-box {
+   		margin-right: 20px;
+   }
+   .dashboard {
+        width: 90%;
+    }
+}
+@media screen and (max-width: 959px) {
+   .nav-box {
+   		margin-right: 20px;
+   }
+   .container {
+   	width: 100%;
+   }
+   .dashboard {
+        width: 90%;
+    }
+    #footer {
+    	width: 100%;
+    }
+}
+
+@media screen and (max-width: 650px) {
+   .nav-box {
+    	width: 70%;
+    }
+}
+
+@media screen and (max-width: 520px) {
+	.title {
+		width: 100%;
+		text-align: center;
+		margin: 0px;
+	}
+	.nav-box {
+		width: 100%;
+		margin: 0px; 
+	}
+   .nav-item {
+   		text-align: center;
+    	width: 100%;
+    	background-color: #4183D7;
+    }
+   .content_area {
+   	margin-top: 10em;
+   }
+}

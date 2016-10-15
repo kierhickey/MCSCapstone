@@ -30,6 +30,7 @@ if($this->loggedin){
 	<link rel="stylesheet" type="text/css" media="print" href="webroot/print.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/sorttable.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/dashboard.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/responsive.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/login.css" />
 	<script type="text/javascript" src="webroot/js/prototype.lite.js"></script>
 	<script type="text/javascript" src="webroot/js/util.js"></script>
@@ -91,6 +92,7 @@ if($this->loggedin){
 					<div class="profile nav-item">
 						<a class="nav-item-link" href="<?php echo $url ?>" title="Profile">
 							<img class="nav-item-img" src="webroot/images/ui/material/profile-white-x24.svg" alt="Profile" />
+							<span class="nav-item-text">My Profile</span>
 						</a>
 					</div>
 				<?php } ?>
