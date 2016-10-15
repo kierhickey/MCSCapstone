@@ -204,6 +204,7 @@ header {
     padding-right: 5px;
     padding-top: 12px;
     margin-top: 24px;
+	position: relative;
 }
 
 .sub_nav {
@@ -574,6 +575,7 @@ tr.title td {
 }
 
 .cssform label.required:after {
+	display: inline;
     content: "*";
     color: red;
     font-weight: normal;

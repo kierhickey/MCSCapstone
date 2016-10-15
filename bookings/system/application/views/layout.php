@@ -30,6 +30,7 @@ if($this->loggedin){
 	<link rel="stylesheet" type="text/css" media="print" href="webroot/print.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/sorttable.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/dashboard.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/login.css" />
 	<script type="text/javascript" src="webroot/js/prototype.lite.js"></script>
 	<script type="text/javascript" src="webroot/js/util.js"></script>
 	<script type="text/javascript" src="webroot/js/sorttable.js"></script><?php
