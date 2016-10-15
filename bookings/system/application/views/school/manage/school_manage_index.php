@@ -132,21 +132,27 @@ if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){
 
 
 function dotable($array){
-
-	echo '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
-	echo '<tbody>';
+// <ul id="navlist">
+// <li id="active"><a href="#" id="current">Item one</a></li>
+// <li><a href="#">Item two</a></li>
+// <li><a href="#">Item three</a></li>
+// <li><a href="#">Item four</a></li>
+// <li><a href="#">Item five</a></li>
+// </ul>
+	// echo '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
+	// echo '<tbody>';
 	$row = 0;
 
 	foreach($array as $link){
-		if($row == 0){ echo '<tr>'; }
-		echo '<td width="33%">';
-		echo '<h5 style="margin:14px 0px">';
+		if($row == 0){ echo '<ul class="dashboard">'; }
+		echo '<li>';
+		echo '<h5 class="colour-'.$row.'" style="margin:14px 0px">';
 		echo '<a href="'.$link['href'].'">';
 		echo '<img src="webroot/images/ui/'.$link['icon'].'" alt="'.$link['text'].'" hspace="4" align="top" width="16" height="16" />';
 		echo $link['text'];
 		echo '</a>';
 		echo '</h5>';
-		echo '</td>';
+		echo '</li>';
 		echo "\n";
 		if ($row == 2) {
 			echo '</tr>'."\n\n"; $row = 0;
@@ -155,7 +161,8 @@ function dotable($array){
 		}
 	}
 
-	echo '</tbody>';
-	echo '</table>'."\n\n";
+	// echo '</tbody>';
+	// echo '</table>'.
+	echo "</ul>\n\n";
 }
 ?>
