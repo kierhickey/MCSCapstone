@@ -116,7 +116,7 @@ function dotable($array){
 
 	foreach($array as $link){
 		if($row == 0){ echo '<ul class="dashboard">'; }
-		echo '<li width="33%">';
+		echo '<li>';
 		echo '<h5 class="colour-'.$row.'" style="margin:14px 0px">';
 		echo '<a href="'.$link['href'].'">';
 		echo '<img src="webroot/images/ui/'.$link['icon'].'" alt="'.$link['text'].'" hspace="4" align="top" width="16" height="16" />';
