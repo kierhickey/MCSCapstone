@@ -38,6 +38,9 @@ class Bookings_model extends Model
                               ,b.date AS bookingDate
                               ,p.time_start AS bookingStart
                               ,p.time_end AS bookingEnd
+                              ,b.room_id as roomId
+                              ,r.name as roomName
+                              ,r.location as location
                               ,(case when b.paid = 0 then 'false'
                                      when b.paid = 1 then 'true'
                                 end) AS paid
@@ -46,6 +49,8 @@ class Bookings_model extends Model
                         ON b.period_id = p.period_id
                         INNER JOIN users u
                         ON b.user_id = u.user_id
+                        INNER JOIN rooms r
+                        ON b.room_id = r.room_id
                         WHERE
                             b.school_id = '$schoolId' AND
                             b.date >= '$startDate' AND

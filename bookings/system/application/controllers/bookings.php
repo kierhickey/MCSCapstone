@@ -68,9 +68,9 @@ class Bookings extends Controller
             $forRoom = true;
             $forUser = true;
 
-            if ($roomId != null && $booking["room_id"] != $roomId) {
+            if ($roomId != null && $booking["roomId"] != $roomId) {
                 $forRoom = false;
-            } else if ($userId != null && $booking["user_id"] != $userId) {
+            } else if ($userId != null && $booking["userId"] != $userId) {
                 $forUser = false;
             }
 

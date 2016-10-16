@@ -101,6 +101,14 @@ var SummaryTable = function (config) {
                     text: booking.displayname
                 }),
                 $("<td></td>", {
+                    class: "booking-end booking-cell",
+                    text: booking.location
+                }),
+                $("<td></td>", {
+                    class: "booking-end booking-cell",
+                    text: booking.roomName
+                }),
+                $("<td></td>", {
                     class: "booking-start booking-cell",
                     text: booking.bookingStart
                 }),
@@ -174,7 +182,7 @@ var SummaryTable = function (config) {
                 rows.push($("<tr></tr>", {
                     html: $("<td></td>", {
                         class: "summary-empty",
-                        colspan: 5,
+                        colspan: 7,
                         text: me.emptyText
                     })
                 }));
@@ -268,7 +276,7 @@ var SummaryTable = function (config) {
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: 5,
+                                    colspan: 7,
                                     class: "summary-date",
                                     html: "Bookings for " + _dateAsReadable(me.getDate())
                                 })
@@ -283,6 +291,14 @@ var SummaryTable = function (config) {
                                     $("<th></th>", {
                                         class: "header-displayname header-cell",
                                         text: "Display Name"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-location header-cell",
+                                        text: "Location"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-room-name header-cell",
+                                        text: "Room Name"
                                     }),
                                     $("<th></th>", {
                                         class: "header-start header-cell",

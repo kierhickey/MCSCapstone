@@ -2,11 +2,15 @@
     var usersLoaded = false;
     var roomsLoaded = false;
 
+    var users = [];
+    var rooms = [];
+
     $.ajax({
         url: "/bookings/api/users",
         method: "GET",
         success: function (response) {
             usersLoaded = true;
+            users = response;
 
             createPage();
         }
@@ -17,6 +21,7 @@
         method: "GET",
         success: function (response) {
             roomsLoaded = true;
+            rooms = response;
 
             createPage();
         }
@@ -56,8 +61,8 @@
             month: (new Date()).getMonth(),
 
             // Requests
-            userIds: [],
-            roomIds: [],
+            users: users,
+            rooms: rooms,
             onDateChanged: function (e) {
                 // Do summary
                 $.ajax({
@@ -65,7 +70,9 @@
                     method: "POST",
                     data: {
                         startDate: formatDate(e.currentDate),
-                        endDate: formatDate(e.currentDate)
+                        endDate: formatDate(e.currentDate),
+                        userId: e.userId === "" ? null : e.userId,
+                        roomId: e.roomId === "" ? null : e.roomId
                     },
                     success: function (response) {
                         response.responseData.each(function (booking) {

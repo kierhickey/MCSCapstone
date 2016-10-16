@@ -7,6 +7,27 @@
 .calendar-header {
     height: 30px;
     background-color: #5bbaff;
+    position: relative;
+}
+
+.calendar-header th {
+    position: relative;
+}
+
+.calendar-filters {
+    height: 24px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 60px;
+    margin: auto;
+}
+
+.calendar-filter {
+    height: 24px;
+    margin-left: 5px;
+    border: none;
+    background-color: #fff;
 }
 
 .calendar-prev-arrow {
@@ -19,11 +40,15 @@
 
 .calendar-month {
     display: inline-block;
-    width: calc(100% - 60px);
+    width: 130px;
     height: 30px;
     line-height: 30px;
     text-align: center;
     color: #fff;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
 
 .calendar-day-gutter {

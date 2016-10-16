@@ -8,12 +8,14 @@ var Calendar = function (config) {
     me.month = config.month || (new Date()).getMonth();
     me.year = config.year || (new Date()).getFullYear();
     me.renderTo = config.renderTo || null;
-    me.userIds = config.userIds || [];
-    me.roomIds = config.roomIds || [];
+    me.users = config.users || [];
+    me.rooms = config.rooms || [];
     me.cls = config.cls || "calendar-table";
     me.headerCls = config.headerCls || "calendar-header";
     me.rendered = false;
     me.map = [];
+    me.userId = null;
+    me.roomId = null;
 
     // Events
     me.onDateChanged = config.onDateChanged || function () {};
@@ -125,6 +127,10 @@ var Calendar = function (config) {
         }
     };
 
+    var isNullOrWhitespace = function (str) {
+        return (!str || str.length === 0 || /^\s*$/.test(str))
+    }
+
     me.getDayAt = function(x,y) {
         return me.map[x][y];
     };
@@ -232,7 +238,6 @@ var Calendar = function (config) {
     };
 
     me.getCellFromDate = function () {
-        debugger;
         for (var y = 0; y < me.map.length; y++) {
             for (var x = 0; x < me.map[y].length; x++) {
                 if (me.map[y][x] == me.day) {
@@ -289,12 +294,73 @@ var Calendar = function (config) {
         // Our date changed event.
         me.onDateChanged({
             previousDate: prevDate,
-            currentDate: currDate
+            currentDate: currDate,
+            userId: me.userId,
+            roomId: me.roomId
         });
 
         // Update the UI
         me.update();
     };
+
+    me.getRoomOptions = function () {
+        var uniqueLocations = [];
+
+        for (var i = 0; i < me.rooms.length; i++) {
+            if (uniqueLocations.indexOf(me.rooms[i].location) < 0) {
+                uniqueLocations.push(me.rooms[i].location);
+            }
+        }
+
+        var defaultOpt = $("<option></option>", {class: "null-option", text: "No Room", value: ""});
+
+        var optGroups = [];
+        var options = [];
+
+        for (var a = 0; a < uniqueLocations.length; a++) {
+            for (var i = 0; i < me.rooms.length; i++) {
+                var room = me.rooms[i];
+
+                if (room.location !== uniqueLocations[a]) continue;
+
+                options.push($("<option></option>", {
+                    class: "room-option",
+                    value: room.roomId,
+                    text: room.name
+                }));
+
+                if (uniqueLocations.length === 1) return [defaultOpt].concat(options);
+            }
+
+            optGroups.push($("<optgroup></optgroup>", {
+                class: 'room-optgroup',
+                label: uniqueLocations[a],
+                html: options
+            }));
+
+            options = [];
+        }
+
+        return [defaultOpt].concat(optGroups);
+    };
+
+    me.getUserOptions = function () {
+        var options = [];
+
+        var defaultOpt = $("<option></option>", {class:"null-option", text: "No User", value: ""});
+
+        for (var i = 0; i < me.users.length; i++) {
+            var user = me.users[i];
+
+            options.push($("<option></option>", {
+                class: "user-option",
+                value: user.userId,
+                text: isNullOrWhitespace(user.displayName) ? user.username : user.displayName + "(" + user.username + ")"
+            }));
+        }
+
+        return [defaultOpt].concat(options);
+    }
 
     me.update = function () {
         if (!me.rendered) return me.render();
@@ -306,6 +372,18 @@ var Calendar = function (config) {
         var cell = me.getCellFromDate();
         $("." + me.cls + " .selected").removeClass("selected");
         $(cell).addClass("selected");
+    };
+
+    var onFilterChange = function () {
+        me.userId = $("select[name=user]").val() === "" ? null : $("select[name=user]").val();
+        me.roomId = $("select[name=room]").val() === "" ? null : $("select[name=room]").val();
+
+        me.onDateChanged({
+            currentDate: me.getDate(),
+            prevDate: me.getDate(),
+            userId: me.userId,
+            roomId: me.roomId
+        });
     };
 
     // Renders the calendar
@@ -340,6 +418,27 @@ var Calendar = function (config) {
                                             on: {
                                                 click: me.nextMonth
                                             }
+                                        }),
+                                        $("<div></div>", {
+                                            class: "calendar-filters",
+                                            html: [
+                                                $("<select></select>", {
+                                                    class: "calendar-filter",
+                                                    name: "room",
+                                                    html: me.getRoomOptions(),
+                                                    on: {
+                                                        change: onFilterChange
+                                                    }
+                                                }),
+                                                $("<select></select>", {
+                                                    class: "calendar-filter",
+                                                    name: "user",
+                                                    html: me.getUserOptions(),
+                                                    on: {
+                                                        change: onFilterChange
+                                                    }
+                                                })
+                                            ]
                                         })
                                     ]
                                 })

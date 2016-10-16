@@ -17,7 +17,7 @@ class Rooms_model extends Model{
 
 	function getAllBasic() {
 		$schoolId = $this->session->userdata("school_id");
-		$columns = ["room_id", "name", "location"];
+		$columns = ["room_id AS roomId", "name", "location"];
 
 		$this->db->select(implode(", ", $columns));
 		$this->db->from("rooms");

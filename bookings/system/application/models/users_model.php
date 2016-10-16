@@ -13,7 +13,7 @@ class Users_model extends Model{
 
 	function getAllBasic() {
 		$schoolId = $this->session->userdata('school_id');
-		$columns = ["user_id", "username", "displayname"];
+		$columns = ["user_id AS userId", "username", "displayname AS displayName"];
 
 		$this->CI->db->select(implode(', ', $columns));
 		$this->CI->db->from('users');
