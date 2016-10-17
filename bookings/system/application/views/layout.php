@@ -26,6 +26,7 @@ if($this->loggedin){
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<meta name="description" content="Melbourne Consulting Suites booking system. Credit to Craig Rodway's ClassroomBookings software for the backbone." />
 	<meta name="author" content="Craig Rodway" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/style.css" />
 	<link rel="stylesheet" type="text/css" media="print" href="webroot/print.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/sorttable.css" />
