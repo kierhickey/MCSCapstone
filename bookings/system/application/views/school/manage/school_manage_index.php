@@ -35,17 +35,17 @@ $school[$i] = [
 
 $i++;
 $school[$i] = [
-	'text' => 'The Business Day',
+	'text' => 'Business Day',
 	'icon' => 'material/business-day-white-x48.svg',
 	'href' => site_url('periods')
 ];
 
-$i++;
-$school[$i] = [
-	'text' => 'Week Cycle',
-	'icon' => 'material/week-cycle-white-x48.svg',
-	'href' => site_url('weeks')
-];
+// $i++;
+// $school[$i] = [
+// 	'text' => 'Week Cycle',
+// 	'icon' => 'material/week-cycle-white-x48.svg',
+// 	'href' => site_url('weeks')
+// ];
 
 $i++;
 $school[$i] = [
@@ -61,12 +61,12 @@ $school[$i] = [
 	'href' => site_url('rooms')
 ];
 
-$i++;
-$school[$i] = [
-	'text' => 'Departments',
-	'icon' => 'material/business-white-x24.svg',
-	'href' => site_url('departments')
-];
+// $i++;
+// $school[$i] = [
+// 	'text' => 'Departments',
+// 	'icon' => 'material/business-white-x24.svg',
+// 	'href' => site_url('departments')
+// ];
 
 
 $i = 0;
