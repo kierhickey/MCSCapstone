@@ -15,8 +15,8 @@ $route['faq']						= 'site/faq';
 $route['features']					= 'site/features';
 
 // School Management
-$route['dashboard']				    = 'school/manage';
-$route['default_controller']		= 'school';
+$route['dashboard']				    = 'business/manage';
+$route['default_controller']		= 'business';
 
 // Help
 $route['help']						= 'help/index';
