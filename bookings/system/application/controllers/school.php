@@ -85,7 +85,7 @@ class School extends Controller
             }
         }
         $body['info'] = $this->M_school->GetInfo();
-        $layout['title'] = 'School Information';
+        $layout['title'] = 'Business Information';
         $layout['showtitle'] = $layout['title'];
         $layout['body'] = $this->load->view('school/details/school_details_edit.php', $body, true);
         $this->load->view('layout', $layout);
