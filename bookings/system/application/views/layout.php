@@ -35,7 +35,9 @@ if($this->loggedin){
 	<link rel="stylesheet" type="text/css" media="screen" href="webroot/css/login.css" />
 	<script type="text/javascript" src="webroot/js/prototype.lite.js"></script>
 	<script type="text/javascript" src="webroot/js/util.js"></script>
-	<script type="text/javascript" src="webroot/js/sorttable.js"></script><?php
+	<script type="text/javascript" src="webroot/js/sorttable.js"></script>
+    <script src="webroot/js/jquery.min.js" type="text/javascript"></script>
+ <?php
 	$js_cpicker = array('weeks', 'school');
 	if(in_array($this->uri->segment(1), $js_cpicker)){
 		echo "\n".'<link rel="stylesheet" type="text/css" media="screen" href="webroot/cpicker/js_color_picker_v2.css" />';
@@ -54,6 +56,7 @@ if($this->loggedin){
 	?>
 </head>
 <body>
+    <input class="id-value" type="hidden" value="<?php echo $id; ?>"/>
 	<div class="header-fix"></div>
 	<header>
 		<div class="container">

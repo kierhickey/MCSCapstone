@@ -68,6 +68,8 @@ class Profile extends Controller {
             $layout['title'] = "$user->firstname $user->lastname's Profile";
         }
     }
+      
+    $layout["id"] = $this->targetUserId;
 
   	// Get bookings for a room if this user owns one
   	$body['myroom'] = $this->M_bookings->ByRoomOwner($this->targetUserId);

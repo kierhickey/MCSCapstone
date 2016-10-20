@@ -12,11 +12,13 @@ var Calendar = function (config) {
     me.rooms = config.rooms || [];
     me.cls = config.cls || "calendar-table";
     me.headerCls = config.headerCls || "calendar-header";
+    me.userFilterEnabled = typeof config.userFilterEnabled === "undefined" ? true : config.userFilterEnabled;
+    me.roomFilterEnabled = typeof config.roomFilterEnabled === "undefined" ? true : config.roomFilterEnabled;
     me.rendered = false;
     me.map = [];
-    me.userId = null;
-    me.roomId = null;
-
+    me.userId = config.userId || null;
+    me.roomId = config.roomId || null;
+    
     // Events
     me.onDateChanged = config.onDateChanged || function () {};
     me.onDayChanged = config.onDayChanged || function () {};
@@ -375,8 +377,10 @@ var Calendar = function (config) {
     };
 
     var onFilterChange = function () {
-        me.userId = $("select[name=user]").val() === "" ? null : $("select[name=user]").val();
-        me.roomId = $("select[name=room]").val() === "" ? null : $("select[name=room]").val();
+        if (me.userFilterEnabled)
+            me.userId = $("select[name=user]").val() === "" ? null : $("select[name=user]").val();
+        if (me.roomFilterEnabled)
+            me.roomId = $("select[name=room]").val() === "" ? null : $("select[name=room]").val();
 
         me.onDateChanged({
             currentDate: me.getDate(),
@@ -389,6 +393,33 @@ var Calendar = function (config) {
     // Renders the calendar
     me.render = function () {
         if (me.rendered) return me.update();
+        
+        if (!me.filterEnabled) {
+            console.log("Filter is off!");
+        };
+        if (me.filterEnabled){
+            console.log("Filter is on!");
+        };
+        
+        var userFilterSelect = $("<select></select>", {
+            class: "calendar-filter",
+            name: "user",
+            html: me.getUserOptions(),
+            on: {
+                change: onFilterChange
+            }
+        });
+        
+        var roomFilterSelect = $("<select></select>", {
+            class: "calendar-filter",
+            name: "room",
+            html: me.getRoomOptions(),
+            on: {
+                change: onFilterChange
+            }
+        });
+        
+        console.log(me.userFilterEnabled);
 
         var calendarRows = getCalendarRows();
         var calendar = $("<table></table>", {
@@ -419,27 +450,20 @@ var Calendar = function (config) {
                                                 click: me.nextMonth
                                             }
                                         }),
+                                        //CAN I PUT IF STATEMENTS HERE TO DECIDE IF THE FILTERS SHOULD RENDER OR NOT?
                                         $("<div></div>", {
                                             class: "calendar-filters",
                                             html: [
-                                                $("<select></select>", {
-                                                    class: "calendar-filter",
-                                                    name: "room",
-                                                    html: me.getRoomOptions(),
-                                                    on: {
-                                                        change: onFilterChange
-                                                    }
-                                                }),
-                                                $("<select></select>", {
-                                                    class: "calendar-filter",
-                                                    name: "user",
-                                                    html: me.getUserOptions(),
-                                                    on: {
-                                                        change: onFilterChange
-                                                    }
-                                                })
+                                                me.roomFilterEnabled 
+                                                    ? roomFilterSelect
+                                                    : "",
+                                                me.userFilterEnabled
+                                                    ? userFilterSelect
+                                                    : ""
+                                                
                                             ]
                                         })
+                                        //END OF FILTERS
                                     ]
                                 })
                             ]
