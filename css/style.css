@@ -14,37 +14,36 @@ body {
 
 header {
     width: 100%;
+    height: 50px;
+    line-height: 50px;
     position: relative;
-    background: #4183D7;
-    padding: 40px 0 0;
+    background: #454a50;
+    padding: 0 20px;
 	box-sizing: border-box;
 }
-header .indent-bottom {
-    padding-bottom: 28px;
+
+.logo-title {
+    padding: 0 10px;
+    line-height: 50px;
+    box-sizing: border-box;
+    margin: 0;
+    font-size: 140%;
+    display: block;
+    overflow: hidden;
 }
+
+.logo-title a {
+    color: #F1F1F1;
+}
+
+.logo-title a:hover {
+    text-decoration: none;
+    color: #E87E04;
+}
+
 h1 {
     float: left;
     padding-left: 54px;
-}
-h1 a {
-    display: block;
-    width: 178px;
-    height: 73px;
-    background: url(../images/logo.png) 3px 0 no-repeat;
-    text-indent: -100%;
-	direction: ltr;
-    white-space: nowrap;
-    overflow: hidden;
-}
-h1 a:hover {
-    text-decoration: none;
-}
-h1 > span {
-    display: block;
-    font: normal 10px/12px Arial, Helvetica, sans-serif;
-    color: #5f5f5f;
-    text-transform: uppercase;
-    padding-top: 7px;
 }
 /********************************* Content **********************************/
 
@@ -206,11 +205,6 @@ time {
 }
 .pad-bottom {
     margin-bottom: 20px;
-}
-.caption {
-    font-size: 12px;
-    line-height: 15px;
-    color: #4f4f4f;
 }
 .lable {
     display: block;
@@ -444,21 +438,34 @@ footer a {
 .social-icons .icon-3 a {
     background-position: -76px top;
 }
-.bookRoom a {
+
+.book-room {
+    width: 150px;
     position: absolute;
-    right: 20px;
-    top: 20px;
-    background: #83c00b;
+    right: 0;
+    left: 0;
+    bottom: 60px;
+    margin: auto;
+    border-radius: 5px;
+    z-index: 9999;
+    background: #E87E04;
+    text-align: center;
+}
+
+.book-room a {
+    display: block;
+    width: 100%;
+    height: 100%;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
-	border-radius: 5px;
     font-weight: bold;
-    padding: 10px 20px;
-    display: block;
+    padding: 10px;
+    box-sizing: border-box;
     color: #fff;
 }
-.bookRoom a:hover {
-    background: #649504;
+
+.book-room a:hover {
+    background: #ec8208;
     text-decoration: none;
 }
 
