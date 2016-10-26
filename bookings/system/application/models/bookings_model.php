@@ -58,7 +58,11 @@ class Bookings_model extends Model
                             AND b.cancelled != 1";
 
 		$query = $this->db->query($queryString);
-		$results = $query->result_array();
+        if ($query != false) {
+		          $results = $query->result_array();
+        } else {
+            $results = ["error" => $this->db];
+        }
 
 		return $results;
 	}

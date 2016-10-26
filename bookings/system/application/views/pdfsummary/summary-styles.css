@@ -1,0 +1,26 @@
+@page {
+    margin: 36pt;
+    font-family: "Calibri", sans-serif;
+    font-size: 10pt;
+}
+
+.title {
+    text-align: right;
+}
+
+.main-title {
+    font-size: 16pt;
+}
+
+.field-label {
+    font-weight: bold;
+    margin-right: 3px;
+}
+
+.foreword {
+}
+
+.summary-table {
+    width: 100%;
+    text-align: left;
+}
