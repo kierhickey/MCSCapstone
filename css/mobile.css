@@ -126,6 +126,10 @@
     header .indent-bottom {
         padding-bottom: 0;
     }
+    header, nav {
+        float: none;
+        height: 260px;
+    }
 
     h1 {
         float: none;
@@ -156,7 +160,6 @@
         top: 115px;
         padding: 5px 10px;
     }
-
     .hide3 {
         display: none;
     }
