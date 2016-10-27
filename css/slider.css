@@ -51,6 +51,15 @@
     width: 30px;
     height: 30px;
     background-color: #454a50;
+    text-align: center;
+    line-height: 30px;
+    color: #F1F1F1;
+    transition: color 0.2s ease;
+}
+
+.slides-next:hover, .slides-prev:hover {
+    text-decoration: none;
+    color: #E87E04;
 }
 
 .slides-container {

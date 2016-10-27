@@ -72,7 +72,26 @@ h1 {
 	box-sizing: border-box;
 }
 .home .content {
-    padding: 59px 0 61px;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.home .list-1 {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.home .list-1 li::before {
+    content: "\2794  ";
+}
+
+.home .list-1 li {
+    background: none;
+    padding: 0;
+}
+
+.grid-heading {
+    text-align: center;
 }
 /* ---------- Tags ---------*/
 
