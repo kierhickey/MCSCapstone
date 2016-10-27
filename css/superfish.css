@@ -124,13 +124,13 @@ ul.sf-menu li:hover li ul, ul.sf-menu li.sfHover li ul {
     }
     .sf-menu>li>a {
         display: block;
-        background: #4183D7;
-        color: #f1f1f1;
+        background: #454a50;
+        color: #E87E04;
         text-align: center;
         padding: 10px 5px;
     }
     .sf-menu>li.sfHover>a, .sf-menu>li>a:hover, .sf-menu>li.current>a {
-        background-color: #4183D7;
+        background-color: #E87E04;
     }
     /***submenu***/
     .sf-menu ul {

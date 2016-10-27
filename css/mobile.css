@@ -1,13 +1,16 @@
 @media only screen and (max-width: 995px) {
     img {
-        width: 100%;
+        display: block;
+        max-width: 100%;
         height: auto;
     }
 
-    .hide1 {
+    .logo-title {
         display: none;
     }
-
+    .logo-short {
+        display: block;
+    }
     .img-indent-none1 {
         float: none;
         margin-right: 0;

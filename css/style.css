@@ -31,6 +31,24 @@ header {
     display: block;
     overflow: hidden;
 }
+.logo-short {
+    padding: 0 10px;
+    line-height: 50px;
+    box-sizing: border-box;
+    margin: 0;
+    font-size: 140%;
+    text-align: center;
+    display: none;
+    overflow: hidden;
+}
+.logo-short a {
+    color: #F1F1F1;
+}
+
+.logo-short a:hover {
+    text-decoration: none;
+    color: #E87E04;
+}
 
 .logo-title a {
     color: #F1F1F1;
