@@ -87,7 +87,6 @@ var SummaryTable = function (config) {
     };
 
     var createRow = function (booking) {
-        console.log(booking.paid);
         return $("<tr></tr>", {
             class: "booking-row",
             id: booking.bookingId,
@@ -153,7 +152,8 @@ var SummaryTable = function (config) {
         headerCls: config.headerCls || "summary-header",
         bodyCls: config.bodyCls || "summary-body",
         emptyText: "No bookings for the selected date...",
-        date: new Date(),
+        startDate: new Date(),
+        endDate: new Date(),
 
         init: function () {
             var me = this;
@@ -231,17 +231,30 @@ var SummaryTable = function (config) {
             me.update();
         },
 
-        setDate: function (d) {
+        setStartDate: function (d) {
             var me = this;
 
-            me.date = d;
+            me.startDate = d;
             me.update();
         },
 
-        getDate: function () {
+        setEndDate: function (d) {
             var me = this;
 
-            return me.date;
+            me.endDate = d;
+            me.update();
+        },
+
+        getStartDate: function () {
+            var me = this;
+
+            return me.startDate;
+        },
+
+        getEndDate: function () {
+            var me = this;
+
+            return me.endDate;
         },
 
         update: function () {
@@ -253,7 +266,7 @@ var SummaryTable = function (config) {
 
             $("." + me.bodyCls).empty();
             $("." + me.bodyCls).append(rows);
-            $(".summary-date").html("Bookings for " + _dateAsReadable(me.getDate()));
+            $(".summary-date").html("Bookings for " + _dateAsReadable(me.getStartDate()) + " - " + _dateAsReadable(me.getEndDate()));
         },
 
         render: function () {
@@ -278,7 +291,7 @@ var SummaryTable = function (config) {
                                 html: $("<th></th>", {
                                     colspan: 7,
                                     class: "summary-date",
-                                    html: "Bookings for " + _dateAsReadable(me.getDate())
+                                    html: "Bookings for " + _dateAsReadable(me.getStartDate()) + " - " + _dateAsReadable(me.getEndDate())
                                 })
                             }),
                             $("<tr></tr>", {
