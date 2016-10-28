@@ -5,6 +5,15 @@
         height: auto;
     }
 
+    .slides-container {
+        width: 100%;
+        max-height: 319px;
+    }
+    
+    .slide-nav {
+        width: 100%;
+    }
+
     .logo-title {
         display: none;
     }
@@ -130,21 +139,15 @@
         float: none;
         height: 100%;
     }
-
+    .slides-container {
+        margin-top: 10%; 
+        max-height: 12.8em;
+    }
+     
     h1 {
         float: none;
         padding-bottom: 40px;
         padding-left: 25px;
-    }
-
-    .slides-container {
-        margin-top: 10%; 
-        width: 100%;
-        height: 12.83em;
-    }
-    
-    .slide-nav {
-        width: 100%;
     }
 
    /* .bookroom_nav, .bookroom_nav a {
