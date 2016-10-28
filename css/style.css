@@ -504,7 +504,9 @@ footer a {
     background: #ec8208;
     text-decoration: none;
 }
-
+/*.bookroom_nav {
+    display: none;
+}*/
 .map-expand-button {
 	display: block;
 	width: 100%;
