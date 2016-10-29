@@ -108,7 +108,7 @@ header {
     color: inherit;
     height: 50px;
     line-height: 50px;
-    margin-left: 10px; 
+    margin-left: 10px;
 }
 
 .title a {
@@ -186,7 +186,6 @@ header {
 .content_area {
     padding-left: 5px;
     padding-right: 5px;
-    padding-top: 12px;
     margin-top: 24px;
     position: relative;
 }
