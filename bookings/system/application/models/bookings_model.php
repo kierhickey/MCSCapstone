@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../../libraries/Model.php";
 
 class Bookings_model extends Model
 {
@@ -10,6 +11,50 @@ class Bookings_model extends Model
     {
         parent::Model();
         $this->CI = &get_instance();
+    }
+
+    public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
+        $bookingsForPeriod = $this->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+
+        $filteredBookings = [];
+        $recurringBookings = [];
+
+        foreach ($bookingsForPeriod as $booking) {
+            $forRoom = true;
+            $forUser = true;
+
+            if ($roomId != null && $booking["roomId"] != $roomId) {
+                $forRoom = false;
+            } else if ($userId != null && $booking["userId"] != $userId) {
+                $forUser = false;
+            }
+
+            if ($forRoom && $forUser) {
+                if ($booking["isRecurring"] === "false") {
+                    array_push($filteredBookings, $booking);
+                } else {
+                    array_push($recurringBookings, $booking);
+                }
+            }
+        }
+
+        $expandedRecurring = [];
+
+        foreach ($recurringBookings as $booking) {
+            $dow = $booking["dayNum"];
+
+            $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
+
+            foreach ($bookingsForDate as $bookingDate) {
+                $bookingCopy = $booking;
+
+                $bookingCopy["bookingDate"] = $bookingDate->format("Y-m-d");
+
+                array_push($expandedRecurring, $bookingCopy);
+            }
+        }
+
+        return array_merge($expandedRecurring, $filteredBookings);
     }
 
 	/**
@@ -135,7 +180,9 @@ class Bookings_model extends Model
 	            if (strlen($displayname) < 2) {
 	                $displayname = $username;
 	            }
-	            $cell['body'] .= '<strong>'.$displayname.'</strong>';
+                if($this->userauth->CheckAuthLevel(ADMINISTRATOR) || $this->session->userdata("user_id") == $booking->user_id){
+                    $cell['body'] .= '<strong>'.$displayname.'</strong>';
+                }
 	            $user = 1;
 	        }
 

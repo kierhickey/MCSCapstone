@@ -128,6 +128,10 @@ class Users extends Controller {
         echo json_encode($this->userProvider->getAllBasic());
     }
 
+    public function getBasic($userId) {
+        return $this->userProvider->getBasic($userId);
+    }
+
 
 	/**
 	 * Save

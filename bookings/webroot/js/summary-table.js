@@ -209,6 +209,8 @@ var SummaryTable = function (config) {
         emptyText: "No bookings for the selected date...",
         startDate: new Date(),
         endDate: new Date(),
+        userId: config.userId || null,
+        roomId: config.roomId || null,
 
         init: function () {
             var me = this;
@@ -420,6 +422,7 @@ var SummaryTable = function (config) {
                                                 click: function () {
                                                     var form = me.createPdfForm();
                                                     console.log(form);
+                                                    debugger;
                                                     form.submit();
                                                 }
                                             }

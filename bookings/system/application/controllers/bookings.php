@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__."/../templates/Template.class.php";
 require_once __DIR__."/../data/DateHelper.class.php";
+require_once "pdfgenerator.php";
 
 class Bookings extends Controller
 {
@@ -41,48 +42,14 @@ class Bookings extends Controller
         $this->school = $school;
     }
 
+    public function generatePdf() {
+        $pdfGen = new PdfGenerator();
+
+        $pdfGen->generate($this->userProvider, $this->bookingsProvider);
+    }
+
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
-        $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
-
-        $filteredBookings = [];
-        $recurringBookings = [];
-
-        foreach ($bookingsForPeriod as $booking) {
-            $forRoom = true;
-            $forUser = true;
-
-            if ($roomId != null && $booking["roomId"] != $roomId) {
-                $forRoom = false;
-            } else if ($userId != null && $booking["userId"] != $userId) {
-                $forUser = false;
-            }
-
-            if ($forRoom && $forUser) {
-                if ($booking["isRecurring"] === "false") {
-                    array_push($filteredBookings, $booking);
-                } else {
-                    array_push($recurringBookings, $booking);
-                }
-            }
-        }
-
-        $expandedRecurring = [];
-
-        foreach ($recurringBookings as $booking) {
-            $dow = $booking["dayNum"];
-
-            $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
-
-            foreach ($bookingsForDate as $bookingDate) {
-                $bookingCopy = $booking;
-
-                $bookingCopy["bookingDate"] = $bookingDate->format("Y-m-d");
-
-                array_push($expandedRecurring, $bookingCopy);
-            }
-        }
-
-        $allBookings = array_merge($expandedRecurring, $filteredBookings);
+        $allBookings = $this->bookingsProvider->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         usort($allBookings, function ($item1, $item2) {
             $bookingOneDate = new DateTime($item1["bookingDate"]);

@@ -89,6 +89,8 @@
                         summaryTable.setStartDate(e.startDate.curr);
                         summaryTable.setEndDate(e.endDate.curr);
                         summaryTable.setBookings(response.responseData);
+                        summaryTable.userId = e.userId;
+                        summaryTable.roomId = e.roomId;
                     },
                     failure: function (response) {
                         console.log(response);
