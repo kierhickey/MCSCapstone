@@ -8,7 +8,7 @@ $route['api/pdf']                   = 'pdfgenerator/generate';
 
 // Bookings
 $route['bookings']					= 'bookings/index';
-$route['bookings/summary']          = 'bookings/summaryPage';
+$route['summary']          = 'bookings/summaryPage';
 
 // ClassroomBookings-specific
 $route['contact']					= 'site/contact';
