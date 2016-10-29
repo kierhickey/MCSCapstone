@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__."/../templates/Template.class.php";
+require_once __DIR__."/../data/DateHelper.class.php";
+require_once "pdfgenerator.php";
 
 class Bookings extends Controller
 {
@@ -40,6 +42,40 @@ class Bookings extends Controller
         $this->school = $school;
     }
 
+    public function generatePdf() {
+        $pdfGen = new PdfGenerator();
+
+        $pdfGen->generate($this->userProvider, $this->bookingsProvider);
+    }
+
+    public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
+        $allBookings = $this->bookingsProvider->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
+
+        usort($allBookings, function ($item1, $item2) {
+            $bookingOneDate = new DateTime($item1["bookingDate"]);
+            $bookingTwoDate = new DateTime($item2["bookingDate"]);
+
+            $bookingOneLocation = $item1["location"];
+            $bookingTwoLocation = $item2["location"];
+
+            $bookingOneSessionStart = $item1["bookingStart"];
+            $bookingTwoSessionStart = $item2["bookingStart"];
+
+            if ($bookingOneDate == $bookingTwoDate) {
+                if ($bookingOneLocation == $bookingTwoLocation) {
+                    if ($bookingOneSessionStart == $bookingTwoSessionStart) {
+                        return 0;
+                    }
+                    return strcmp($bookingOneSessionStart, $bookingTwoSessionStart);
+                }
+                return strcmp($bookingOneLocation, $bookingTwoLocation);
+            }
+            return $bookingOneDate < $bookingTwoDate ? -1 : 1;
+        });
+
+        return $allBookings;
+    }
+
     /**
      * Gives a summary of total bookings made over the past 2 months
      */
@@ -60,24 +96,7 @@ class Bookings extends Controller
         $userId = $_POST['userId'];
         $roomId = $_POST['roomId'];
 
-        $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
-
-        $filteredBookings = [];
-
-        foreach ($bookingsForPeriod as $booking) {
-            $forRoom = true;
-            $forUser = true;
-
-            if ($roomId != null && $booking["roomId"] != $roomId) {
-                $forRoom = false;
-            } else if ($userId != null && $booking["userId"] != $userId) {
-                $forUser = false;
-            }
-
-            if ($forRoom && $forUser) {
-                array_push($filteredBookings, $booking);
-            }
-        }
+        $filteredBookings = $this->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         $response = [
             "requestData" => [

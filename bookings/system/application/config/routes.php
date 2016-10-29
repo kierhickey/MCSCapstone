@@ -4,10 +4,11 @@
 $route['api/bookings/summary']      = 'bookings/bookingsForPeriod';
 $route['api/users']                 = 'users/getAllBasic';
 $route['api/rooms']                 = 'rooms/getAllBasic';
+$route['api/pdf']                   = 'bookings/generatePdf';
 
 // Bookings
 $route['bookings']					= 'bookings/index';
-$route['bookings/summary']          = 'bookings/summaryPage';
+$route['summary']                   = 'bookings/summaryPage';
 
 // ClassroomBookings-specific
 $route['contact']					= 'site/contact';

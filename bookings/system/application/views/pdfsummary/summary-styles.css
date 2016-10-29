@@ -1,0 +1,83 @@
+@page {
+    margin: 36pt;
+    font-family: "Calibri", sans-serif;
+    font-size: 10pt;
+}
+
+.title {
+    text-align: right;
+}
+
+.title-nouser {
+    text-align: left;
+}
+
+.main-title {
+    font-size: 16pt;
+}
+
+.field-label {
+    font-weight: bold;
+    margin-right: 3px;
+}
+
+.column {
+    display: inline-block;
+    width: 50%;
+    margin-right: -3px;
+}
+
+.right {
+    text-align: right;
+}
+
+th {
+    text-align: left;
+}
+
+.new-date td {
+    border-top: 1px solid #989898;
+}
+
+thead {
+    border-bottom: 2px solid #000;
+}
+
+.summary-table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+.margin-fix {
+    margin-right: 5px;
+    height: 90px;
+}
+
+.footer-table {
+    border: 1px solid #000;
+    border-collapse: collapse;
+    margin-top: -2px;
+    width: 35%;
+}
+
+.footer-table td {
+    border: 1px solid #000;
+}
+
+.footer-table td > div {
+    margin: 5px 10px;
+}
+
+.footer-table tr td:last-child {
+    text-align: right;
+}
+
+.thanks {
+    text-align: center;
+}
+
+.link {
+    text-decoration: underline;
+}

@@ -1,11 +1,21 @@
 var SummaryTable = function (config) {
 
     // Inject CSS
-    $("head").append($("<link/>", {
-        "rel": "stylesheet",
-        "href": "webroot/css/summary.css",
-        "type": "text/css"
-    }));
+    $("head").append(
+        [
+            $("<link/>", {
+                "rel": "stylesheet",
+                "href": "webroot/css/summary.css",
+                "type": "text/css"
+            }),
+            $("<link/>", {
+                "rel": "stylesheet",
+                "media": "print",
+                "href": "webroot/css/summary-print.css",
+                "type": "text/css"
+            }),
+        ]
+    );
 
     var _formatDate = function (date) {
         var y,m,d;
@@ -34,9 +44,9 @@ var SummaryTable = function (config) {
      * @return {[type]}     [description]
      */
     var _getDaySuffix = function (day) {
-        var nst = /1$/;
-        var nnd = /2$/;
-        var nrd = /3$/;
+        var nst = /([^1]1|^1)$/;
+        var nnd = /([^1]2|^2)$/;
+        var nrd = /([^1]3|^3)$/;
 
         if (nst.test(day)) return "st";
         if (nnd.test(day)) return "nd";
@@ -86,12 +96,56 @@ var SummaryTable = function (config) {
         return dayName + " the " + d + "<sup>" + suffix + "</sup> of " + monthName + ", " + y;
     };
 
+    var _dateRangeAsReadable = function(startDate, endDate) {
+        var y = startDate.getFullYear();
+        var m = startDate.getMonth();
+        var sD = startDate.getDate();
+        var eD = endDate.getDate()
+        var sDow = startDate.getDay();
+        var eDow = endDate.getDay();
+
+        var days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
+        var months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ]
+
+        var startDayName = days[sDow];
+        var endDayName = days[eDow];
+        var startSuffix = _getDaySuffix(sD);
+        var endSuffix = _getDaySuffix(eD);
+        var monthName = months[m];
+
+        return startDayName + " the " + sD + "<sup>" + startSuffix + "</sup>" + " to " + endDayName + " the " + eD + "<sup>" + endSuffix + "</sup>" + " of " + monthName + ", " + y;
+    }
+
     var createRow = function (booking) {
-        console.log(booking.paid);
         return $("<tr></tr>", {
             class: "booking-row",
             id: booking.bookingId,
             html: [
+                $("<td></td>", {
+                    class: "booking-username booking-cell",
+                    text: booking.bookingDate
+                }),
                 $("<td></td>", {
                     class: "booking-username booking-cell",
                     text: booking.username
@@ -153,7 +207,10 @@ var SummaryTable = function (config) {
         headerCls: config.headerCls || "summary-header",
         bodyCls: config.bodyCls || "summary-body",
         emptyText: "No bookings for the selected date...",
-        date: new Date(),
+        startDate: new Date(),
+        endDate: new Date(),
+        userId: config.userId || null,
+        roomId: config.roomId || null,
 
         init: function () {
             var me = this;
@@ -231,17 +288,89 @@ var SummaryTable = function (config) {
             me.update();
         },
 
-        setDate: function (d) {
+        setStartDate: function (d) {
             var me = this;
 
-            me.date = d;
+            me.startDate = d;
             me.update();
         },
 
-        getDate: function () {
+        setEndDate: function (d) {
             var me = this;
 
-            return me.date;
+            me.endDate = d;
+            me.update();
+        },
+
+        getStartDate: function () {
+            var me = this;
+
+            return me.startDate;
+        },
+
+        getEndDate: function () {
+            var me = this;
+
+            return me.endDate;
+        },
+
+        getHeaderText: function () {
+            var me = this;
+            var startDate = me.getStartDate();
+            var endDate = me.getEndDate();
+
+            if (startDate > endDate) {
+                var temp = endDate;
+                endDate = startDate;
+                startDate = temp;
+            }
+
+            if (startDate.getDate() == endDate.getDate()) {
+                return "Bookings for " + _dateAsReadable(startDate);
+            }
+            return "Bookings for " + _dateRangeAsReadable(startDate, endDate);
+        },
+
+        createPdfForm: function () {
+            var me = this;
+
+            var startDate = me.startDate, endDate = me.endDate;
+
+            if (startDate > endDate) {
+                endDate = me.startDate;
+                startDate = me.endDate;
+            }
+
+            var form = $("<form></form>", {
+                class: "pdf-form",
+                method: "post",
+                action: "api/pdf",
+                html: [
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "startDate",
+                        value: startDate
+                    }),
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "endDate",
+                        value: endDate
+                    }),
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "userId",
+                        value: me.userId
+                    }),
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "roomId",
+                        value: me.roomId
+                    })
+                ]
+            });
+
+            $(".content_area").append(form);
+            return $(".pdf-form");
         },
 
         update: function () {
@@ -253,7 +382,7 @@ var SummaryTable = function (config) {
 
             $("." + me.bodyCls).empty();
             $("." + me.bodyCls).append(rows);
-            $(".summary-date").html("Bookings for " + _dateAsReadable(me.getDate()));
+            $("." + me.headerCls + "-title").html(me.getHeaderText());
         },
 
         render: function () {
@@ -276,14 +405,50 @@ var SummaryTable = function (config) {
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: 7,
-                                    class: "summary-date",
-                                    html: "Bookings for " + _dateAsReadable(me.getDate())
+                                    colspan: 8,
+                                    class: me.headerCls + "-inner",
+                                    html: [
+                                        $("<span></span>", {
+                                            class: me.headerCls + "-title",
+                                            html: me.getHeaderText()
+                                        }),
+                                        $("<div></div>", {
+                                            class: "header-button",
+                                            html: $("<img/>", {
+                                                class: "header-button-icon",
+                                                src: "webroot/images/ui/material/download-white-x24.svg"
+                                            }),
+                                            on: {
+                                                click: function () {
+                                                    var form = me.createPdfForm();
+                                                    console.log(form);
+                                                    debugger;
+                                                    form.submit();
+                                                }
+                                            }
+                                        }),
+                                        $("<div></div>", {
+                                            class: "header-button",
+                                            html: $("<img/>", {
+                                                class: "header-button-icon",
+                                                src: "webroot/images/ui/material/print-white-x24.svg"
+                                            }),
+                                            on: {
+                                                click: function () {
+                                                    window.print();
+                                                }
+                                            }
+                                        })
+                                    ]
                                 })
                             }),
                             $("<tr></tr>", {
                                 class: "summary-col-headers",
                                 html: [
+                                    $("<th></th>", {
+                                        class: "header-date header-cell",
+                                        text: "Date"
+                                    }),
                                     $("<th></th>", {
                                         class: "header-username header-cell",
                                         text: "Username"

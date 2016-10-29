@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/../../libraries/Model.php";
 
 class Bookings_model extends Model
 {
@@ -10,6 +11,50 @@ class Bookings_model extends Model
     {
         parent::Model();
         $this->CI = &get_instance();
+    }
+
+    public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
+        $bookingsForPeriod = $this->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+
+        $filteredBookings = [];
+        $recurringBookings = [];
+
+        foreach ($bookingsForPeriod as $booking) {
+            $forRoom = true;
+            $forUser = true;
+
+            if ($roomId != null && $booking["roomId"] != $roomId) {
+                $forRoom = false;
+            } else if ($userId != null && $booking["userId"] != $userId) {
+                $forUser = false;
+            }
+
+            if ($forRoom && $forUser) {
+                if ($booking["isRecurring"] === "false") {
+                    array_push($filteredBookings, $booking);
+                } else {
+                    array_push($recurringBookings, $booking);
+                }
+            }
+        }
+
+        $expandedRecurring = [];
+
+        foreach ($recurringBookings as $booking) {
+            $dow = $booking["dayNum"];
+
+            $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
+
+            foreach ($bookingsForDate as $bookingDate) {
+                $bookingCopy = $booking;
+
+                $bookingCopy["bookingDate"] = $bookingDate->format("Y-m-d");
+
+                array_push($expandedRecurring, $bookingCopy);
+            }
+        }
+
+        return array_merge($expandedRecurring, $filteredBookings);
     }
 
 	/**
@@ -28,14 +73,13 @@ class Bookings_model extends Model
 		}
 
 		$schoolId = $this->session->userdata("school_id");
-		$startDate = $startDate;
-		$endDate = $endDate;
 
 		$queryString = "SELECT b.booking_id AS bookingId
                               ,u.user_id AS userId
                               ,u.username AS username
                               ,u.displayname AS displayName
                               ,b.date AS bookingDate
+                              ,b.day_num AS dayNum
                               ,p.time_start AS bookingStart
                               ,p.time_end AS bookingEnd
                               ,b.room_id as roomId
@@ -44,6 +88,9 @@ class Bookings_model extends Model
                               ,(case when b.paid = 0 then 'false'
                                      when b.paid = 1 then 'true'
                                 end) AS paid
+                              ,(case when b.date IS NULL then 'true'
+                                     when b.date IS NOT NULL then 'false'
+                                end) AS isRecurring
                         FROM bookings b
                         INNER JOIN periods p
                         ON b.period_id = p.period_id
@@ -53,12 +100,19 @@ class Bookings_model extends Model
                         ON b.room_id = r.room_id
                         WHERE
                             b.school_id = '$schoolId' AND
-                            b.date >= '$startDate' AND
-                            b.date <= '$endDate'
-                            AND b.cancelled != 1";
+                            (
+                                (b.date >= '$startDate' AND b.date <= '$endDate')
+                                OR b.date IS NULL
+                            )
+                            AND b.cancelled != 1
+                        ORDER BY b.date asc, r.location, p.time_start";
 
 		$query = $this->db->query($queryString);
-		$results = $query->result_array();
+        if ($query != false) {
+		          $results = $query->result_array();
+        } else {
+            $results = ["error" => "An error has occurred when fetching the data from the server."];
+        }
 
 		return $results;
 	}
@@ -126,7 +180,9 @@ class Bookings_model extends Model
 	            if (strlen($displayname) < 2) {
 	                $displayname = $username;
 	            }
-	            $cell['body'] .= '<strong>'.$displayname.'</strong>';
+                if($this->userauth->CheckAuthLevel(ADMINISTRATOR) || $this->session->userdata("user_id") == $booking->user_id){
+                    $cell['body'] .= '<strong>'.$displayname.'</strong>';
+                }
 	            $user = 1;
 	        }
 

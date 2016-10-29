@@ -23,10 +23,6 @@ class Rooms extends Controller {
 				redirect('login', 'location');
 			} else {
 				$this->loggedin = True;
-				if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){
-					$this->session->set_flashdata('auth', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeadmin'), True) );
-					redirect('dashboard', 'location');
-				}
 			}
 		}
 		// Load models
@@ -45,6 +41,10 @@ class Rooms extends Controller {
 
 
   function info(){
+      if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){
+          $this->session->set_flashdata('auth', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeadmin'), True) );
+          redirect('dashboard', 'location');
+      }
   	#$this->output->enable_profiler(true);
   	//$this->output->cache(60*24*7);
   	$school_id = $this->uri->segment(3);
@@ -75,6 +75,10 @@ class Rooms extends Controller {
 
 
 	function index(){
+        if(!$this->userauth->CheckAuthLevel(ADMINISTRATOR)){
+            $this->session->set_flashdata('auth', $this->load->view('msgbox/error', $this->lang->line('crbs_auth_mustbeadmin'), True) );
+            redirect('dashboard', 'location');
+        }
 		// Get list of rooms from database
 		$body['rooms'] = $this->roomsProvider->Get(NULL, $this->school_id);	//$this->session->userdata('schoolcode'));
 		// Set main layout

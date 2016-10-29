@@ -31,5 +31,5 @@ $this->load->view('partials/iconbar', $icondata);
 
 </div>
 <script src="webroot/js/calendar.js" type="application/javascript"></script>
-<script src="webroot/js/summaryTable.js" type="application/javascript"></script>
+<script src="webroot/js/summary-table.js" type="application/javascript"></script>
 <script src="webroot/js/profile.js" type="application/javascript"></script>
