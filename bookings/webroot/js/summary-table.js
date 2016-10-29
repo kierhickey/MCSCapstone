@@ -325,6 +325,40 @@ var SummaryTable = function (config) {
             return "Bookings for " + _dateRangeAsReadable(startDate, endDate);
         },
 
+        createPdfForm: function () {
+            var me = this;
+            var form = $("<form></form>", {
+                class: "pdf-form",
+                method: "post",
+                action: "api/pdf",
+                html: [
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "startDate",
+                        value: me.startDate
+                    }),
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "endDate",
+                        value: me.endDate
+                    }),
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "userId",
+                        value: me.userId
+                    }),
+                    $("<input/>", {
+                        type: "hidden",
+                        name: "roomId",
+                        value: me.roomId
+                    })
+                ]
+            });
+
+            $(".content_area").append(form);
+            return $(".pdf-form");
+        },
+
         update: function () {
             var me = this;
 
@@ -372,7 +406,9 @@ var SummaryTable = function (config) {
                                             }),
                                             on: {
                                                 click: function () {
-
+                                                    var form = me.createPdfForm();
+                                                    console.log(form);
+                                                    form.submit();
                                                 }
                                             }
                                         }),
