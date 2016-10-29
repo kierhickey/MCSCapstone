@@ -4,7 +4,8 @@ var Calendar = function (config) {
     var me = {};
 
     // Variables
-    me.day = config.day || (new Date()).getDay();
+    me.startDay = config.day || (new Date()).getDate();
+    me.endDay = config.day || (new Date()).getDate();
     me.month = config.month || (new Date()).getMonth();
     me.year = config.year || (new Date()).getFullYear();
     me.renderTo = config.renderTo || null;
@@ -20,10 +21,7 @@ var Calendar = function (config) {
     me.roomId = config.roomId || null;
 
     // Events
-    me.onDateChanged = config.onDateChanged || function () {};
-    me.onDayChanged = config.onDayChanged || function () {};
-    me.onMonthChanged = config.onMonthChanged || function () {};
-    me.onYearChanged = config.onYearChanged || function () {};
+    me.onDateRangeChanged = config.onDateRangeChanged || function () {};
 
     // Inject CSS
     $("head").append($("<link/>", {
@@ -32,8 +30,7 @@ var Calendar = function (config) {
         "type": "text/css"
     }));
 
-    $(document).on(
-        "click", ".calendar-day-cell", function (ev) {
+    $(document).on("click", ".calendar-day-cell", function (ev) {
             var self = ev.target;
             var parent = self.parentElement;
             var ptNumRegex = /^week-([^\s]*)$/
@@ -43,7 +40,13 @@ var Calendar = function (config) {
 
             if (dayDate === undefined) return;
 
-            me.setDate(me.year, me.month, dayDate);
+            var startDay = me.startDay;
+            var endDay = dayDate;
+            if (!ev.shiftKey) {
+                startDay = dayDate;
+            }
+
+            me.setDateRange(me.year, me.month, startDay, endDay);
         }
     );
 
@@ -176,7 +179,7 @@ var Calendar = function (config) {
             m = me.month + 1;
         }
 
-        me.setDate(y, m, 1);
+        me.setDateRange(y, m, 1, 1);
 
         me.update();
     };
@@ -194,7 +197,7 @@ var Calendar = function (config) {
             m = me.month - 1;
         }
 
-        me.setDate(y, m, 1);
+        me.setDateRange(y, m, 1, 1);
 
         me.update();
     };
@@ -239,67 +242,129 @@ var Calendar = function (config) {
         return days[dayIndex];
     };
 
-    me.getCellFromDate = function () {
+    me.getCellsFromDate = function () {
+        var cells = [],
+            compareStart,
+            compareEnd;
+
+        if (me.startDay > me.endDay) {
+            compareStart = me.endDay;
+            compareEnd = me.startDay;
+        } else {
+            compareStart = me.startDay;
+            compareEnd = me.endDay;
+        }
+
         for (var y = 0; y < me.map.length; y++) {
             for (var x = 0; x < me.map[y].length; x++) {
-                if (me.map[y][x] == me.day) {
+                if (me.map[y][x] >= compareStart && me.map[y][x] <= compareEnd) {
                     var week = $(".week")[y];
                     var cell = $(week).children(".calendar-day-cell")[x];
 
-                    return cell;
+                    cells.push(cell);
                 }
             }
         }
+
+        return cells;
     };
 
-    me.getDate = function () {
-        return new Date(me.year, me.month, me.day);
+    me.getStartDate = function () {
+        return new Date(me.year, me.month, me.startDay);
     }
 
-    me.setDate = function (y,m,d) {
+    me.getEndDate = function () {
+        return new Date(me.year, me.month, me.endDay);
+    }
+
+    me.setDateRange = function (y,m,sD,eD) {
+        if (y <= 1900 || m < 0 || m > 11 || sD < 1 || sD > 31 || eD < 1 || eD > 31) {
+            throw "Date parse error: out of range";
+        }
+
+        var prevStartDate = me.getStartDate();
+        var prevEndDate = me.getEndDate();
+
+        me.setStartDate(y,m,sD);
+        me.setEndDate(y,m,eD);
+
+        var currStartDate = me.getStartDate();
+        var currEndDate = me.getEndDate();
+
+        var dateRangeChanged = (currStartDate != prevStartDate) || (currEndDate != prevEndDate);
+
+        if (!dateRangeChanged) return;
+
+        var event = {
+            sender: this,
+            startDate: {
+                prev: prevStartDate,
+                curr: currStartDate
+            },
+            endDate: {
+                prev: prevEndDate,
+                curr: currEndDate
+            },
+            userId: me.userId,
+            roomId: me.roomId
+        }
+
+        me.onDateRangeChanged(event);
+
+        me.update();
+    };
+
+    me.setStartDate = function (y,m,d) {
         if (y <= 1900 || m < 0 || d < 1 || m > 11 || d > 31) {
             throw "Date out of range";
         }
 
         // The previous date
-        var prevDate = me.getDate();
+        var prevDate = me.getStartDate();
 
         me.year = y;
         me.month = m;
-        me.day = d;
+        me.startDay = d;
 
         // The current date
-        var currDate = me.getDate();
+        var currDate = me.getStartDate();
 
         // Has our date changed?
         var dateChanged = false;
 
-        // Year changed
-        if (prevDate.getFullYear() !== currDate.getFullYear()) {
-            me.onYearChanged();
-            dateChanged = true;
-        }
-        // Month changed
-        if (prevDate.getMonth() !== currDate.getMonth()) {
-            me.onMonthChanged();
-            dateChanged = true;
-        }
-        // Day changed
-        if (prevDate.getDate() !== currDate.getDate()) {
-            me.onDayChanged();
-            dateChanged = true;
-        }
+        // Date changed
+        if (prevDate != currDate) dateChanged = true;
 
         // No change, no need to do anything.
         if (!dateChanged) return;
 
-        // Our date changed event.
-        me.onDateChanged({
-            previousDate: prevDate,
-            currentDate: currDate,
-            userId: me.userId,
-            roomId: me.roomId
-        });
+        // Update the UI
+        me.update();
+    };
+
+    me.setEndDate = function (y,m,d) {
+        if (y <= 1900 || m < 0 || d < 1 || m > 11 || d > 31) {
+            throw "Date out of range";
+        }
+
+        // The previous date
+        var prevDate = me.getEndDate();
+
+        me.year = y;
+        me.month = m;
+        me.endDay = d;
+
+        // The current date
+        var currDate = me.getEndDate();
+
+        // Has our date changed?
+        var dateChanged = false;
+
+        // Date changed
+        if (prevDate != currDate) dateChanged = true;
+
+        // No change, no need to do anything.
+        if (!dateChanged) return;
 
         // Update the UI
         me.update();
@@ -371,9 +436,9 @@ var Calendar = function (config) {
 
         updateWeeks();
 
-        var cell = me.getCellFromDate();
+        var cells = me.getCellsFromDate();
         $("." + me.cls + " .selected").removeClass("selected");
-        $(cell).addClass("selected");
+        $(cells).addClass("selected");
     };
 
     var onFilterChange = function () {
@@ -382,9 +447,16 @@ var Calendar = function (config) {
         if (me.roomFilterEnabled)
             me.roomId = $("select[name=room]").val() === "" ? null : $("select[name=room]").val();
 
-        me.onDateChanged({
-            currentDate: me.getDate(),
-            prevDate: me.getDate(),
+        me.onDateRangeChanged({
+            sender: this,
+            startDate: {
+                prev: me.getStartDate(),
+                curr: me.getStartDate()
+            },
+            endDate: {
+                prev: me.getEndDate(),
+                curr: me.getEndDate()
+            },
             userId: me.userId,
             roomId: me.roomId
         });
@@ -418,8 +490,6 @@ var Calendar = function (config) {
                 change: onFilterChange
             }
         });
-
-        console.log(me.userFilterEnabled);
 
         var calendarRows = getCalendarRows();
         var calendar = $("<table></table>", {

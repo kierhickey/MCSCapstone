@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__."/../../libraries/Model.php";
+
 class Users_model extends Model{
 
 
@@ -26,6 +28,25 @@ class Users_model extends Model{
 		} else {
 			return [];
 		}
+	}
+
+	public function getBasic($userId) {
+		$schoolId = $this->session->userdata('school_id');
+
+		$queryString = "SELECT user_id AS userId
+							  ,username
+							  ,(case when displayname = '' then CONCAT(firstname, ' ', lastname)
+						  			 when displayname != '' then displayname
+								end) AS displayName
+						FROM users
+						WHERE school_id = $schoolId AND user_id = $userId";
+
+		$query = $this->db->query($queryString);
+
+		if ($query != false) {
+			return $query->result_array()[0];
+		}
+		return [];
 	}
 
 	/**

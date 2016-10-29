@@ -63,23 +63,34 @@
             // Requests
             users: users,
             rooms: rooms,
-            onDateChanged: function (e) {
+            onDateRangeChanged: function (e) {
+                var getStart, getEnd;
+
+                if (e.startDate.curr > e.endDate.curr) {
+                    getStart = e.endDate.curr;
+                    getEnd = e.startDate.curr;
+                } else {
+                    getStart = e.startDate.curr;
+                    getEnd = e.endDate.curr;
+                }
+
                 // Do summary
                 $.ajax({
                     url: "/bookings/api/bookings/summary",
                     method: "POST",
                     data: {
-                        startDate: formatDate(e.currentDate),
-                        endDate: formatDate(e.currentDate),
+                        startDate: formatDate(getStart),
+                        endDate: formatDate(getEnd),
                         userId: e.userId === "" ? null : e.userId,
                         roomId: e.roomId === "" ? null : e.roomId
                     },
                     success: function (response) {
-                        response.responseData.each(function (booking) {
-                            booking.bookingDate = e.currentDate;
-                        });
-                        summaryTable.setDate(e.currentDate);
+                        console.log(response);
+                        summaryTable.setStartDate(e.startDate.curr);
+                        summaryTable.setEndDate(e.endDate.curr);
                         summaryTable.setBookings(response.responseData);
+                        summaryTable.userId = e.userId;
+                        summaryTable.roomId = e.roomId;
                     },
                     failure: function (response) {
                         console.log(response);
