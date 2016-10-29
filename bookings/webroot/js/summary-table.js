@@ -331,6 +331,14 @@ var SummaryTable = function (config) {
 
         createPdfForm: function () {
             var me = this;
+
+            var startDate = me.startDate, endDate = me.endDate;
+
+            if (startDate > endDate) {
+                endDate = me.startDate;
+                startDate = me.endDate;
+            }
+
             var form = $("<form></form>", {
                 class: "pdf-form",
                 method: "post",
@@ -339,12 +347,12 @@ var SummaryTable = function (config) {
                     $("<input/>", {
                         type: "hidden",
                         name: "startDate",
-                        value: me.startDate
+                        value: startDate
                     }),
                     $("<input/>", {
                         type: "hidden",
                         name: "endDate",
-                        value: me.endDate
+                        value: endDate
                     }),
                     $("<input/>", {
                         type: "hidden",

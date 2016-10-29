@@ -62,27 +62,32 @@ class PdfGenerator {
         $bookingController = new Bookings();
         $bookings = $bookingController->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
-        //usort($bookings, [$this, "sortDate"]);
-
         $lastDate;
 
         foreach ($bookings as $entry) {
-            $temp = explode("-", $entry["bookingDate"]);
-            $date = new DateTime($temp[0]."/".$temp[1]."/".$temp[2]);
+            $date = new DateTime(str_replace("-", "/", $entry["bookingDate"]));
             $dateString = $date->format("d/m/Y");
             $session = $entry["bookingStart"] . " &ndash; " . $entry["bookingEnd"];
-            $price = $entry["isRecurring"] ? "10.00" : "15.00";
+            $price = $entry["isRecurring"] == "true" ? "10.00" : "15.00";
             $location = $entry["location"];
             $room = $entry["roomName"];
 
-            $htmlSummaryTable = $htmlSummaryTable . "
-            <tr>
-                <td>$dateString</td>
+            $tr = "<tr>";
+
+            if ($lastDate != $dateString) {
+                $tr = "<tr class='new-date'>";
+            }
+
+            $htmlSummaryTable = $htmlSummaryTable .
+            $tr.
+                "<td>$dateString</td>
                 <td>$location</td>
                 <td>$room</td>
                 <td>$session</td>
                 <td>$price</td>
             </tr>";
+
+            $lastDate = $dateString;
         }
 
         $htmlSummaryTable = $htmlSummaryTable . "</tbody></table>";

@@ -21,11 +21,16 @@ th {
     text-align: left;
 }
 
+.new-date td {
+    border-top: 1px solid #989898;
+}
+
 thead {
-    border-bottom: 1px solid #000;
+    border-bottom: 2px solid #000;
 }
 
 .summary-table {
     width: 100%;
     text-align: left;
+    border-collapse: collapse;
 }

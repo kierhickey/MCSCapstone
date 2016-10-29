@@ -27,24 +27,6 @@ class Bookings_model extends Model
 			throw new Exception("startDate must be before endDate");
 		}
 
-        $startTemp = explode("-", $startDate);
-        $endTemp = explode("-", $endDate);
-
-        $startDateDate = new DateTime($startTemp[0]."/".$startTemp[1]."/".$startTemp[2]);
-        $endDateDate = new DateTime($endTemp[0]."/".$endTemp[1]."/".$endTemp[2]);
-
-        $minDayNum = 0;
-        $maxDayNum = 0;
-
-        $daysDifference = $endDateDate->diff($startDateDate)->format("%a");
-
-        if ($daysDifference > 7) {
-            $minDayNum = 1;
-            $maxDayNum = 7;
-        } else {
-
-        }
-
 		$schoolId = $this->session->userdata("school_id");
 
 		$queryString = "SELECT b.booking_id AS bookingId
