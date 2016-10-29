@@ -18,7 +18,7 @@ var Calendar = function (config) {
     me.map = [];
     me.userId = config.userId || null;
     me.roomId = config.roomId || null;
-    
+
     // Events
     me.onDateChanged = config.onDateChanged || function () {};
     me.onDayChanged = config.onDayChanged || function () {};
@@ -314,7 +314,7 @@ var Calendar = function (config) {
             }
         }
 
-        var defaultOpt = $("<option></option>", {class: "null-option", text: "No Room", value: ""});
+        var defaultOpt = $("<option></option>", {class: "null-option", text: "All Rooms", value: ""});
 
         var optGroups = [];
         var options = [];
@@ -393,14 +393,14 @@ var Calendar = function (config) {
     // Renders the calendar
     me.render = function () {
         if (me.rendered) return me.update();
-        
+
         if (!me.filterEnabled) {
             console.log("Filter is off!");
         };
         if (me.filterEnabled){
             console.log("Filter is on!");
         };
-        
+
         var userFilterSelect = $("<select></select>", {
             class: "calendar-filter",
             name: "user",
@@ -409,7 +409,7 @@ var Calendar = function (config) {
                 change: onFilterChange
             }
         });
-        
+
         var roomFilterSelect = $("<select></select>", {
             class: "calendar-filter",
             name: "room",
@@ -418,7 +418,7 @@ var Calendar = function (config) {
                 change: onFilterChange
             }
         });
-        
+
         console.log(me.userFilterEnabled);
 
         var calendarRows = getCalendarRows();
@@ -454,13 +454,13 @@ var Calendar = function (config) {
                                         $("<div></div>", {
                                             class: "calendar-filters",
                                             html: [
-                                                me.roomFilterEnabled 
+                                                me.roomFilterEnabled
                                                     ? roomFilterSelect
                                                     : "",
                                                 me.userFilterEnabled
                                                     ? userFilterSelect
                                                     : ""
-                                                
+
                                             ]
                                         })
                                         //END OF FILTERS
