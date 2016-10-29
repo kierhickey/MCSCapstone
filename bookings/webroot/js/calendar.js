@@ -243,11 +243,21 @@ var Calendar = function (config) {
     };
 
     me.getCellsFromDate = function () {
-        var cells = [];
+        var cells = [],
+            compareStart,
+            compareEnd;
+
+        if (me.startDay > me.endDay) {
+            compareStart = me.endDay;
+            compareEnd = me.startDay;
+        } else {
+            compareStart = me.startDay;
+            compareEnd = me.endDay;
+        }
 
         for (var y = 0; y < me.map.length; y++) {
             for (var x = 0; x < me.map[y].length; x++) {
-                if (me.map[y][x] >= me.startDay && me.map[y][x] <= me.endDay) {
+                if (me.map[y][x] >= compareStart && me.map[y][x] <= compareEnd) {
                     var week = $(".week")[y];
                     var cell = $(week).children(".calendar-day-cell")[x];
 
@@ -270,11 +280,6 @@ var Calendar = function (config) {
     me.setDateRange = function (y,m,sD,eD) {
         if (y <= 1900 || m < 0 || m > 11 || sD < 1 || sD > 31 || eD < 1 || eD > 31) {
             throw "Date parse error: out of range";
-        }
-        if (sD > eD) {
-            var temp = sD;
-            sD = eD;
-            eD = temp;
         }
 
         var prevStartDate = me.getStartDate();
@@ -442,7 +447,7 @@ var Calendar = function (config) {
         if (me.roomFilterEnabled)
             me.roomId = $("select[name=room]").val() === "" ? null : $("select[name=room]").val();
 
-        me.onDateChanged({
+        me.onDateRangeChanged({
             sender: this,
             startDate: {
                 prev: me.getStartDate(),

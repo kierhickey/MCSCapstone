@@ -64,18 +64,28 @@
             users: users,
             rooms: rooms,
             onDateRangeChanged: function (e) {
-                console.log(e);
+                var getStart, getEnd;
+
+                if (e.startDate.curr > e.endDate.curr) {
+                    getStart = e.endDate.curr;
+                    getEnd = e.startDate.curr;
+                } else {
+                    getStart = e.startDate.curr;
+                    getEnd = e.endDate.curr;
+                }
+
                 // Do summary
                 $.ajax({
                     url: "/bookings/api/bookings/summary",
                     method: "POST",
                     data: {
-                        startDate: formatDate(e.startDate.curr),
-                        endDate: formatDate(e.endDate.curr),
+                        startDate: formatDate(getStart),
+                        endDate: formatDate(getEnd),
                         userId: e.userId === "" ? null : e.userId,
                         roomId: e.roomId === "" ? null : e.roomId
                     },
                     success: function (response) {
+                        console.log(response);
                         response.responseData.each(function (booking) {
                             booking.bookingDate = e.currentDate;
                         });

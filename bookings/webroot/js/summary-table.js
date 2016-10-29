@@ -34,9 +34,9 @@ var SummaryTable = function (config) {
      * @return {[type]}     [description]
      */
     var _getDaySuffix = function (day) {
-        var nst = /1$/;
-        var nnd = /2$/;
-        var nrd = /3$/;
+        var nst = /[^1]1$/;
+        var nnd = /[^1]2$/;
+        var nrd = /[^1]3$/;
 
         if (nst.test(day)) return "st";
         if (nnd.test(day)) return "nd";
@@ -257,6 +257,23 @@ var SummaryTable = function (config) {
             return me.endDate;
         },
 
+        getHeaderText: function () {
+            var me = this;
+            var startDate = me.getStartDate();
+            var endDate = me.getEndDate();
+
+            if (startDate > endDate) {
+                var temp = endDate;
+                endDate = startDate;
+                startDate = temp;
+            }
+
+            if (startDate.getDate() == endDate.getDate()) {
+                return "Bookings for " + _dateAsReadable(startDate);
+            }
+            return "Bookings for " + _dateAsReadable(startDate) + " - " + _dateAsReadable(endDate);
+        },
+
         update: function () {
             var me = this;
 
@@ -266,7 +283,7 @@ var SummaryTable = function (config) {
 
             $("." + me.bodyCls).empty();
             $("." + me.bodyCls).append(rows);
-            $(".summary-date").html("Bookings for " + _dateAsReadable(me.getStartDate()) + " - " + _dateAsReadable(me.getEndDate()));
+            $("." + me.headerCls + "-title").html(me.getHeaderText());
         },
 
         render: function () {
@@ -290,8 +307,13 @@ var SummaryTable = function (config) {
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
                                     colspan: 7,
-                                    class: "summary-date",
-                                    html: "Bookings for " + _dateAsReadable(me.getStartDate()) + " - " + _dateAsReadable(me.getEndDate())
+                                    class: me.headerCls + "-inner",
+                                    html: [
+                                        $("<span></span>", {
+                                            class: me.headerCls + "-title",
+                                            html: me.getHeaderText()
+                                        })
+                                    ]
                                 })
                             }),
                             $("<tr></tr>", {
