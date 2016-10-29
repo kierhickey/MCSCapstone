@@ -28,6 +28,9 @@
     }
 }
 @media screen and (max-width: 720px) {
+    header {
+        height: 100px;
+    }
   .title {
     width: 100%;
     text-align: center;
@@ -36,8 +39,11 @@
   .nav-box {
     text-align: center;
     width: 100%;
-    margin: 0px; 
+    margin: 0px;
     background-color: #4183D7;
+  }
+  .header-fix {
+      height: 100px;
   }
   .content_area {
     margin-top: 2em;
@@ -52,7 +58,7 @@
 	}
 	.nav-box {
 		width: 100%;
-		margin: 0px; 
+		margin: 0px;
 	}
    .nav-item {
    		text-align: center;
