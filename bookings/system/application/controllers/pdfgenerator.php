@@ -31,8 +31,22 @@ class PdfGenerator {
                 </tr>
             </thead><tbody>";
 
+        $startDate = new DateTime();
+        $endDate = (new DateTime())->add(new DateInterval("P1M"));
+
+        if ($_POST["startDate"] != null) {
+            $startDate = new DateTime($_POST["startDate"]);
+        }
+
+        if ($_POST["endDate"] != null) {
+            $endDate = new DateTime($_POST["endDate"]);
+        }
+
+        $userId = $_POST['userId'];
+        $roomId = $_POST['roomId'];
+
         $bookingController = new Bookings();
-        $bookings = $bookingController->bookingsForPeriod();
+        $bookings = $bookingController->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         foreach ($entries as $entry) {
             $date = $entry["date"];

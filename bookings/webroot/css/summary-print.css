@@ -1,0 +1,19 @@
+.calendar-container {
+    display: none;
+}
+
+.summary-table {
+    box-shadow: none;
+}
+
+.summary-header {
+    color: #000;
+}
+
+.header-cell {
+    text-decoration: underline;
+}
+
+p {
+    display: none;
+}

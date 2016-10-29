@@ -1,11 +1,21 @@
 var SummaryTable = function (config) {
 
     // Inject CSS
-    $("head").append($("<link/>", {
-        "rel": "stylesheet",
-        "href": "webroot/css/summary.css",
-        "type": "text/css"
-    }));
+    $("head").append(
+        [
+            $("<link/>", {
+                "rel": "stylesheet",
+                "href": "webroot/css/summary.css",
+                "type": "text/css"
+            }),
+            $("<link/>", {
+                "rel": "stylesheet",
+                "media": "print",
+                "href": "webroot/css/summary-print.css",
+                "type": "text/css"
+            }),
+        ]
+    );
 
     var _formatDate = function (date) {
         var y,m,d;
@@ -34,9 +44,9 @@ var SummaryTable = function (config) {
      * @return {[type]}     [description]
      */
     var _getDaySuffix = function (day) {
-        var nst = /[^1]1$/;
-        var nnd = /[^1]2$/;
-        var nrd = /[^1]3$/;
+        var nst = /([^1]1|^1)$/;
+        var nnd = /([^1]2|^2)$/;
+        var nrd = /([^1]3|^3)$/;
 
         if (nst.test(day)) return "st";
         if (nnd.test(day)) return "nd";
@@ -85,6 +95,47 @@ var SummaryTable = function (config) {
 
         return dayName + " the " + d + "<sup>" + suffix + "</sup> of " + monthName + ", " + y;
     };
+
+    var _dateRangeAsReadable = function(startDate, endDate) {
+        var y = startDate.getFullYear();
+        var m = startDate.getMonth();
+        var sD = startDate.getDate();
+        var eD = endDate.getDate()
+        var sDow = startDate.getDay();
+        var eDow = endDate.getDay();
+
+        var days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
+        var months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ]
+
+        var startDayName = days[sDow];
+        var endDayName = days[eDow];
+        var startSuffix = _getDaySuffix(sD);
+        var endSuffix = _getDaySuffix(eD);
+        var monthName = months[m];
+
+        return startDayName + " the " + sD + "<sup>" + startSuffix + "</sup>" + " to " + endDayName + " the " + eD + "<sup>" + endSuffix + "</sup>" + " of " + monthName + ", " + y;
+    }
 
     var createRow = function (booking) {
         return $("<tr></tr>", {
@@ -271,7 +322,7 @@ var SummaryTable = function (config) {
             if (startDate.getDate() == endDate.getDate()) {
                 return "Bookings for " + _dateAsReadable(startDate);
             }
-            return "Bookings for " + _dateAsReadable(startDate) + " - " + _dateAsReadable(endDate);
+            return "Bookings for " + _dateRangeAsReadable(startDate, endDate);
         },
 
         update: function () {
@@ -312,6 +363,30 @@ var SummaryTable = function (config) {
                                         $("<span></span>", {
                                             class: me.headerCls + "-title",
                                             html: me.getHeaderText()
+                                        }),
+                                        $("<div></div>", {
+                                            class: "header-button",
+                                            html: $("<img/>", {
+                                                class: "header-button-icon",
+                                                src: "webroot/images/ui/material/download-white-x24.svg"
+                                            }),
+                                            on: {
+                                                click: function () {
+
+                                                }
+                                            }
+                                        }),
+                                        $("<div></div>", {
+                                            class: "header-button",
+                                            html: $("<img/>", {
+                                                class: "header-button-icon",
+                                                src: "webroot/images/ui/material/print-white-x24.svg"
+                                            }),
+                                            on: {
+                                                click: function () {
+                                                    window.print();
+                                                }
+                                            }
                                         })
                                     ]
                                 })

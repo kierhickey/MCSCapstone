@@ -15,6 +15,7 @@
 }
 
 .summary-col-headers {
+    height: 20px;
     background-color: #509ed7;
 }
 
@@ -30,12 +31,31 @@
     text-overflow: ellipsis;
 }
 
+.header-button {
+    width: 40px;
+    height: 40px;
+    float: right;
+    cursor: pointer;
+}
+
+.header-button-icon {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+}
+
+.header-button:hover {
+    background-color: rgba(255,255,255,0.4)
+}
+
 .header-cell {
     box-sizing: border-box;
     height: 20px;
     font-weight: normal;
+    font-size: 90%;
     cursor: pointer;
     line-height: 20px;
+    padding: 0;
 }
 
 .summary-table td {
@@ -56,9 +76,23 @@
 .summary-header {
     background-color: #5bbaff;
     color: #fff;
-    height: 50px;
+    height: 60px;
     line-height: 30px;
     text-align: center;
+}
+
+.summary-header-title {
+    position: absolute;
+    max-width: 80%;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.summary-header-inner {
+    text-align: center;
+    height: 40px;
+    padding: 0;
 }
 
 .booking-row {

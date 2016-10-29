@@ -40,6 +40,29 @@ class Bookings extends Controller
         $this->school = $school;
     }
 
+    public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
+        $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+
+        $filteredBookings = [];
+
+        foreach ($bookingsForPeriod as $booking) {
+            $forRoom = true;
+            $forUser = true;
+
+            if ($roomId != null && $booking["roomId"] != $roomId) {
+                $forRoom = false;
+            } else if ($userId != null && $booking["userId"] != $userId) {
+                $forUser = false;
+            }
+
+            if ($forRoom && $forUser) {
+                array_push($filteredBookings, $booking);
+            }
+        }
+
+        return $filteredBookings;
+    }
+
     /**
      * Gives a summary of total bookings made over the past 2 months
      */
@@ -60,24 +83,7 @@ class Bookings extends Controller
         $userId = $_POST['userId'];
         $roomId = $_POST['roomId'];
 
-        $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
-
-        $filteredBookings = [];
-
-        foreach ($bookingsForPeriod as $booking) {
-            $forRoom = true;
-            $forUser = true;
-
-            if ($roomId != null && $booking["roomId"] != $roomId) {
-                $forRoom = false;
-            } else if ($userId != null && $booking["userId"] != $userId) {
-                $forUser = false;
-            }
-
-            if ($forRoom && $forUser) {
-                array_push($filteredBookings, $booking);
-            }
-        }
+        $filteredBookings = $this->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         $response = [
             "requestData" => [
