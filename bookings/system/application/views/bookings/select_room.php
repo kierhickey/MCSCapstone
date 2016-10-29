@@ -1,15 +1,3 @@
-<?php
-$roomlist = array();
-$roomphoto = array();
-foreach($rooms as $room){
-	$roomlist[$room->room_id] = $room->name;
-	if($room->photo != NULL){
-		$roomphoto[$room->room_id] = TRUE;
-	} else {
-		#$roomphoto[$room->room_id] = FALSE;
-	}
-}
-?>
 <form action="<?php echo site_url('bookings/load') ?>" method="POST">
 <?php echo form_hidden('chosen_date', $chosen_date) ?>
 <table>
@@ -30,18 +18,12 @@ foreach($rooms as $room){
 			</label>
 		</td>
 		<td valign="middle">
-			<?php
-			echo form_dropdown(
-				'room_id',
-				$roomlist,
-				$room_id,
-				'onchange="this.form.submit()" onmouseup="this.form.submit"'
-			);
-		?>
+            <select name="room_id" class="roomBookSelect" onchange="this.form.submit()"></select>
 		</td>
 		<td> &nbsp; <input type="submit" value=" Load " /></td>
 	</tr>
 </table>
+    <script src="webroot/js/room_select.js" type="application/javascript"></script>
 </form>
 
 <br />
