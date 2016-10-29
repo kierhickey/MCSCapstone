@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/../templates/Template.class.php";
+require_once __DIR__."/../data/DateHelper.class.php";
 
 class Bookings extends Controller
 {
@@ -44,6 +45,7 @@ class Bookings extends Controller
         $bookingsForPeriod = $this->bookingsProvider->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
         $filteredBookings = [];
+        $recurringBookings = [];
 
         foreach ($bookingsForPeriod as $booking) {
             $forRoom = true;
@@ -56,11 +58,33 @@ class Bookings extends Controller
             }
 
             if ($forRoom && $forUser) {
-                array_push($filteredBookings, $booking);
+                if ($booking["isRecurring"] === "false") {
+                    array_push($filteredBookings, $booking);
+                } else {
+                    array_push($recurringBookings, $booking);
+                }
             }
         }
 
-        return $filteredBookings;
+        $expandedRecurring = [];
+
+        foreach ($recurringBookings as $booking) {
+            $dow = $booking["dayNum"];
+
+            $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
+
+            foreach ($bookingsForDate as $bookingDate) {
+                $bookingCopy = $booking;
+
+                $bookingCopy["bookingDate"] = $bookingDate->format("Y-m-d");
+
+                array_push($expandedRecurring, $bookingCopy);
+            }
+        }
+
+        $allBookings = array_merge($expandedRecurring, $filteredBookings);
+
+        return $allBookings;
     }
 
     /**

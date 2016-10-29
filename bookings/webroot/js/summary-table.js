@@ -144,6 +144,10 @@ var SummaryTable = function (config) {
             html: [
                 $("<td></td>", {
                     class: "booking-username booking-cell",
+                    text: booking.bookingDate
+                }),
+                $("<td></td>", {
+                    class: "booking-username booking-cell",
                     text: booking.username
                 }),
                 $("<td></td>", {
@@ -391,7 +395,7 @@ var SummaryTable = function (config) {
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: 7,
+                                    colspan: 8,
                                     class: me.headerCls + "-inner",
                                     html: [
                                         $("<span></span>", {
@@ -430,6 +434,10 @@ var SummaryTable = function (config) {
                             $("<tr></tr>", {
                                 class: "summary-col-headers",
                                 html: [
+                                    $("<th></th>", {
+                                        class: "header-date header-cell",
+                                        text: "Date"
+                                    }),
                                     $("<th></th>", {
                                         class: "header-username header-cell",
                                         text: "Username"

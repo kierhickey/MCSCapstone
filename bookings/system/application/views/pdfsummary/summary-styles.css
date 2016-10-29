@@ -17,7 +17,12 @@
     margin-right: 3px;
 }
 
-.foreword {
+th {
+    text-align: left;
+}
+
+thead {
+    border-bottom: 1px solid #000;
 }
 
 .summary-table {

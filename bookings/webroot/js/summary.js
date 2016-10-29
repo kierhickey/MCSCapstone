@@ -86,9 +86,6 @@
                     },
                     success: function (response) {
                         console.log(response);
-                        response.responseData.each(function (booking) {
-                            booking.bookingDate = e.currentDate;
-                        });
                         summaryTable.setStartDate(e.startDate.curr);
                         summaryTable.setEndDate(e.endDate.curr);
                         summaryTable.setBookings(response.responseData);

@@ -27,15 +27,32 @@ class Bookings_model extends Model
 			throw new Exception("startDate must be before endDate");
 		}
 
+        $startTemp = explode("-", $startDate);
+        $endTemp = explode("-", $endDate);
+
+        $startDateDate = new DateTime($startTemp[0]."/".$startTemp[1]."/".$startTemp[2]);
+        $endDateDate = new DateTime($endTemp[0]."/".$endTemp[1]."/".$endTemp[2]);
+
+        $minDayNum = 0;
+        $maxDayNum = 0;
+
+        $daysDifference = $endDateDate->diff($startDateDate)->format("%a");
+
+        if ($daysDifference > 7) {
+            $minDayNum = 1;
+            $maxDayNum = 7;
+        } else {
+
+        }
+
 		$schoolId = $this->session->userdata("school_id");
-		$startDate = $startDate;
-		$endDate = $endDate;
 
 		$queryString = "SELECT b.booking_id AS bookingId
                               ,u.user_id AS userId
                               ,u.username AS username
                               ,u.displayname AS displayName
                               ,b.date AS bookingDate
+                              ,b.day_num AS dayNum
                               ,p.time_start AS bookingStart
                               ,p.time_end AS bookingEnd
                               ,b.room_id as roomId
@@ -44,6 +61,9 @@ class Bookings_model extends Model
                               ,(case when b.paid = 0 then 'false'
                                      when b.paid = 1 then 'true'
                                 end) AS paid
+                              ,(case when b.date IS NULL then 'true'
+                                     when b.date IS NOT NULL then 'false'
+                                end) AS isRecurring
                         FROM bookings b
                         INNER JOIN periods p
                         ON b.period_id = p.period_id
@@ -53,15 +73,18 @@ class Bookings_model extends Model
                         ON b.room_id = r.room_id
                         WHERE
                             b.school_id = '$schoolId' AND
-                            b.date >= '$startDate' AND
-                            b.date <= '$endDate'
-                            AND b.cancelled != 1";
+                            (
+                                (b.date >= '$startDate' AND b.date <= '$endDate')
+                                OR b.date IS NULL
+                            )
+                            AND b.cancelled != 1
+                        ORDER BY b.date asc, r.location, p.time_start";
 
 		$query = $this->db->query($queryString);
         if ($query != false) {
 		          $results = $query->result_array();
         } else {
-            $results = ["error" => $this->db];
+            $results = ["error" => "An error has occurred when fetching the data from the server."];
         }
 
 		return $results;

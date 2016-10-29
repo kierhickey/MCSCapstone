@@ -14,13 +14,27 @@ class PdfGenerator {
     const MARGIN_SIZE_TOP = 36;
     const MARGIN_SIZE_BOTTOM = 36;
 
+    public function sortDate($a, $b) {
+        $aDateTemp = explode("-", $a->bookingDate);
+        $aDay = intval($aDateTemp[2]);
+        $aMonth = intval($aDateTemp[1]);
+        $aYear = intval($aDateTemp[0]);
+
+        $bDateTemp = explode("-", $b->bookingDate);
+        $bDay = intval($bDateTemp[2]);
+        $bMonth = intval($bDateTemp[1]);
+        $bYear = intval($bDateTemp[0]);
+
+        return ($aYear >= $bYear) && ($aMonth >= $bMonth) && ($aDay > $bDay);
+    }
+
     public function loadHtmlContent($pdf) {
         $pdf->setBasePath(__DIR__."/../views/pdfsummary/");
         $htmlHeader = file_get_contents(__DIR__."/../views/pdfsummary/summary-header.html");
         $htmlFooter = file_get_contents(__DIR__."/../views/pdfsummary/summary-footer.html");
 
         $htmlSummaryTable = "<table class='summary-table'>";
-        $htmlSummaryTable .= "
+        $htmlSummaryTable = $htmlSummaryTable . "
             <thead>
                 <tr>
                     <th>Date</th>
@@ -48,14 +62,22 @@ class PdfGenerator {
         $bookingController = new Bookings();
         $bookings = $bookingController->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
-        foreach ($entries as $entry) {
-            $date = $entry["date"];
-            $session = $entry["startDate"] + " &ndash; " + $entry["endDate"];
-            $price = $entry["isRecurring"] ? 10.00 : 15.00;
+        //usort($bookings, [$this, "sortDate"]);
 
-            $htmlSummaryTable .= "
+        $lastDate;
+
+        foreach ($bookings as $entry) {
+            $temp = explode("-", $entry["bookingDate"]);
+            $date = new DateTime($temp[0]."/".$temp[1]."/".$temp[2]);
+            $dateString = $date->format("d/m/Y");
+            $session = $entry["bookingStart"] . " &ndash; " . $entry["bookingEnd"];
+            $price = $entry["isRecurring"] ? "10.00" : "15.00";
+            $location = $entry["location"];
+            $room = $entry["roomName"];
+
+            $htmlSummaryTable = $htmlSummaryTable . "
             <tr>
-                <td>$date</td>
+                <td>$dateString</td>
                 <td>$location</td>
                 <td>$room</td>
                 <td>$session</td>
@@ -63,7 +85,13 @@ class PdfGenerator {
             </tr>";
         }
 
-        $htmlSummaryTable .= "</tbody></table>";
+        $htmlSummaryTable = $htmlSummaryTable . "</tbody></table>";
+
+        // Replace values in HTML Header
+        $htmlHeader = str_replace("{{userFullName}}", "John Doe", $htmlHeader);
+        $htmlHeader = str_replace("{{startDate}}", $startDate->format("d/m/Y"), $htmlHeader);
+        $htmlHeader = str_replace("{{endDate}}", $endDate->format("d/m/Y"), $htmlHeader);
+        $htmlHeader = str_replace("{{dueDate}}", "End of Week", $htmlHeader);
 
         $pdf->loadHtml($htmlHeader.$htmlSummaryTable.$htmlFooter);
     }
