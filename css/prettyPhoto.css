@@ -151,11 +151,11 @@
 	div.dark_square .pp_description { color: #fff; }
 	div.dark_square .pp_loaderIcon { background: url(../images/prettyPhoto/dark_square/loader.gif) center center no-repeat; } /* Loader icon */
 	
-	div.dark_square .pp_expand { background: url(../images/prettyPhoto/dark_square/sprite.png) -31px -26px no-repeat; cursor: pointer; } /* Expand button */
-	div.dark_square .pp_expand:hover { background: url(../images/prettyPhoto/dark_square/sprite.png) -31px -47px no-repeat; cursor: pointer; } /* Expand button hover */
-	div.dark_square .pp_contract { background: url(../images/prettyPhoto/dark_square/sprite.png) 0 -26px no-repeat; cursor: pointer; } /* Contract button */
-	div.dark_square .pp_contract:hover { background: url(../images/prettyPhoto/dark_square/sprite.png) 0 -47px no-repeat; cursor: pointer; } /* Contract button hover */
-	div.dark_square .pp_close { width: 75px; height: 22px; background: url(../images/prettyPhoto/dark_square/sprite.png) -1px -1px no-repeat; cursor: pointer; } /* Close button */
+	div.dark_square .pp_expand { background: url(../images/prettyPhoto/dark_square/btnExpand_18px.svg) 0px 0px no-repeat; cursor: pointer; } /* Expand button */
+	/*div.dark_square .pp_expand:hover { background: url(../images/prettyPhoto/dark_square/btnExpand.svg) -1px -1px no-repeat; cursor: pointer; } Expand button hover */
+	div.dark_square .pp_contract { background: url(../images/prettyPhoto/dark_square/btnContract_18px.svg) 0px 0px no-repeat; cursor: pointer; } /* Contract button */
+	/*div.dark_square .pp_contract:hover { background: url(../images/prettyPhoto/dark_square/btnContract.svg) -1px -1px no-repeat; cursor: pointer; } Contract button hover */
+	div.dark_square .pp_close { width: 25px; height: 25px; background: url(../images/prettyPhoto/dark_square/close_24px.svg) 0px 0px no-repeat; cursor: pointer; } /* Close button */
 	div.dark_square .pp_details { position: relative; }
 	div.dark_square .pp_description { margin: 0 85px 0 0; }
 	div.dark_square #pp_full_res .pp_inline { color: #fff; }
@@ -165,13 +165,13 @@
 	div.dark_square .pp_nav .pp_play { background: url(../images/prettyPhoto/dark_square/sprite.png) -1px -100px no-repeat; height: 15px; width: 14px; }
 	div.dark_square .pp_nav .pp_pause { background: url(../images/prettyPhoto/dark_square/sprite.png) -24px -100px no-repeat; height: 15px; width: 14px; }
 	
-	div.dark_square .pp_arrow_previous { background: url(../images/prettyPhoto/dark_square/sprite.png) 0 -71px no-repeat; } /* The previous arrow in the bottom nav */
+	div.dark_square .pp_arrow_previous { background: url(../images/prettyPhoto/dark_square/btnPrevious_24px.svg) 0px 0px no-repeat; height: 24px; width: 24px; } /* The previous arrow in the bottom nav */
 		div.dark_square .pp_arrow_previous.disabled { background-position: 0 -87px; cursor: default; }
-	div.dark_square .pp_arrow_next { background: url(../images/prettyPhoto/dark_square/sprite.png) -22px -71px no-repeat; } /* The next arrow in the bottom nav */
+	div.dark_square .pp_arrow_next { background: url(../images/prettyPhoto/dark_square/btnNext_24px.svg) 0px 0px no-repeat; height: 24px; width: 24px;} /* The next arrow in the bottom nav */
 		div.dark_square .pp_arrow_next.disabled { background-position: -22px -87px; cursor: default; }
 	
-	div.dark_square .pp_next:hover { background: url(../images/prettyPhoto/dark_square/btnNext.png) center right  no-repeat; cursor: pointer; } /* Next button */
-	div.dark_square .pp_previous:hover { background: url(../images/prettyPhoto/dark_square/btnPrevious.png) center left no-repeat; cursor: pointer; } /* Previous button */
+	div.dark_square .pp_next:hover { background: url(../images/prettyPhoto/dark_square/btnNext_24px.svg) center right  no-repeat; cursor: pointer; } /* Next button */
+	div.dark_square .pp_previous:hover { background: url(../images/prettyPhoto/dark_square/btnPrevious_24px.svg) center left no-repeat; cursor: pointer; } /* Previous button */
 
 
 	/* ----------------------------------
