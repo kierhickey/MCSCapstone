@@ -379,7 +379,7 @@ var Calendar = function (config) {
             }
         }
 
-        var defaultOpt = $("<option></option>", {class: "null-option", text: "No Room", value: ""});
+        var defaultOpt = $("<option></option>", {class: "null-option", text: "All Rooms", value: ""});
 
         var optGroups = [];
         var options = [];
