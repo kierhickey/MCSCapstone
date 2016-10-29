@@ -397,7 +397,7 @@ time {
     z-index: 1;
 }
 .lightbox-image span {
-    background: url("../images/magnify.png") no-repeat scroll 50% 50% transparent;
+    background: url("../images/magnify_48px.svg") no-repeat scroll 50% 50% transparent;
     display: inline-block;
     height: 100%;
     left: 0;
