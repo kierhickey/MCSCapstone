@@ -149,7 +149,7 @@
 									</li>
 								</ul>
 								<div class="thumb-box">
-									<ul class="thumbs">
+									<ul class="thumbs-1">
 										<li>
 											<a href="#stkilda-1" data-slide="1">
 												<img src="images/stkildard/room1-large.jpg" alt="This is caption 1 <a href='#link'>Even with links!</a>">
@@ -231,7 +231,7 @@
 									</li>
 								</ul>
 								<div class="thumb-box">
-									<ul class="thumbs">
+									<ul class="thumbs-2">
 										<li>
 											<a href="#elsternwick-1" data-slide="1">
 												<img src="images/stkildard/room1-large.jpg" alt="This is caption 1 <a href='#link'>Even with links!</a>">
@@ -309,16 +309,16 @@
 		  margin-left: -1%;
 		  width: 102%;
 		}
-		.thumbs {
+		.thumbs-1, .thumbs-2 {
 		    @include clearfix;
 		}
-		   .thumbs li {
+		   .thumbs-1 li, .thumbs-2  li {
 		      float: left;
 		      width: 20%;
 		      text-align: center;
 		      padding: 0 1%;
 		    }
-		    .thumbs img {
+		    .thumbs-1 img, .thumbs-2  img {
 		        width: 100%;
 		        opacity: .8;
 		        @include transition(opacity .32s);
@@ -340,7 +340,7 @@
 		}*/		
 	</style>
 	<script type="text/javascript">
-		var thumbs = jQuery('#thumbnails-1').slippry({
+		var thumbs1 = jQuery('#thumbnails-1').slippry({
 		  // general elements & wrapper
 		  slippryWrapper: '<div class="slippry_box thumbnails" />',
 		  // options
@@ -348,16 +348,17 @@
 		  pager: false,
 		  auto: false,
 		  onSlideBefore: function (el, index_old, index_new) {
-		    jQuery('.thumbs a img').removeClass('active');
-		    jQuery('img', jQuery('.thumbs a')[index_new]).addClass('active');
+		    jQuery('.thumbs-1 a img').removeClass('active');
+		    jQuery('img', jQuery('.thumbs-1 a')[index_new]).addClass('active');
 		  }
 		});
 
-		jQuery('.thumbs a').click(function () {
-		  thumbs.goToSlide($(this).data('slide'));
+		jQuery('.thumbs-1 a').click(function () {
+		  thumbs1.goToSlide($(this).data('slide'));
 		  return false;
 		});
-		var thumbs = jQuery('#thumbnails-2').slippry({
+
+		var thumbs2 = jQuery('#thumbnails-2').slippry({
 		  // general elements & wrapper
 		  slippryWrapper: '<div class="slippry_box thumbnails" />',
 		  // options
@@ -365,13 +366,13 @@
 		  pager: false,
 		  auto: false,
 		  onSlideBefore: function (el, index_old, index_new) {
-		    jQuery('.thumbs a img').removeClass('active');
-		    jQuery('img', jQuery('.thumbs a')[index_new]).addClass('active');
+		    jQuery('.thumbs-2 a img').removeClass('active');
+		    jQuery('img', jQuery('.thumbs-2 a')[index_new]).addClass('active');
 		  }
 		});
 
-		jQuery('.thumbs a').click(function () {
-		  thumbs.goToSlide($(this).data('slide'));
+		jQuery('.thumbs-2 a').click(function () {
+		  thumbs2.goToSlide($(this).data('slide'));
 		  return false;
 		});
 	</script>
