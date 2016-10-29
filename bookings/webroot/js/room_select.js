@@ -5,9 +5,9 @@ $.ajax({
         method: "GET",
         success: function (response) {
             rooms = response;
-            console.log(response);
+           
             var roomSelector = getRoomOptions();
-            console.log(roomSelector);
+            
             $(".roomBookSelect").append(roomSelector);
             
             var idMatches = window.location.href.match(/room\/([^\/]*)\//);
