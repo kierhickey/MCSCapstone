@@ -172,7 +172,35 @@ var SummaryTable = function (config) {
                 }),
                 $("<td></td>", {
                     class: "booking-paid booking-cell",
-                    text: booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid"
+                    html: [
+                        $("<a></a>", {
+                            class: "booking-paid-toggle",
+                            text: booking.paid && booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid",
+                            on: {
+                                click: function (event) {
+                                    var bookingId = $(this).parent().parent().attr("id");
+
+                                    console.log({bookingId:bookingId});
+
+                                    $.ajax({
+                                        data: {
+                                            bookingId: bookingId
+                                        },
+                                        method: "POST",
+                                        url: "/bookings/api/bookings/paid",
+                                        success: function (response) {
+                                            console.log(response);
+                                        },
+                                        error: function (response) {
+                                            if (response.status == 404) {
+                                                throw "404 Not Found Exception";
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    ]
                 }),
             ]
         });

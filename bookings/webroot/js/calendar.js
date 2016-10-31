@@ -38,7 +38,7 @@ var Calendar = function (config) {
             var dayNum = alphaToNum(self.classList[1]);
             var dayDate = me.map[weekNum - 1][dayNum - 1];
 
-            if (dayDate === undefined) return;
+            if (typeof dayDate === 'undefined') return;
 
             var startDay = me.startDay;
             var endDay = dayDate;

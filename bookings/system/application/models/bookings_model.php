@@ -13,6 +13,110 @@ class Bookings_model extends Model
         $this->CI = &get_instance();
     }
 
+    public function isRecurring($bookingId) {
+        $queryString = "SELECT date FROM bookings WHERE booking_id = $bookingId;";
+
+        $query = $this->db->query($queryString);
+        if ($query != false) {
+            $result = $query->result_array()[0];
+        }
+
+        return is_null($result);
+    }
+
+    public function markRecurringPaid($bookingId, $date, $note) {
+        if (!isRecurring($bookingId)) { // We can throw it to the other method.
+            return markAsPaid($bookingId, $note);
+        }
+
+        // Check if paid exists :)
+        $queryString = "SELECT COUNT(*) FROM payments WHERE booking_id = $booking_id AND for_date = '$date'";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Invalid query - bad booking id?"
+            ];
+        }
+
+        $num = $query->result_array()[0];
+
+        if ($num >= 1) { // Already paid
+            return [
+                "status" => 200,
+                "message" => "Booking already paid."
+            ];
+        }
+
+        // No payment entries -- make one
+        $queryString = "INSERT INTO payments(booking_id, for_date, notes)
+                        VALUES ($bookingId, '$date', '$note')";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Failed to mark as paid."
+            ];
+        }
+
+        return [
+            "status" => 200,
+            "message" => "Booking succesfully marked as paid."
+        ];
+    }
+
+    public function markAsPaid($bookingId, $note) {
+        if (isRecurring($bookingId)) {
+            return [
+                "status" => 400,
+                "message" => "Attempted to mark recurring booking as paid without target date."
+            ];
+        }
+
+        // Check if payment exists.
+        $queryString = "SELECT COUNT(*) FROM payments WHERE booking_id = $booking_id";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Invalid query - bad booking id?"
+            ];
+        }
+
+        $num = $query->result_array()[0];
+
+        if ($num >= 1) { // Already paid
+            return [
+                "status" => 200,
+                "message" => "Booking already paid."
+            ];
+        }
+
+        // No payment entries -- make one
+        $queryString = "INSERT INTO payments(booking_id, for_date, notes)
+                        VALUES ($bookingId, NULL, '$note')";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Failed to mark as paid."
+            ];
+        }
+
+        return [
+            "status" => 200,
+            "message" => "Booking succesfully marked as paid."
+        ];
+    }
+
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
         $bookingsForPeriod = $this->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
@@ -85,9 +189,6 @@ class Bookings_model extends Model
                               ,b.room_id as roomId
                               ,r.name as roomName
                               ,r.location as location
-                              ,(case when b.paid = 0 then 'false'
-                                     when b.paid = 1 then 'true'
-                                end) AS paid
                               ,(case when b.date IS NULL then 'true'
                                      when b.date IS NOT NULL then 'false'
                                 end) AS isRecurring
@@ -109,7 +210,7 @@ class Bookings_model extends Model
 
 		$query = $this->db->query($queryString);
         if ($query != false) {
-		          $results = $query->result_array();
+		    $results = $query->result_array();
         } else {
             $results = ["error" => "An error has occurred when fetching the data from the server."];
         }
@@ -973,7 +1074,7 @@ class Bookings_model extends Model
         $maxdate = date('Y-m-d', strtotime('+14 days', Now()));
         $today = date('Y-m-d');
         // All current bookings for this user between today and 2 weeks' time
-        $query_str = 'SELECT rooms.*, bookings.*, periods.name as periodname, periods.time_start, periods.time_end, bookings.paid '
+        $query_str = 'SELECT rooms.*, bookings.*, periods.name as periodname, periods.time_start, periods.time_end'
                                 .'FROM bookings '
                                 .'JOIN rooms ON rooms.room_id=bookings.room_id '
                                 .'JOIN periods ON periods.period_id=bookings.period_id '
