@@ -1132,7 +1132,7 @@ class Bookings_model extends Model
                                 .'AND bookings.date Is Not NULL '
                                 .'ORDER BY bookings.date asc, periods.time_start asc';
         $query = $this->db->query($query_str);
-        if ($query->num_rows() > 0) {
+        if ($query != false && $query->num_rows() > 0) {
             return $query->result();
         } else {
             return false;
