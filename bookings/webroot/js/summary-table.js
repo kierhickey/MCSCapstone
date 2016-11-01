@@ -96,6 +96,11 @@ var SummaryTable = function (config) {
         return dayName + " the " + d + "<sup>" + suffix + "</sup> of " + monthName + ", " + y;
     };
 
+    var getModalMessage = function(booking) {
+        return "Are you sure you wish to mark the booking on " + _dateAsReadable(new Date(booking.bookingDate)) +
+            " for the session at " + booking.bookingStart + " as paid?";
+    }
+
     var _dateRangeAsReadable = function(startDate, endDate) {
         var y = startDate.getFullYear();
         var m = startDate.getMonth();
@@ -178,25 +183,46 @@ var SummaryTable = function (config) {
                             text: booking.paid && booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid",
                             on: {
                                 click: function (event) {
-                                    var bookingId = $(this).parent().parent().attr("id");
+                                    var modal = new Modal({
+                                        type: ModalType.YesNo,
+                                        message: getModalMessage(booking),
+                                        yes: function (modal) {
+                                            modal.close();
+                                            var data;
 
-                                    console.log({bookingId:bookingId});
-
-                                    $.ajax({
-                                        data: {
-                                            bookingId: bookingId
-                                        },
-                                        method: "POST",
-                                        url: "/bookings/api/bookings/paid",
-                                        success: function (response) {
-                                            console.log(response);
-                                        },
-                                        error: function (response) {
-                                            if (response.status == 404) {
-                                                throw "404 Not Found Exception";
+                                            if (booking.isRecurring) {
+                                                data = {
+                                                    bookingId: booking.bookingId,
+                                                    date: booking.bookingDate
+                                                };
+                                            } else {
+                                                data = {
+                                                    bookingId: booking.bookingId
+                                                };
                                             }
+
+                                            $.ajax({
+                                                data: data,
+                                                method: "POST",
+                                                url: "/bookings/api/bookings/paid",
+                                                success: function (response) {
+                                                    console.log(response);
+                                                },
+                                                error: function (response) {
+                                                    if (response.status == 404) {
+                                                        throw "404 Not Found Exception";
+                                                    } else {
+                                                        console.log(response);
+                                                    }
+                                                }
+                                            })
+                                        },
+                                        no: function (modal) {
+                                            modal.close();
                                         }
-                                    })
+                                    });
+
+                                    modal.show();
                                 }
                             }
                         })

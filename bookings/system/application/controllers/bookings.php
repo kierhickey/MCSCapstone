@@ -43,12 +43,11 @@ class Bookings extends Controller
     }
 
     private function _markAsPaid($bookingId) {
-        $bookingId = $_POST["bookingId"];
+        if (isset($_POST["forDate"])) {
+            return $this->bookingsProvider->markRecurringPaid($bookingId, $_POST["forDate"]);
+        }
 
-        return [
-            "status" => 204,
-            "bookingId" => $bookingId
-        ];
+        return $this->bookingsProvider->markAsPaid($bookingId);
     }
 
     public function markAsPaid() {
@@ -57,7 +56,7 @@ class Bookings extends Controller
         if (!isset($_POST["bookingId"])) {
             echo json_encode([
                 "status" => 400,
-                "message" => "The request made to the server did not include a valid booking ID"
+                "message" => "The request made to the server was invalid."
             ]);
             return;
         }

@@ -18,35 +18,39 @@ class Bookings_model extends Model
 
         $query = $this->db->query($queryString);
         if ($query != false) {
-            $result = $query->result_array()[0];
+            $rArray = $query->result_array();
+            echo print_r($rArray);
+            $result = $rArray[0]["date"];
         }
 
         return is_null($result);
     }
 
     public function markRecurringPaid($bookingId, $date, $note) {
-        if (!isRecurring($bookingId)) { // We can throw it to the other method.
+        if (!$this->isRecurring($bookingId)) { // We can throw it to the other method.
             return markAsPaid($bookingId, $note);
         }
 
         // Check if paid exists :)
-        $queryString = "SELECT COUNT(*) FROM payments WHERE booking_id = $booking_id AND for_date = '$date'";
+        $queryString = "SELECT COUNT(*) as total FROM payments WHERE booking_id = $bookingId AND for_date = '$date'";
 
         $query = $this->db->query($queryString);
 
         if ($query == false) {
             return [
                 "status" => 500,
-                "error" => "Invalid query - bad booking id?"
+                "error" => "Invalid query - bad booking id?",
+                "queryString" => $queryString
             ];
         }
 
-        $num = $query->result_array()[0];
+        $num = $query->result_array()["total"];
 
         if ($num >= 1) { // Already paid
             return [
                 "status" => 200,
-                "message" => "Booking already paid."
+                "message" => "Booking already paid.",
+                "count" => $num
             ];
         }
 
@@ -70,7 +74,7 @@ class Bookings_model extends Model
     }
 
     public function markAsPaid($bookingId, $note) {
-        if (isRecurring($bookingId)) {
+        if ($this->isRecurring($bookingId)) {
             return [
                 "status" => 400,
                 "message" => "Attempted to mark recurring booking as paid without target date."
@@ -78,23 +82,25 @@ class Bookings_model extends Model
         }
 
         // Check if payment exists.
-        $queryString = "SELECT COUNT(*) FROM payments WHERE booking_id = $booking_id";
+        $queryString = "SELECT COUNT(*) as total FROM payments WHERE booking_id = $bookingId";
 
         $query = $this->db->query($queryString);
 
         if ($query == false) {
             return [
                 "status" => 500,
-                "error" => "Invalid query - bad booking id?"
+                "error" => "Invalid query - bad booking id?",
+                "queryString" => $queryString
             ];
         }
 
-        $num = $query->result_array()[0];
+        $num = $query->result_array()["total"];
 
         if ($num >= 1) { // Already paid
             return [
                 "status" => 200,
-                "message" => "Booking already paid."
+                "message" => "Booking already paid.",
+                "count" => $num
             ];
         }
 
@@ -115,6 +121,10 @@ class Bookings_model extends Model
             "status" => 200,
             "message" => "Booking succesfully marked as paid."
         ];
+    }
+
+    public function getPaymentsForBooking($bookingId) {
+        
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
@@ -146,6 +156,8 @@ class Bookings_model extends Model
 
         foreach ($recurringBookings as $booking) {
             $dow = $booking["dayNum"];
+
+            $paidDates = $this->getPaymentsForBooking($booking["bookingId"]);
 
             $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
 
@@ -192,6 +204,14 @@ class Bookings_model extends Model
                               ,(case when b.date IS NULL then 'true'
                                      when b.date IS NOT NULL then 'false'
                                 end) AS isRecurring
+                              ,(case when b.date is NOT NULL then
+                                  (
+                                      case when (SELECT COUNT(*) FROM payments WHERE booking_id = b.booking_id) = 1 then 'true'
+                                           else 'false'
+                                      end
+                                  )
+                                else 'false'
+                                end) AS paid
                         FROM bookings b
                         INNER JOIN periods p
                         ON b.period_id = p.period_id
