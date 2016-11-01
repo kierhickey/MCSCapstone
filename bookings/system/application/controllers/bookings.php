@@ -42,6 +42,41 @@ class Bookings extends Controller
         $this->school = $school;
     }
 
+    private function _markAsPaid($bookingId) {
+        if (isset($_POST["forDate"])) {
+            return $this->bookingsProvider->markRecurringPaid($bookingId, $_POST["forDate"]);
+        }
+
+        return $this->bookingsProvider->markAsPaid($bookingId);
+    }
+
+    public function markAsPaid() {
+        header('Content-Type: application/json');
+
+        if (!$this->userauth->CheckAuthLevel( ADMINISTRATOR )) {
+            echo json_encode([
+                "status" => 403,
+                "message" => "You do not have the required elevation to access the requested resource."
+            ]);
+            return;
+        }
+
+        if (!isset($_POST["bookingId"])) {
+            echo json_encode([
+                "status" => 400,
+                "message" => "The request made to the server was invalid."
+            ]);
+            return;
+        }
+
+        $result = $this->_markAsPaid($_POST["bookingId"]);
+
+        echo json_encode([
+            "requestData" => $_POST,
+            "responseData" => $result
+        ]);
+    }
+
     public function generatePdf() {
         $pdfGen = new PdfGenerator();
 
@@ -49,6 +84,13 @@ class Bookings extends Controller
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
+        if( !$this->userauth->CheckAuthLevel( ADMINISTRATOR ) ) {
+            return [
+                "status" => 403,
+                "message" => "You do not have the required elevation to access the requested resource."
+            ];
+        }
+
         $allBookings = $this->bookingsProvider->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         usort($allBookings, function ($item1, $item2) {

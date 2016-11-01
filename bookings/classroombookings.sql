@@ -19,7 +19,6 @@ CREATE TABLE `bookings` (
   `date` date DEFAULT NULL,
   `notes` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `cancelled` tinyint(1) unsigned DEFAULT '0',
-  `paid` boolean DEFAULT FALSE,
   PRIMARY KEY (`booking_id`),
   KEY `school_id` (`school_id`,`period_id`,`room_id`,`user_id`)
 );
@@ -169,3 +168,13 @@ CREATE TABLE `weeks` (
   `icon` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`week_id`)
 );
+
+DROP TABLE IF EXISTS `payments`;
+CREATE TABLE `payments` (
+    `payment_id` INT NOT NULL AUTO_INCREMENT,
+    `booking_id` INT(6) UNSIGNED NOT NULL,
+    `for_date` DATE,
+    `notes` VARCHAR(256),
+    PRIMARY KEY (`payment_id`),
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)
+) ENGINE = InnoDB;
