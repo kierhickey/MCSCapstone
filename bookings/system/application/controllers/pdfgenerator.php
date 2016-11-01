@@ -83,7 +83,7 @@ class PdfGenerator {
             $date = new DateTime(str_replace("-", "/", $entry["bookingDate"]));
             $dateString = $date->format("d/m/Y");
             $session = $entry["bookingStart"] . " &ndash; " . $entry["bookingEnd"];
-            $price = $entry["isRecurring"] == "true" ? 10.00 : 15.00;
+            $price = $entry["isRecurring"] == true ? 10.00 : 15.00;
             $location = $entry["location"];
             $room = $entry["roomName"];
             $paid = $entry["paid"] == "true" ? "P" : "NP";
