@@ -180,7 +180,7 @@ var SummaryTable = function (config) {
                     html: [
                         $("<a></a>", {
                             class: "booking-paid-toggle",
-                            text: booking.paid && booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid",
+                            text: booking.paid ? "Paid" : "Not Paid",
                             on: {
                                 click: function (event) {
                                     var modal = new Modal({
@@ -193,11 +193,11 @@ var SummaryTable = function (config) {
                                             if (booking.isRecurring) {
                                                 data = {
                                                     bookingId: booking.bookingId,
-                                                    date: booking.bookingDate
+                                                    forDate: booking.bookingDate,
                                                 };
                                             } else {
                                                 data = {
-                                                    bookingId: booking.bookingId
+                                                    bookingId: booking.bookingId,
                                                 };
                                             }
 
@@ -206,7 +206,7 @@ var SummaryTable = function (config) {
                                                 method: "POST",
                                                 url: "/bookings/api/bookings/paid",
                                                 success: function (response) {
-                                                    console.log(response);
+                                                    $(".booking-paid-toggle").text("Paid");
                                                 },
                                                 error: function (response) {
                                                     if (response.status == 404) {
@@ -475,8 +475,7 @@ var SummaryTable = function (config) {
                                             on: {
                                                 click: function () {
                                                     var form = me.createPdfForm();
-                                                    console.log(form);
-                                                    debugger;
+                                                                                                        
                                                     form.submit();
                                                 }
                                             }

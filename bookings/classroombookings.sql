@@ -173,7 +173,7 @@ DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
     `payment_id` INT NOT NULL AUTO_INCREMENT,
     `booking_id` INT(6) UNSIGNED NOT NULL,
-    `for_date` INT,
+    `for_date` DATE,
     `notes` VARCHAR(256),
     PRIMARY KEY (`payment_id`),
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)

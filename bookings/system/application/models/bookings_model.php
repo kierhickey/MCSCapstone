@@ -19,14 +19,13 @@ class Bookings_model extends Model
         $query = $this->db->query($queryString);
         if ($query != false) {
             $rArray = $query->result_array();
-            echo print_r($rArray);
             $result = $rArray[0]["date"];
         }
 
         return is_null($result);
     }
 
-    public function markRecurringPaid($bookingId, $date, $note) {
+    public function markRecurringPaid($bookingId, $date = NULL, $note = "") {
         if (!$this->isRecurring($bookingId)) { // We can throw it to the other method.
             return markAsPaid($bookingId, $note);
         }
@@ -73,7 +72,7 @@ class Bookings_model extends Model
         ];
     }
 
-    public function markAsPaid($bookingId, $note) {
+    public function markAsPaid($bookingId, $note = "") {
         if ($this->isRecurring($bookingId)) {
             return [
                 "status" => 400,
@@ -123,8 +122,34 @@ class Bookings_model extends Model
         ];
     }
 
-    public function getPaymentsForBooking($bookingId) {
-        
+    public function getPaymentsForRecurringBooking($bookingId) {
+        $queryString = "SELECT booking_id, for_date FROM payments WHERE booking_id = $bookingId";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "message" => "Unable to complete request"
+            ];
+        }
+
+        $rArray = $query->result_array();
+
+        $result = [];
+
+        foreach($rArray as $array) {
+            $bookingId = $array["booking_id"];
+            $date = $array["for_date"];
+
+            if (!isset($result[$bookingId])) {
+                $result[$bookingId] = [];
+            }
+
+            array_push($result[$bookingId], $date);
+        }
+
+        return $result;
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
@@ -145,8 +170,10 @@ class Bookings_model extends Model
 
             if ($forRoom && $forUser) {
                 if ($booking["isRecurring"] === "false") {
+                    $booking["isRecurring"] = false;
                     array_push($filteredBookings, $booking);
                 } else {
+                    $booking["isRecurring"] = true;
                     array_push($recurringBookings, $booking);
                 }
             }
@@ -157,14 +184,17 @@ class Bookings_model extends Model
         foreach ($recurringBookings as $booking) {
             $dow = $booking["dayNum"];
 
-            $paidDates = $this->getPaymentsForBooking($booking["bookingId"]);
+            $paidDates = $this->getPaymentsForRecurringBooking($booking["bookingId"]);
 
             $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
 
             foreach ($bookingsForDate as $bookingDate) {
                 $bookingCopy = $booking;
 
-                $bookingCopy["bookingDate"] = $bookingDate->format("Y-m-d");
+                $date = $bookingDate->format("Y-m-d");
+
+                $bookingCopy["paid"] = in_array($date, $paidDates[$booking["bookingId"]]);
+                $bookingCopy["bookingDate"] = $date;
 
                 array_push($expandedRecurring, $bookingCopy);
             }

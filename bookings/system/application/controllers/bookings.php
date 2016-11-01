@@ -53,6 +53,14 @@ class Bookings extends Controller
     public function markAsPaid() {
         header('Content-Type: application/json');
 
+        if (!$this->userauth->CheckAuthLevel( ADMINISTRATOR )) {
+            echo json_encode([
+                "status" => 403,
+                "message" => "You do not have the required elevation to access the requested resource."
+            ]);
+            return;
+        }
+
         if (!isset($_POST["bookingId"])) {
             echo json_encode([
                 "status" => 400,
@@ -61,14 +69,12 @@ class Bookings extends Controller
             return;
         }
 
-        if (!$this->userauth->CheckAuthLevel( ADMINISTRATOR )) {
-            echo json_encode([
-                "status" => 403,
-                "message" => "You do not have the required elevation to access the requested resource."
-            ]);
-            return;
-        }
-        echo json_encode($this->_markAsPaid($_POST["bookingId"]));
+        $result = $this->_markAsPaid($_POST["bookingId"]);
+
+        echo json_encode([
+            "requestData" => $_POST,
+            "responseData" => $result
+        ]);
     }
 
     public function generatePdf() {
