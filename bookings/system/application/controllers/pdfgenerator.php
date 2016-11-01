@@ -51,7 +51,7 @@ class PdfGenerator {
         $endDate = (new DateTime())->add(new DateInterval("P1M"));
         // Tue+Oct+18+2016+00:00:00+GMT+1100+(AUS+Eastern+Standard+Time)
         if ($_POST["startDate"] != null) {
-            $startDate = date_create_from_format('D M d Y H:i:s e+',$_POST["endDate"]);
+            $startDate = date_create_from_format('D M d Y H:i:s e+',$_POST["startDate"]);
         }
 
         if ($_POST["endDate"] != null) {

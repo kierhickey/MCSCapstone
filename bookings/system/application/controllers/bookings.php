@@ -94,6 +94,9 @@ class Bookings extends Controller
         $allBookings = $this->bookingsProvider->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         usort($allBookings, function ($item1, $item2) {
+            //echo $item1["bookingDate"];
+            //echo $item2["bookingDate"];
+
             $bookingOneDate = new DateTime($item1["bookingDate"]);
             $bookingTwoDate = new DateTime($item2["bookingDate"]);
 
