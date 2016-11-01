@@ -206,7 +206,7 @@ var SummaryTable = function (config) {
                                                 method: "POST",
                                                 url: "/bookings/api/bookings/paid",
                                                 success: function (response) {
-                                                    $(".booking-paid-toggle").text("Paid");
+                                                    $("#" + booking.bookingId + " .booking-paid-toggle").text("Paid");
                                                 },
                                                 error: function (response) {
                                                     if (response.status == 404) {
@@ -475,7 +475,7 @@ var SummaryTable = function (config) {
                                             on: {
                                                 click: function () {
                                                     var form = me.createPdfForm();
-                                                                                                        
+
                                                     form.submit();
                                                 }
                                             }
