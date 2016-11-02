@@ -259,6 +259,7 @@ class Bookings_model extends Model
                         ORDER BY b.date asc, r.location, p.time_start";
 
 		$query = $this->db->query($queryString);
+        
         if ($query != false) {
 		    $results = $query->result_array();
         } else {
