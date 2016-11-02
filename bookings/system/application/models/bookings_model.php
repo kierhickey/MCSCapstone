@@ -259,7 +259,7 @@ class Bookings_model extends Model
                         ORDER BY b.date asc, r.location, p.time_start";
 
 		$query = $this->db->query($queryString);
-        
+
         if ($query != false) {
 		    $results = $query->result_array();
         } else {
@@ -339,12 +339,14 @@ class Bookings_model extends Model
 	        }
 
 	        // Any notes?
-	        if ($booking->notes) {
-	            if (isset($user)) {
-	                $cell['body'] .= '<br />';
-	            }
-	            $cell['body'] .= '<span title="'.$booking->notes.'">'.character_limiter($booking->notes, 15).'</span>';
-	        }
+            if($this->userauth->CheckAuthLevel(ADMINISTRATOR) || $this->session->userdata("user_id") == $booking->user_id){
+    	        if ($booking->notes) {
+    	            if (isset($user)) {
+    	                $cell['body'] .= '<br />';
+    	            }
+    	            $cell['body'] .= '<span title="'.$booking->notes.'">'.character_limiter($booking->notes, 15).'</span>';
+    	        }
+            }
 
 	        // Cancel if user is an Admin, Room owner, or Booking owner
 	        $user_id = $this->session->userdata('user_id');
