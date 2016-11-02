@@ -652,7 +652,7 @@ class Bookings_model extends Model
 				$dayofweek = $school['days_list'][$i];
                 $day['width'] = $col_width;
                 $day['name'] = $dayofweek;
-				$day['date'] = date('m/d', strtotime("+".($i - 1)." days", strtotime($week_start)));
+				$day['date'] = date('d/m', strtotime("+".($i - 1)." days", strtotime($week_start)));
                 $html .= $this->load->view('bookings/table/headings/days', $day, true);
             }
         break;
