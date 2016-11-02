@@ -199,41 +199,6 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 <?php echo @field($this->validation->displayname_error) ?>
 
 
-<p>
-	<label for="department">Department</label>
-  <?php
-	$departmentlist['0'] = '(None)';
-	if($departments){
-  	foreach($departments as $department){
-	  	$departmentlist[$department->department_id] = $department->name;		#@field($user->displayname, $user->username);
-  	}
-  }
-	$department_id = @field($this->validation->department_id, $user->department_id, '0');
-	echo form_dropdown('department_id', $departmentlist, $department_id, 'tabindex="'.$t.'"');
-	$t++;
-	?>
-</p>
-<?php echo @field($this->validation->department_id_error) ?>
-
-
-<p>
-  <label for="ext">Extension</label>
-  <?php
-	$ext = @field($this->validation->ext, $user->ext);
-	echo form_input(array(
-		'name' => 'ext',
-		'id' => 'ext',
-		'size' => '10',
-		'maxlength' => '10',
-		'tabindex' => $t,
-		'value' => $ext,
-	));
-	$t++;
-	?>
-</p>
-<?php echo @field($this->validation->ext_error) ?>
-
-
 </fieldset>
 
 
