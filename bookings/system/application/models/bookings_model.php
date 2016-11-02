@@ -1075,6 +1075,23 @@ class Bookings_model extends Model
 
     public function Add($data)
     {
+        $date = $data['date'];
+        $sessionId = $data['period_id'];
+        
+        $queryString = "SELECT COUNT(*) AS total FROM bookings WHERE date = $date AND period_id = $sessionId";
+        
+        $query = $this->db->query($queryString);
+        
+        if ($query == false) {
+            return false; // Query didn't work -- abort.
+        }
+        
+        $result = $query->result_array();
+        
+        if ($result > 0) {
+            return false; // A booking exists for that timeslot. Dun do eet.
+        }
+        
         // Run query to insert blank row
         $this->db->insert('bookings', array('booking_id' => null));
         // Get id of inserted record

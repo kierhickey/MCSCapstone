@@ -513,7 +513,7 @@ class Bookings extends Controller
             if ($booking_id == 'X') {
                 // No ID, adding new record
                 if (!$this->bookingsProvider->Add($data)) {
-                    $flashmsg = $this->load->view('msgbox/error', sprintf($this->lang->line('dberror'), 'adding', 'booking'), true);
+                    $flashmsg = $this->load->view('msgbox/error', "Could not add the requested booking - a booking for this time has already been made.", true);
                 } else {
                     $flashmsg = $this->load->view('msgbox/info', 'The booking has been made.', true);
                 }
