@@ -1077,21 +1077,35 @@ class Bookings_model extends Model
     {
         $date = $data['date'];
         $sessionId = $data['period_id'];
-        
-        $queryString = "SELECT COUNT(*) AS total FROM bookings WHERE date = $date AND period_id = $sessionId";
-        
+        $dateDayNum = (new DateTime($date))->format("N");
+
+        $queryString = "SELECT COUNT(*) AS total
+                        FROM bookings
+                        WHERE
+                            (date = '$date' OR day_num = $dateDayNum)
+                            AND period_id = $sessionId";
+
         $query = $this->db->query($queryString);
-        
+
         if ($query == false) {
             return false; // Query didn't work -- abort.
         }
-        
-        $result = $query->result_array();
-        
-        if ($result > 0) {
+
+        $result = $query->result_array()[0];
+
+        ini_set("log_errors", 1);
+        ini_set("error_log", "/tmp/php-error.log");
+
+        error_log(json_encode([
+            "date" => $date,
+            "periodId" => $sessionId,
+            "result" => $result
+        ]));
+
+        if ($result["total"] > 0) {
             return false; // A booking exists for that timeslot. Dun do eet.
         }
-        
+
         // Run query to insert blank row
         $this->db->insert('bookings', array('booking_id' => null));
         // Get id of inserted record
