@@ -223,7 +223,11 @@ class Bookings_model extends Model
 		$queryString = "SELECT b.booking_id AS bookingId
                               ,u.user_id AS userId
                               ,u.username AS username
-                              ,u.displayname AS displayName
+                              ,(case
+                                  when u.displayname IS NOT NULL AND u.displayname != '' then u.displayname
+                                  when u.firstname IS NOT NULL AND u.firstname != '' then CONCAT(u.firstname, ' ', u.lastname)
+                                  else u.username
+                               end) AS displayName
                               ,b.date AS bookingDate
                               ,b.day_num AS dayNum
                               ,p.time_start AS bookingStart
