@@ -39,6 +39,7 @@ class PdfGenerator {
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>User</th>
                     <th>Location</th>
                     <th>Room</th>
                     <th>Session</th>
@@ -81,6 +82,7 @@ class PdfGenerator {
 
         foreach ($bookings as $entry) {
             $date = new DateTime(str_replace("-", "/", $entry["bookingDate"]));
+            $displayName = $entry["displayName"];
             $dateString = $date->format("d/m/Y");
             $session = $entry["bookingStart"] . " &ndash; " . $entry["bookingEnd"];
             $price = $entry["isRecurring"] == true ? 10.00 : 15.00;
@@ -104,6 +106,7 @@ class PdfGenerator {
             $htmlSummaryTable = $htmlSummaryTable .
             $tr.
                 "<td>$dateString</td>
+                <td>$displayName</td>
                 <td>$location</td>
                 <td>$room</td>
                 <td>$session</td>

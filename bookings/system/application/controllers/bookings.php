@@ -97,8 +97,8 @@ class Bookings extends Controller
             //echo $item1["bookingDate"];
             //echo $item2["bookingDate"];
 
-            $bookingOneDate = new DateTime($item1["bookingDate"]);
-            $bookingTwoDate = new DateTime($item2["bookingDate"]);
+            $bookingOneDate = date_create_from_format('Y-m-d', $item1["bookingDate"]);
+            $bookingTwoDate = date_create_from_format('Y-m-d', $item2["bookingDate"]);
 
             $bookingOneLocation = $item1["location"];
             $bookingTwoLocation = $item2["location"];
