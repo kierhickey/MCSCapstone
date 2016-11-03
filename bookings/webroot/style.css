@@ -723,6 +723,12 @@ table.bookings td.staff {
     border: 1px solid #3082BF;
 }
 
+table.bookings td.past-staff {
+    background: #779cb7;
+    color: #fff;
+    border: 1px solid #3082BF;
+}
+
 
 /* Booked by staff */
 
