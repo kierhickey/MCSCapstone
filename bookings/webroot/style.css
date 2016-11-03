@@ -692,11 +692,24 @@ table.bookings td.free {
     color: #000;
 }
 
+table.bookings td.past-free {
+    background: #ccc;
+    border: 1px solid #ccc;
+    /*#D3E6CF;  /*#C7F2BC;*/
+    color: #000;
+}
+
 
 /* Free period */
 
 table.bookings td.static {
     background: #E68A73;
+    color: #fff;
+    border: 1px solid #E68A73;
+}
+
+table.bookings td.past-static {
+    background: #d0a499;
     color: #fff;
     border: 1px solid #E68A73;
 }

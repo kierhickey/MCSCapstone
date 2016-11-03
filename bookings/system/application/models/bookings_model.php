@@ -307,21 +307,33 @@ class Bookings_model extends Model
 
     public function BookingCell($data, $key, $rooms, $users, $room_id, $url, $booking_date_ymd = '', $holidays = array())
     {
+        $bookingDate = DateTime::createFromFormat('Y-m-d', $booking_date_ymd);
+        $todaysDate = new DateTime();
+        $tomorrowsDate = $todaysDate->add(new DateInterval('P1D'));
 
         // Check if there is a booking
     	if (isset($data[$key])) {
 
 	        // There's a booking for this ID, set var
 	        $booking = $data[$key];
+            
+            $cell['body'] = '';
 
 	        if ($booking->date == null) {
 	            // If no date set, then it's a static/timetable/recurring booking
-	            $cell['class'] = 'static';
-	            $cell['body'] = '';
+                if ($bookingDate >= $todaysDate) {
+	                $cell['class'] = 'static';
+                } else {
+                    $cell['class'] = 'past-static';
+                }
 	        } else {
 	            // Date is set, it's a once off staff booking
-	            $cell['class'] = 'staff';
-	            $cell['body'] = '';
+	            if ($bookingDate >= $todaysDate) {
+                    $cell['class'] = 'staff';
+                } else {
+                    $cell['class'] = 'past-staff';
+                }
+                $cell['body'] = '';
 	        }
 
 	        // Username info
@@ -351,30 +363,35 @@ class Bookings_model extends Model
 	        if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)
 				|| ($user_id == $booking->user_id)
 				|| (($user_id == $rooms[$room_id]->user_id) && ($booking->date != null))) {
-
-	            $cancel_msg = 'Are you sure you want to cancel this booking?';
-	            if ($user_id != $booking->user_id) {
-	                $cancel_msg = 'Are you sure you want to cancel this booking?\n\n(**) Please take caution, it is not your own booking!!';
-	            }
-	            $cancel_url = site_url('bookings/cancel/'.$booking->booking_id);
-	            if (!isset($edit)) {
-	                $cell['body'] .= '<br />';
-	            }
-	            $cell['body'] .= '<a onclick="if(!confirm(\''.$cancel_msg.'\')){return false;}" href="'.$cancel_url.'" title="Cancel this booking"><img src="webroot/images/ui/delete.gif" width="16" height="16" alt="Cancel" title="Cancel this booking" hspace="8" /></a>';
+                if ($bookingDate >= $tomorrowsDate) {
+                    $cancel_msg = 'Are you sure you want to cancel this booking?';
+                    if ($user_id != $booking->user_id) {
+                        $cancel_msg = 'Are you sure you want to cancel this booking?\n\n(**) Please take caution, it is not your own booking!!';
+                    }
+                    $cancel_url = site_url('bookings/cancel/'.$booking->booking_id);
+                    if (!isset($edit)) {
+                        $cell['body'] .= '<br />';
+                    }
+                    $cell['body'] .= '<a onclick="if(!confirm(\''.$cancel_msg.'\')){return false;}" href="'.$cancel_url.'" title="Cancel this booking"><img src="webroot/images/ui/delete.gif" width="16" height="16" alt="Cancel" title="Cancel this booking" hspace="8" /></a>';
+                }
 	        }
 	    } elseif (isset($holidays[$booking_date_ymd])) {
 	        $cell['class'] = 'holiday';
 	        $cell['body'] = $holidays[$booking_date_ymd][0]->name;
 	    } else {
+            if ($bookingDate >= $todaysDate) {
+                // No bookings
+                $book_url = site_url('bookings/book/'.$url);
+                $cell['class'] = 'free';
+                $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
 
-	        // No bookings
-	        $book_url = site_url('bookings/book/'.$url);
-	        $cell['class'] = 'free';
-	        $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
-
-	        if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-	            $cell['body'] .= '<input type="checkbox" name="recurring[]" value="'.$url.'" />';
-	        }
+                if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+                    $cell['body'] .= '<input type="checkbox" name="recurring[]" value="'.$url.'" />';
+                }
+            } else {
+                $cell['class'] = 'past-free';
+                $cell['body'] = '';
+            }
 	    }
 
         return $this->load->view('bookings/table/bookingcell', $cell, true);
