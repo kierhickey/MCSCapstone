@@ -23,6 +23,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'maxlength' => '20',
 		'tabindex' => $t,
 		'value' => $username,
+		'required' => 'required'
 	));
 	$t++;
 	?>
@@ -41,6 +42,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'maxlength' => '40',
 		'tabindex' => $t,
 		'value' => '',
+		'required' => 'required'
 	));
 	$t++;
 	?>
@@ -59,6 +61,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'maxlength' => '40',
 		'tabindex' => $t,
 		'value' => '',
+		'required' => 'required'
 	));
 	$t++;
 	?>
@@ -75,7 +78,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'authlevel',
 		$data,
 		$authlevel,
-		' id="authlevel" tabindex="'.$t.'"'
+		" id='authlevel' tabindex='$t'"
 	);
 	$t++;
 	?>
@@ -146,7 +149,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 
 
 <p>
-  <label for="firstname">First name</label>
+  <label for="firstname" class="required">First name</label>
   <?php
 	$firstname = @field($this->validation->firstname, $user->firstname);
 	echo form_input(array(
@@ -156,6 +159,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'maxlength' => '20',
 		'tabindex' => $t,
 		'value' => $firstname,
+		'required' => 'required'
 	));
 	$t++;
 	?>
@@ -164,7 +168,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 
 
 <p>
-  <label for="lastname">Last name</label>
+  <label for="lastname" class="required">Last name</label>
   <?php
 	$lastname = @field($this->validation->lastname, $user->lastname);
 	echo form_input(array(
@@ -174,6 +178,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'maxlength' => '20',
 		'tabindex' => $t,
 		'value' => $lastname,
+		'required' => 'required'
 	));
 	$t++;
 	?>
@@ -192,6 +197,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'maxlength' => '20',
 		'tabindex' => $t,
 		'value' => $displayname,
+		'required' => 'required'
 	));
 	$t++;
 	?>
@@ -201,6 +207,17 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 
 </fieldset>
 
+<script type="application/javascript">
+	var updateDisplayName = function () {
+		var firstName = $("#firstname").val();
+		var lastName = $("#lastname").val();
+
+		$("#displayname").val(firstName + " " + lastName);
+	};
+
+	$("#firstname").on('input', updateDisplayName);
+	$("#lastname").on('input', updateDisplayName);
+</script>
 
 <?php
 $submit['submit'] = array('Save', $t);
