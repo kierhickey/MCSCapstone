@@ -88,7 +88,7 @@ class PdfGenerator {
             $price = $entry["isRecurring"] == true ? 10.00 : 15.00;
             $location = $entry["location"];
             $room = $entry["roomName"];
-            $paid = $entry["paid"] == "true" ? "P" : "NP";
+            $paid = $entry["paid"] ? "P" : "NP";
 
             $tr = "<tr>";
 

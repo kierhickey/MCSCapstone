@@ -120,6 +120,15 @@ header {
     color: #fff;
 }
 
+.tip-label {
+    margin-right: 3px;
+    font-weight: bold;
+}
+
+.tip-label, .tip-text {
+    background-color: transparent;
+}
+
 .nav-box {
     float: right;
     font-weight: bold;
