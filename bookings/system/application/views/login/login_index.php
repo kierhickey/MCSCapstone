@@ -1,5 +1,13 @@
 <?php echo $this->session->flashdata('auth') ?>
 
+<div class="info" style="margin-bottom: 12.67px">
+	<p>
+		If you do not have an account with Melbourne Consulting Suites, contact
+		our Administrator for more information;
+	</p>
+	<span>Email: </span><a href="mailto:&#112;&#114;&#111;&#102;&#105;&#108;&#101;&#112;&#115;&#121;&#099;&#104;&#064;&#121;&#097;&#104;&#111;&#111;&#046;&#099;&#111;&#109;">&#112;&#114;&#111;&#102;&#105;&#108;&#101;&#112;&#115;&#121;&#099;&#104;&#064;&#121;&#097;&#104;&#111;&#111;&#046;&#099;&#111;&#109;</a><br/>
+	<span>Phone: </span><a href="tel:0419 368 746">0419 368 746</a>
+</div>
 <div class="login-panel">
 	<div class="login-panel-inner">
 		<?php

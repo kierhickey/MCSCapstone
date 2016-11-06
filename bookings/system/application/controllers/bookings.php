@@ -42,6 +42,41 @@ class Bookings extends Controller
         $this->school = $school;
     }
 
+    private function _markAsPaid($bookingId) {
+        if (isset($_POST["forDate"])) {
+            return $this->bookingsProvider->markRecurringPaid($bookingId, $_POST["forDate"]);
+        }
+
+        return $this->bookingsProvider->markAsPaid($bookingId);
+    }
+
+    public function markAsPaid() {
+        header('Content-Type: application/json');
+
+        if (!$this->userauth->CheckAuthLevel( ADMINISTRATOR )) {
+            echo json_encode([
+                "status" => 403,
+                "message" => "You do not have the required elevation to access the requested resource."
+            ]);
+            return;
+        }
+
+        if (!isset($_POST["bookingId"])) {
+            echo json_encode([
+                "status" => 400,
+                "message" => "The request made to the server was invalid."
+            ]);
+            return;
+        }
+
+        $result = $this->_markAsPaid($_POST["bookingId"]);
+
+        echo json_encode([
+            "requestData" => $_POST,
+            "responseData" => $result
+        ]);
+    }
+
     public function generatePdf() {
         $pdfGen = new PdfGenerator();
 
@@ -49,11 +84,21 @@ class Bookings extends Controller
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
+        if( !$this->userauth->CheckAuthLevel( ADMINISTRATOR ) ) {
+            return [
+                "status" => 403,
+                "message" => "You do not have the required elevation to access the requested resource."
+            ];
+        }
+
         $allBookings = $this->bookingsProvider->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         usort($allBookings, function ($item1, $item2) {
-            $bookingOneDate = new DateTime($item1["bookingDate"]);
-            $bookingTwoDate = new DateTime($item2["bookingDate"]);
+            //echo $item1["bookingDate"];
+            //echo $item2["bookingDate"];
+
+            $bookingOneDate = date_create_from_format('Y-m-d', $item1["bookingDate"]);
+            $bookingTwoDate = date_create_from_format('Y-m-d', $item2["bookingDate"]);
 
             $bookingOneLocation = $item1["location"];
             $bookingTwoLocation = $item2["location"];
@@ -468,7 +513,7 @@ class Bookings extends Controller
             if ($booking_id == 'X') {
                 // No ID, adding new record
                 if (!$this->bookingsProvider->Add($data)) {
-                    $flashmsg = $this->load->view('msgbox/error', sprintf($this->lang->line('dberror'), 'adding', 'booking'), true);
+                    $flashmsg = $this->load->view('msgbox/error', "Could not add the requested booking - a booking for this time has already been made.", true);
                 } else {
                     $flashmsg = $this->load->view('msgbox/info', 'The booking has been made.', true);
                 }

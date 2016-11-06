@@ -96,6 +96,11 @@ var SummaryTable = function (config) {
         return dayName + " the " + d + "<sup>" + suffix + "</sup> of " + monthName + ", " + y;
     };
 
+    var getModalMessage = function(booking) {
+        return "Are you sure you wish to mark the booking on " + _dateAsReadable(new Date(booking.bookingDate)) +
+            " for the session at " + booking.bookingStart + " as paid?";
+    }
+
     var _dateRangeAsReadable = function(startDate, endDate) {
         var y = startDate.getFullYear();
         var m = startDate.getMonth();
@@ -137,7 +142,61 @@ var SummaryTable = function (config) {
         return startDayName + " the " + sD + "<sup>" + startSuffix + "</sup>" + " to " + endDayName + " the " + eD + "<sup>" + endSuffix + "</sup>" + " of " + monthName + ", " + y;
     }
 
-    var createRow = function (booking) {
+    var createRow = function (booking, showPaidCol) {
+        var paidCol = $("<td></td>", {
+            class: "booking-paid booking-cell",
+            html: [
+                $("<a></a>", {
+                    class: "booking-paid-toggle",
+                    text: booking.paid ? "Paid" : "Not Paid",
+                    on: {
+                        click: function (event) {
+                            var modal = new Modal({
+                                type: ModalType.YesNo,
+                                message: getModalMessage(booking),
+                                yes: function (modal) {
+                                    modal.close();
+                                    var data;
+
+                                    if (booking.isRecurring) {
+                                        data = {
+                                            bookingId: booking.bookingId,
+                                            forDate: booking.bookingDate,
+                                        };
+                                    } else {
+                                        data = {
+                                            bookingId: booking.bookingId,
+                                        };
+                                    }
+
+                                    $.ajax({
+                                        data: data,
+                                        method: "POST",
+                                        url: "/bookings/api/bookings/paid",
+                                        success: function (response) {
+                                            $("#" + booking.bookingId + " .booking-paid-toggle").text("Paid");
+                                        },
+                                        error: function (response) {
+                                            if (response.status == 404) {
+                                                throw "404 Not Found Exception";
+                                            } else {
+                                                console.log(response);
+                                            }
+                                        }
+                                    })
+                                },
+                                no: function (modal) {
+                                    modal.close();
+                                }
+                            });
+
+                            modal.show();
+                        }
+                    }
+                })
+            ]
+        });
+
         return $("<tr></tr>", {
             class: "booking-row",
             id: booking.bookingId,
@@ -170,10 +229,7 @@ var SummaryTable = function (config) {
                     class: "booking-end booking-cell",
                     text: booking.bookingEnd
                 }),
-                $("<td></td>", {
-                    class: "booking-paid booking-cell",
-                    text: booking.paid.toLowerCase() === "true" ? "Paid" : "Not Paid"
-                }),
+                (showPaidCol ? paidCol : "")
             ]
         });
     }
@@ -211,6 +267,7 @@ var SummaryTable = function (config) {
         endDate: new Date(),
         userId: config.userId || null,
         roomId: config.roomId || null,
+        showPaidColumn: typeof config.showPaidColumn === "undefined" ? true : config.showPaidColumn,
 
         init: function () {
             var me = this;
@@ -232,14 +289,14 @@ var SummaryTable = function (config) {
             var rows = [];
 
             for (var i = 0; i < me.bookings.length; i++) {
-                rows.push(createRow(me.bookings[i]));
+                rows.push(createRow(me.bookings[i], me.showPaidColumn));
             }
 
             if (rows.length === 0) {
                 rows.push($("<tr></tr>", {
                     html: $("<td></td>", {
                         class: "summary-empty",
-                        colspan: 7,
+                        colspan: me.showPaidColumn ? 8 : 7,
                         text: me.emptyText
                     })
                 }));
@@ -397,6 +454,11 @@ var SummaryTable = function (config) {
 
             var rows = me.getRows();
 
+            var paidCol = $("<th></th>", {
+                class: "header-paid header-cell",
+                text: "Paid"
+            });
+
             var summTable = $("<table></table>", {
                 class: me.cls,
                 html: [
@@ -405,7 +467,7 @@ var SummaryTable = function (config) {
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: 8,
+                                    colspan: me.showPaidColumn ? 8 : 7,
                                     class: me.headerCls + "-inner",
                                     html: [
                                         $("<span></span>", {
@@ -421,8 +483,7 @@ var SummaryTable = function (config) {
                                             on: {
                                                 click: function () {
                                                     var form = me.createPdfForm();
-                                                    console.log(form);
-                                                    debugger;
+
                                                     form.submit();
                                                 }
                                             }
@@ -473,10 +534,7 @@ var SummaryTable = function (config) {
                                         class: "header-end header-cell",
                                         text: "End Time"
                                     }),
-                                    $("<th></th>", {
-                                        class: "header-paid header-cell",
-                                        text: "Paid"
-                                    }),
+                                    me.showPaidColumn ? paidCol : ""
                                 ]
                             })
                         ]

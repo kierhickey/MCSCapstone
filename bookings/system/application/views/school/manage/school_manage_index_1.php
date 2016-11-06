@@ -4,7 +4,7 @@
 ?>
 
 <h5>
-	<a href="<?php echo site_url('school/details') ?>">
+	<a href="<?php echo site_url('settings') ?>">
 		<img src="webroot/images/ui/school_manage_details.png" hspace="4" align="top" width="16" height="16" />
 		Business details
 	</a>

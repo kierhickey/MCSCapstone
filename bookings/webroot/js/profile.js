@@ -40,6 +40,8 @@
 
         var summConfig = {
             renderTo: ".selected-summary",
+            showPaidColumn: false,
+            userId: userId
         }
 
         var summaryTable = new SummaryTable(summConfig);
@@ -53,22 +55,28 @@
             userId: userId,
             rooms: rooms,
             userFilterEnabled: false,
-            onDateChanged: function (e) {
+            onDateRangeChanged: function (e) {
+                var startDate = e.startDate.curr;
+                var endDate = e.endDate.curr;
+
+                if (startDate > endDate) {
+                    startDate = e.endDate.curr;
+                    endDate = e.startDate.curr;
+                }
+
                 // Do summary
                 $.ajax({
                     url: "/bookings/api/bookings/summary",
                     method: "POST",
                     data: {
-                        startDate: formatDate(e.currentDate),
-                        endDate: formatDate(e.currentDate),
+                        startDate: formatDate(startDate),
+                        endDate: formatDate(endDate),
                         userId: e.userId === "" ? null : e.userId,
                         roomId: e.roomId === "" ? null : e.roomId
                     },
                     success: function (response) {
-                        response.responseData.each(function (booking) {
-                            booking.bookingDate = e.currentDate;
-                        });
-                        summaryTable.setDate(e.currentDate);
+                        summaryTable.setStartDate(e.startDate.curr);
+                        summaryTable.setEndDate(e.endDate.curr);
                         summaryTable.setBookings(response.responseData);
                     },
                     failure: function (response) {

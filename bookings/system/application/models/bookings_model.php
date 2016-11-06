@@ -13,6 +13,145 @@ class Bookings_model extends Model
         $this->CI = &get_instance();
     }
 
+    public function isRecurring($bookingId) {
+        $queryString = "SELECT date FROM bookings WHERE booking_id = $bookingId;";
+
+        $query = $this->db->query($queryString);
+        if ($query != false) {
+            $rArray = $query->result_array();
+            $result = $rArray[0]["date"];
+        }
+
+        return is_null($result);
+    }
+
+    public function markRecurringPaid($bookingId, $date = NULL, $note = "") {
+        if (!$this->isRecurring($bookingId)) { // We can throw it to the other method.
+            return markAsPaid($bookingId, $note);
+        }
+
+        // Check if paid exists :)
+        $queryString = "SELECT COUNT(*) as total FROM payments WHERE booking_id = $bookingId AND for_date = '$date'";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Invalid query - bad booking id?",
+                "queryString" => $queryString
+            ];
+        }
+
+        $num = $query->result_array()[0]["total"];
+
+        if ($num >= 1) { // Already paid
+            return [
+                "status" => 200,
+                "message" => "Booking already paid.",
+                "count" => $num
+            ];
+        }
+
+        // No payment entries -- make one
+        $queryString = "INSERT INTO payments(booking_id, for_date, notes)
+                        VALUES ($bookingId, '$date', '$note')";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Failed to mark as paid."
+            ];
+        }
+
+        return [
+            "status" => 200,
+            "message" => "Booking succesfully marked as paid."
+        ];
+    }
+
+    public function markAsPaid($bookingId, $note = "") {
+        if ($this->isRecurring($bookingId)) {
+            return [
+                "status" => 400,
+                "message" => "Attempted to mark recurring booking as paid without target date."
+            ];
+        }
+
+        // Check if payment exists.
+        $queryString = "SELECT COUNT(*) as total FROM payments WHERE booking_id = $bookingId";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Invalid query - bad booking id?",
+                "queryString" => $queryString
+            ];
+        }
+
+        $num = $query->result_array()[0]["total"];
+
+        if ($num >= 1) { // Already paid
+            return [
+                "status" => 200,
+                "message" => "Booking already paid.",
+                "count" => $num
+            ];
+        }
+
+        // No payment entries -- make one
+        $queryString = "INSERT INTO payments(booking_id, for_date, notes)
+                        VALUES ($bookingId, NULL, '$note')";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Failed to mark as paid."
+            ];
+        }
+
+        return [
+            "status" => 200,
+            "message" => "Booking succesfully marked as paid."
+        ];
+    }
+
+    public function getPaymentsForRecurringBooking($bookingId) {
+        $queryString = "SELECT booking_id, for_date FROM payments WHERE booking_id = $bookingId";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "message" => "Unable to complete request"
+            ];
+        }
+
+        $rArray = $query->result_array();
+
+        $result = [];
+
+        foreach($rArray as $array) {
+            $bookingId = $array["booking_id"];
+            $date = $array["for_date"];
+
+            if (!isset($result[$bookingId])) {
+                $result[$bookingId] = [];
+            }
+
+            array_push($result[$bookingId], $date);
+        }
+
+        return $result;
+    }
+
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
         $bookingsForPeriod = $this->getByTimespan($startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
@@ -31,8 +170,10 @@ class Bookings_model extends Model
 
             if ($forRoom && $forUser) {
                 if ($booking["isRecurring"] === "false") {
+                    $booking["isRecurring"] = false;
                     array_push($filteredBookings, $booking);
                 } else {
+                    $booking["isRecurring"] = true;
                     array_push($recurringBookings, $booking);
                 }
             }
@@ -43,12 +184,17 @@ class Bookings_model extends Model
         foreach ($recurringBookings as $booking) {
             $dow = $booking["dayNum"];
 
+            $paidDates = $this->getPaymentsForRecurringBooking($booking["bookingId"]);
+
             $bookingsForDate = DateHelper::GetDatesForDow($dow, $startDate, $endDate);
 
             foreach ($bookingsForDate as $bookingDate) {
                 $bookingCopy = $booking;
 
-                $bookingCopy["bookingDate"] = $bookingDate->format("Y-m-d");
+                $date = $bookingDate->format("Y-m-d");
+
+                $bookingCopy["paid"] = in_array($date, $paidDates[$booking["bookingId"]]);
+                $bookingCopy["bookingDate"] = $date;
 
                 array_push($expandedRecurring, $bookingCopy);
             }
@@ -77,7 +223,11 @@ class Bookings_model extends Model
 		$queryString = "SELECT b.booking_id AS bookingId
                               ,u.user_id AS userId
                               ,u.username AS username
-                              ,u.displayname AS displayName
+                              ,(case
+                                  when u.displayname IS NOT NULL AND u.displayname != '' then u.displayname
+                                  when u.firstname IS NOT NULL AND u.firstname != '' then CONCAT(u.firstname, ' ', u.lastname)
+                                  else u.username
+                               end) AS displayName
                               ,b.date AS bookingDate
                               ,b.day_num AS dayNum
                               ,p.time_start AS bookingStart
@@ -85,12 +235,17 @@ class Bookings_model extends Model
                               ,b.room_id as roomId
                               ,r.name as roomName
                               ,r.location as location
-                              ,(case when b.paid = 0 then 'false'
-                                     when b.paid = 1 then 'true'
-                                end) AS paid
                               ,(case when b.date IS NULL then 'true'
                                      when b.date IS NOT NULL then 'false'
                                 end) AS isRecurring
+                              ,(case when b.date is NOT NULL then
+                                  (
+                                      case when (SELECT COUNT(*) FROM payments WHERE booking_id = b.booking_id) = 1 then 'true'
+                                           else 'false'
+                                      end
+                                  )
+                                else 'false'
+                                end) AS paid
                         FROM bookings b
                         INNER JOIN periods p
                         ON b.period_id = p.period_id
@@ -108,10 +263,19 @@ class Bookings_model extends Model
                         ORDER BY b.date asc, r.location, p.time_start";
 
 		$query = $this->db->query($queryString);
+
         if ($query != false) {
-		          $results = $query->result_array();
+		    $results = $query->result_array();
         } else {
             $results = ["error" => "An error has occurred when fetching the data from the server."];
+        }
+
+        foreach ($results as &$booking) {
+            if ($booking["paid"] == "true") {
+                $booking["paid"] = true;
+            } else {
+                $booking["paid"] = false;
+            }
         }
 
 		return $results;
@@ -156,6 +320,9 @@ class Bookings_model extends Model
 
     public function BookingCell($data, $key, $rooms, $users, $room_id, $url, $booking_date_ymd = '', $holidays = array())
     {
+        $bookingDate = DateTime::createFromFormat('Y-m-d', $booking_date_ymd);
+        $todaysDate = new DateTime();
+        $tomorrowsDate = $todaysDate->add(new DateInterval('P1D'));
 
         // Check if there is a booking
     	if (isset($data[$key])) {
@@ -163,14 +330,23 @@ class Bookings_model extends Model
 	        // There's a booking for this ID, set var
 	        $booking = $data[$key];
 
+            $cell['body'] = '';
+
 	        if ($booking->date == null) {
 	            // If no date set, then it's a static/timetable/recurring booking
-	            $cell['class'] = 'static';
-	            $cell['body'] = '';
+                if ($bookingDate >= $todaysDate) {
+	                $cell['class'] = 'static';
+                } else {
+                    $cell['class'] = 'past-static';
+                }
 	        } else {
 	            // Date is set, it's a once off staff booking
-	            $cell['class'] = 'staff';
-	            $cell['body'] = '';
+	            if ($bookingDate >= $todaysDate) {
+                    $cell['class'] = 'staff';
+                } else {
+                    $cell['class'] = 'past-staff';
+                }
+                $cell['body'] = '';
 	        }
 
 	        // Username info
@@ -187,12 +363,14 @@ class Bookings_model extends Model
 	        }
 
 	        // Any notes?
-	        if ($booking->notes) {
-	            if (isset($user)) {
-	                $cell['body'] .= '<br />';
-	            }
-	            $cell['body'] .= '<span title="'.$booking->notes.'">'.character_limiter($booking->notes, 15).'</span>';
-	        }
+            if($this->userauth->CheckAuthLevel(ADMINISTRATOR) || $this->session->userdata("user_id") == $booking->user_id){
+    	        if ($booking->notes) {
+    	            if (isset($user)) {
+    	                $cell['body'] .= '<br />';
+    	            }
+    	            $cell['body'] .= '<span title="'.$booking->notes.'">'.character_limiter($booking->notes, 15).'</span>';
+    	        }
+            }
 
 	        // Cancel if user is an Admin, Room owner, or Booking owner
 	        $user_id = $this->session->userdata('user_id');
@@ -200,30 +378,35 @@ class Bookings_model extends Model
 	        if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)
 				|| ($user_id == $booking->user_id)
 				|| (($user_id == $rooms[$room_id]->user_id) && ($booking->date != null))) {
-
-	            $cancel_msg = 'Are you sure you want to cancel this booking?';
-	            if ($user_id != $booking->user_id) {
-	                $cancel_msg = 'Are you sure you want to cancel this booking?\n\n(**) Please take caution, it is not your own booking!!';
-	            }
-	            $cancel_url = site_url('bookings/cancel/'.$booking->booking_id);
-	            if (!isset($edit)) {
-	                $cell['body'] .= '<br />';
-	            }
-	            $cell['body'] .= '<a onclick="if(!confirm(\''.$cancel_msg.'\')){return false;}" href="'.$cancel_url.'" title="Cancel this booking"><img src="webroot/images/ui/delete.gif" width="16" height="16" alt="Cancel" title="Cancel this booking" hspace="8" /></a>';
+                if ($bookingDate >= $tomorrowsDate) {
+                    $cancel_msg = 'Are you sure you want to cancel this booking?';
+                    if ($user_id != $booking->user_id) {
+                        $cancel_msg = 'Are you sure you want to cancel this booking?\n\n(**) Please take caution, it is not your own booking!!';
+                    }
+                    $cancel_url = site_url('bookings/cancel/'.$booking->booking_id);
+                    if (!isset($edit)) {
+                        $cell['body'] .= '<br />';
+                    }
+                    $cell['body'] .= '<a onclick="if(!confirm(\''.$cancel_msg.'\')){return false;}" href="'.$cancel_url.'" title="Cancel this booking"><img src="webroot/images/ui/delete.gif" width="16" height="16" alt="Cancel" title="Cancel this booking" hspace="8" /></a>';
+                }
 	        }
 	    } elseif (isset($holidays[$booking_date_ymd])) {
 	        $cell['class'] = 'holiday';
 	        $cell['body'] = $holidays[$booking_date_ymd][0]->name;
 	    } else {
+            if ($bookingDate >= $todaysDate) {
+                // No bookings
+                $book_url = site_url('bookings/book/'.$url);
+                $cell['class'] = 'free';
+                $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
 
-	        // No bookings
-	        $book_url = site_url('bookings/book/'.$url);
-	        $cell['class'] = 'free';
-	        $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
-
-	        if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-	            $cell['body'] .= '<input type="checkbox" name="recurring[]" value="'.$url.'" />';
-	        }
+                if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+                    $cell['body'] .= '<input type="checkbox" name="recurring[]" value="'.$url.'" />';
+                }
+            } else {
+                $cell['class'] = 'past-free';
+                $cell['body'] = '';
+            }
 	    }
 
         return $this->load->view('bookings/table/bookingcell', $cell, true);
@@ -498,7 +681,7 @@ class Bookings_model extends Model
 				$dayofweek = $school['days_list'][$i];
                 $day['width'] = $col_width;
                 $day['name'] = $dayofweek;
-				$day['date'] = date('m/d', strtotime("+".($i - 1)." days", strtotime($week_start)));
+				$day['date'] = date('d/m', strtotime("+".($i - 1)." days", strtotime($week_start)));
                 $html .= $this->load->view('bookings/table/headings/days', $day, true);
             }
         break;
@@ -924,6 +1107,37 @@ class Bookings_model extends Model
 
     public function Add($data)
     {
+        $date = $data['date'];
+        $sessionId = $data['period_id'];
+        $dateDayNum = (new DateTime($date))->format("N");
+
+        $queryString = "SELECT COUNT(*) AS total
+                        FROM bookings
+                        WHERE
+                            (date = '$date' OR day_num = $dateDayNum)
+                            AND period_id = $sessionId";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return false; // Query didn't work -- abort.
+        }
+
+        $result = $query->result_array()[0];
+
+        ini_set("log_errors", 1);
+        ini_set("error_log", "/tmp/php-error.log");
+
+        error_log(json_encode([
+            "date" => $date,
+            "periodId" => $sessionId,
+            "result" => $result
+        ]));
+
+        if ($result["total"] > 0) {
+            return false; // A booking exists for that timeslot. Dun do eet.
+        }
+
         // Run query to insert blank row
         $this->db->insert('bookings', array('booking_id' => null));
         // Get id of inserted record
@@ -973,7 +1187,7 @@ class Bookings_model extends Model
         $maxdate = date('Y-m-d', strtotime('+14 days', Now()));
         $today = date('Y-m-d');
         // All current bookings for this user between today and 2 weeks' time
-        $query_str = 'SELECT rooms.*, bookings.*, periods.name as periodname, periods.time_start, periods.time_end, bookings.paid '
+        $query_str = 'SELECT rooms.*, bookings.*, periods.name as periodname, periods.time_start, periods.time_end'
                                 .'FROM bookings '
                                 .'JOIN rooms ON rooms.room_id=bookings.room_id '
                                 .'JOIN periods ON periods.period_id=bookings.period_id '
@@ -981,7 +1195,7 @@ class Bookings_model extends Model
                                 .'AND bookings.date Is Not NULL '
                                 .'ORDER BY bookings.date asc, periods.time_start asc';
         $query = $this->db->query($query_str);
-        if ($query->num_rows() > 0) {
+        if ($query != false && $query->num_rows() > 0) {
             return $query->result();
         } else {
             return false;

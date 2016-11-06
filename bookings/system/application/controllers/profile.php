@@ -68,15 +68,8 @@ class Profile extends Controller {
             $layout['title'] = "$user->firstname $user->lastname's Profile";
         }
     }
-      
-    $layout["id"] = $this->targetUserId;
 
-  	// Get bookings for a room if this user owns one
-  	$body['myroom'] = $this->M_bookings->ByRoomOwner($this->targetUserId);
-  	// Get all bookings made by this user (only staff ones)
-  	$body['mybookings'] = $this->M_bookings->ByUser($this->targetUserId);
-  	// Get totals
-  	$body['total'] = $this->M_bookings->TotalNum($this->targetUserId, $this->school_id);
+    $layout["id"] = $this->targetUserId;
 
     $layout['showtitle'] = $layout['title'];
 	$layout['body'] = $this->load->view('profile/profile_index', $body, True);
@@ -93,15 +86,15 @@ class Profile extends Controller {
   	// Get bookings for a room if this user owns one
   	$body['user'] = $this->M_users->Get($user_id);
 
-		$cols[0]['content'] = $this->load->view('profile/profile_edit', $body, True);
-		$cols[0]['width'] = '70%';
-		$cols[1]['content'] = $this->load->view('profile/profile_edit_side', $body, True);
-		$cols[1]['width'] = '30%';
+	$cols[0]['content'] = $this->load->view('profile/profile_edit', $body, True);
+	$cols[0]['width'] = '70%';
+	$cols[1]['content'] = $this->load->view('profile/profile_edit_side', $body, True);
+	$cols[1]['width'] = '30%';
 
-		$layout['title'] = 'Edit my details';
-		$layout['showtitle'] = $layout['title'];
-		$layout['body'] = $this->load->view('columns', $cols, True);
-		$this->load->view('layout', $layout);
+	$layout['title'] = 'Edit my details';
+	$layout['showtitle'] = $layout['title'];
+	$layout['body'] = $this->load->view('columns', $cols, True);
+	$this->load->view('layout', $layout);
   }
 
 

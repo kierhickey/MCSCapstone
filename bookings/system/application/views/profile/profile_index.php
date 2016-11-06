@@ -10,26 +10,24 @@ $this->load->view('partials/iconbar', $icondata);
 
 
 <h3>Bookings</h3>
-
 <p>To see your confirmed bookings for an individual day for all rooms: </p>
-    <ul> 
-    <li>    Set the room list to "No Room" </li>
-     <li>Click on the date you wish to view, a table will be generated below! </li>
-    </ul>
-
-    
-    
-    
-    
-<p>**To see your confirmed bookings for a week, click on the button labelled "View Week bookings"**</p>
+<ul>
+    <li>Set the room list to "All Rooms"</li>
+    <li>Click on the date you wish to view and a table will be generated below!</li>
+    <li>If you wish to print the table, you can either download a PDF view, or simply print this page!</li>
+</ul>
+<p>
+    <span class="tip-label">Tip: </span><span class="tip-text">To select multiple days, hold shift while clicking!</span>
+</p>
 
 <div class="calendar-container">
     <img class="loader" src="webroot/images/ui/loaders/oval.svg" alt="Loading..." />
-    
+
 </div>
 <div class="selected-summary">
 
 </div>
+<script src="webroot/js/modal.js" type="application/javascript"></script>
 <script src="webroot/js/calendar.js" type="application/javascript"></script>
 <script src="webroot/js/summary-table.js" type="application/javascript"></script>
 <script src="webroot/js/profile.js" type="application/javascript"></script>

@@ -9,3 +9,4 @@
 <script src="webroot/js/calendar.js" type="text/javascript"></script>
 <script src="webroot/js/summary-table.js" type="text/javascript"></script>
 <script src="webroot/js/summary.js" type="text/javascript"></script>
+<script src="webroot/js/modal.js" type="text/javascript"></script>
