@@ -43,7 +43,7 @@ class Bookings_model extends Model
             ];
         }
 
-        $num = $query->result_array()["total"];
+        $num = $query->result_array()[0]["total"];
 
         if ($num >= 1) { // Already paid
             return [
@@ -93,7 +93,7 @@ class Bookings_model extends Model
             ];
         }
 
-        $num = $query->result_array()["total"];
+        $num = $query->result_array()[0]["total"];
 
         if ($num >= 1) { // Already paid
             return [
@@ -270,6 +270,14 @@ class Bookings_model extends Model
             $results = ["error" => "An error has occurred when fetching the data from the server."];
         }
 
+        foreach ($results as &$booking) {
+            if ($booking["paid"] == "true") {
+                $booking["paid"] = true;
+            } else {
+                $booking["paid"] = false;
+            }
+        }
+
 		return $results;
 	}
 
@@ -321,7 +329,7 @@ class Bookings_model extends Model
 
 	        // There's a booking for this ID, set var
 	        $booking = $data[$key];
-            
+
             $cell['body'] = '';
 
 	        if ($booking->date == null) {
