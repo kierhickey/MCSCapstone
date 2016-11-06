@@ -7,6 +7,8 @@ $route['api/rooms']                 = 'rooms/getAllBasic';
 $route['api/bookings/paid']         = 'bookings/markAsPaid';
 $route['api/pdf']                   = 'bookings/generatePdf';
 
+$route['settings']                  = 'school/details';
+
 // Bookings
 $route['bookings']					= 'bookings/index';
 $route['summary']                   = 'bookings/summaryPage';

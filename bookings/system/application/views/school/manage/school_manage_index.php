@@ -30,7 +30,7 @@ $i = 0;
 $school[$i] = [
 	'text' => 'Business Details',
 	'icon' => 'material/business-info-white-x48.svg',
-	'href' => site_url('school/details')
+	'href' => site_url('settings')
 ];
 
 $i++;
