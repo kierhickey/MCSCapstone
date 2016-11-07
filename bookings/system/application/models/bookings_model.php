@@ -1136,13 +1136,15 @@ class Bookings_model extends Model
     {
         $date = $data['date'];
         $sessionId = $data['period_id'];
+        $roomNumber = $data['room_id'];
         $dateDayNum = (new DateTime($date))->format("N");
 
         $queryString = "SELECT COUNT(*) AS total
                         FROM bookings
                         WHERE
                             (date = '$date' OR day_num = $dateDayNum)
-                            AND period_id = $sessionId";
+                            AND period_id = $sessionId
+                            AND room_id = $roomNumber";
 
         $query = $this->db->query($queryString);
 
