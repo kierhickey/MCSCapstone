@@ -203,7 +203,7 @@ var SummaryTable = function (config) {
             html: [
                 $("<td></td>", {
                     class: "booking-username booking-cell",
-                    text: booking.bookingDate
+                    text: _formatDate(new Date(booking.bookingDate))
                 }),
                 $("<td></td>", {
                     class: "booking-username booking-cell",
@@ -236,7 +236,7 @@ var SummaryTable = function (config) {
 
     var sorts = [];
 
-    var props = ["username", "displayname", "bookingStart", "bookingEnd"];
+    var props = ["username", "displayname", "bookingStart", "bookingEnd", "bookingDate", "roomName", "location", "paid"];
 
     for (var i = 0; i < props.length; i++) {
         // Create closure to prevent only the last property working
@@ -334,6 +334,12 @@ var SummaryTable = function (config) {
                     break;
                 case "end":
                     sortTarget = "bookingEnd";
+                    break;
+                case "date":
+                    sortTarget = "bookingDate";
+                    break;
+                case "room-name":
+                    sortTarget = "roomName";
                     break;
                 default:
                     break;
