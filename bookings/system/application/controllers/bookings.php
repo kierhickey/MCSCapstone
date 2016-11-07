@@ -84,7 +84,7 @@ class Bookings extends Controller
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
-        if( !$this->userauth->CheckAuthLevel( ADMINISTRATOR ) ) {
+        if($userId == null && !$this->userauth->CheckAuthLevel( ADMINISTRATOR ) ) {
             return [
                 "status" => 403,
                 "message" => "You do not have the required elevation to access the requested resource."
