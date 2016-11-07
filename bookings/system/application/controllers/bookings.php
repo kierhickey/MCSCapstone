@@ -93,31 +93,6 @@ class Bookings extends Controller
 
         $allBookings = $this->bookingsProvider->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
-        usort($allBookings, function ($item1, $item2) {
-            //echo $item1["bookingDate"];
-            //echo $item2["bookingDate"];
-
-            $bookingOneDate = date_create_from_format('Y-m-d', $item1["bookingDate"]);
-            $bookingTwoDate = date_create_from_format('Y-m-d', $item2["bookingDate"]);
-
-            $bookingOneLocation = $item1["location"];
-            $bookingTwoLocation = $item2["location"];
-
-            $bookingOneSessionStart = $item1["bookingStart"];
-            $bookingTwoSessionStart = $item2["bookingStart"];
-
-            if ($bookingOneDate == $bookingTwoDate) {
-                if ($bookingOneLocation == $bookingTwoLocation) {
-                    if ($bookingOneSessionStart == $bookingTwoSessionStart) {
-                        return 0;
-                    }
-                    return strcmp($bookingOneSessionStart, $bookingTwoSessionStart);
-                }
-                return strcmp($bookingOneLocation, $bookingTwoLocation);
-            }
-            return $bookingOneDate < $bookingTwoDate ? -1 : 1;
-        });
-
         return $allBookings;
     }
 
