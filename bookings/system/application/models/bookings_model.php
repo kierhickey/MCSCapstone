@@ -1164,11 +1164,10 @@ class Bookings_model extends Model
                 $dateDayNum = (new DateTime($date))->format("N");
 
                 $queryString = "SELECT COUNT(*) AS total
-                FROM bookings
-                WHERE
-                (date = '$date' OR day_num = $dateDayNum)
-                AND period_id = $sessionId
-                AND room_id = $roomNumber";
+                    FROM bookings
+                    WHERE (date = '$date' OR day_num = $dateDayNum)
+                    AND period_id = $sessionId
+                    AND room_id = $roomNumber";
 
                 $query = $this->db->query($queryString);
 
@@ -1192,7 +1191,11 @@ class Bookings_model extends Model
                 }
 
                 // Run query to insert blank row
-                $this->db->insert('bookings', array('booking_id' => null));
+                $this->db->insert('bookings', [
+                    'booking_id' => null,
+                    'start_date' => (new DateTime())->format('Y-m-d')
+                ]);
+                
                 // Get id of inserted record
                 $booking_id = $this->db->insert_id();
                 // Now call the edit function to update the actual data for this new row now we have the ID
