@@ -231,12 +231,18 @@ class Bookings_model extends Model
             $bookingOneSessionStart = $item1["bookingStart"];
             $bookingTwoSessionStart = $item2["bookingStart"];
 
+            $bookingOneRoom = $item1["roomName"];
+            $bookingTwoRoom = $item2["roomName"];
+
             if ($bookingOneDate == $bookingTwoDate) {
                 if ($bookingOneLocation == $bookingTwoLocation) {
-                    if ($bookingOneSessionStart == $bookingTwoSessionStart) {
-                        return 0;
+                    if ($bookingOneRoom == $bookingTwoRoom) {
+                        if ($bookingOneSessionStart == $bookingTwoSessionStart) {
+                            return 0;
+                        }
+                        return strcmp($bookingOneSessionStart, $bookingTwoSessionStart);
                     }
-                    return strcmp($bookingOneSessionStart, $bookingTwoSessionStart);
+                    return strcmp($bookingOneRoom, $bookingTwoRoom);
                 }
                 return strcmp($bookingOneLocation, $bookingTwoLocation);
             }
@@ -1195,7 +1201,7 @@ class Bookings_model extends Model
                     'booking_id' => null,
                     'start_date' => (new DateTime())->format('Y-m-d')
                 ]);
-                
+
                 // Get id of inserted record
                 $booking_id = $this->db->insert_id();
                 // Now call the edit function to update the actual data for this new row now we have the ID

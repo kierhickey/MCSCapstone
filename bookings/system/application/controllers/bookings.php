@@ -5,6 +5,8 @@ require_once "pdfgenerator.php";
 
 class Bookings extends Controller
 {
+    private $errorMsg = NULL;
+
     public function Bookings()
     {
         // Call parent
@@ -141,10 +143,10 @@ class Bookings extends Controller
       //  $summaryText = "This page presents a summary of information for "
       //      ."export! You can filter by room, by person, or by both, and "
       //      ."export information as it is displayed below!";
-        
-        
-      $summaryText ="  
-  
+
+
+      $summaryText ="
+
 
 <p>To view all confirmed bookings, across all rooms for a <strong> single  client </strong></p>
 <ul>
@@ -166,25 +168,17 @@ class Bookings extends Controller
 </p>
 
 <p>
-    If you wish to print the Summary Table below, you can do so using the Printer Icon. </br> 
-    If you wish to generate a PDF invoice summary, click the Download arrow adjacent. 
+    If you wish to print the Summary Table below, you can do so using the Printer Icon. </br>
+    If you wish to generate a PDF invoice summary, click the Download arrow adjacent.
 </p>
 
 ";
-        
+
 
         $layout["title"] = "Summary";
         $layout["showtitle"] = "Summary";
         $layout["body"] = $html->toHtml([
             "summaryText" => $summaryText,
-            "roomOptions" => [
-                    "1" => "bruh",
-                    "2" => "does this work?"
-            ],
-            "userOptions" => [
-                "1" => "Administrator",
-                "2" => "Testuser1"
-            ]
         ]);
 
         $this->load->view('layout', $layout);
@@ -303,6 +297,8 @@ class Bookings extends Controller
         $layout['title'] = 'Book a room';
         $layout['showtitle'] = $layout['title'];
 
+        $layout['body'] = $this->session->flashdata('error');
+
         $seg_count = $this->uri->total_segments();
 
         if ($seg_count != 2 && $seg_count != 12) {
@@ -313,11 +309,6 @@ class Bookings extends Controller
             if ($seg_count == 12) {
 
                 // Create array of data from the URI
-                $booking['booking_id'] = 'X';
-                $booking['period_id'] = $uri['period'];
-                $booking['room_id'] = $uri['room'];
-                $booking['date'] = date('d/m/Y', strtotime($uri['date']));
-
                 if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                     $booking['day_num'] = $uri['day'];
                     $booking['week_id'] = $uri['week'];
@@ -325,16 +316,26 @@ class Bookings extends Controller
                     $booking['user_id'] = $this->session->userdata('user_id');
                 }
 
-                $body['booking'] = $booking;
+                $booking['period_id'] = $uri['period'];
+                $booking['room_id'] = $uri['room'];
+                $booking['date'] = date('d/m/Y', strtotime($uri['date']));
+
                 $body['hidden'] = $booking;
             } else {
                 $body['hidden'] = array();
             }
 
+            $booking['booking_id'] = 'X';
+            $body['booking'] = $booking;
+
+            $body["errorMsg"] = $this->errorMsg;
+
+            $this->errorMsg = NULL;
+
             // Lookups we need if an admin user
             if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                 $body['days'] = $this->sessionProvider->days;
-                $body['rooms'] = $this->roomsProvider->Get(null, $this->school_id);
+                $body['rooms'] = $this->roomsProvider->getAllBasic();
                 $body['periods'] = $this->sessionProvider->Get();
                 $body['weeks'] = $this->weeksProvider->Get();
                 $body['users'] = $this->userProvider->Get();
@@ -466,7 +467,6 @@ class Bookings extends Controller
 
         // Validation rules
         $vrules['booking_id'] = 'required';
-        $vrules['date'] = 'max_length[10]|callback__is_valid_date';
         $vrules['use'] = 'max_length[100]';
         $this->validation->set_rules($vrules);
 
@@ -480,13 +480,59 @@ class Bookings extends Controller
         $vfields['day_num'] = 'Day of week';
         $this->validation->set_fields($vfields);
 
+        //
+        // Date validation
+        // Valid format: dd/mm/yyyy
+        //
+        $dateValid = true; //Assume innocent
+        $isLeapYear = false;
+
+        // Reference Data
+        $today = new DateTime();
+        $todayYear = intval($today->format('Y'));
+        $todayMonth = intval($today->format('m'));
+        $todayDate = intval($today->format('d'));
+
+        $date = $this->input->post('date');
+        $dateArr = explode("/", $date);
+
+        // There are three parts of the date
+        $dateValid = count($dateArr) == 3;
+
+        $year = intval($dateArr[2]);
+        $month = intval($dateArr[1]);
+        $day = intval($dateArr[0]);
+
+        // Date isn't in the past
+        if ($year < $todayYear
+                || $month < $todayMonth
+                || $day < $todayDay) {
+            $dateValid = false;
+        }
+
+        $roomId = $this->input->post("room_id");
+
+        $roomIsBookable = $this->roomsProvider->isBookable($roomId);
+
+        // Date is valid
+        $dateValid = checkdate($month, $day, $year);
+
+        // End Date Validation
+
         // Set the error delims to a nice styled red hint under the fields
         $this->validation->set_error_delimiters('<p class="hint error"><span>', '</span></p>');
 
         if ($this->validation->run() == false) { // Validation failed
-            if ($booking_id != 'X') {
+            if ($booking_id != 'X' && $booking_id != false) {
                 return $this->Edit($booking_id);
             } else {
+                return $this->book();
+            }
+        } else if (!$dateValid) {
+            if ($booking_id != 'X' && $booking_id != false) {
+                return $this->Edit($booking_id);
+            } else {
+                $this->errorMsg = "The date '$date' is not a valid date. Please specify a date in dd/mm/yyyy format";
                 return $this->book();
             }
         } else { // Validation succeeded
@@ -553,7 +599,7 @@ class Bookings extends Controller
 
         if (count($datearr) == 3) {
             $valid = checkdate($datearr[1], $datarr[0], $datearr[2]); // month, day, year
-
+            echo "I DO ACTUALLY CHECK SHIT APPARENTLY";
             if ($valid) {
                 $ret = true;
             } else {

@@ -22,6 +22,7 @@ class Rooms_model extends Model{
 		$this->db->select(implode(", ", $columns));
 		$this->db->from("rooms");
 		$this->db->where("school_id", $schoolId);
+		$this->db->where("bookable", 1);
 
 		$query = $this->db->get();
 
@@ -29,6 +30,22 @@ class Rooms_model extends Model{
 			return $query->result();
 		} else {
 			return [];
+		}
+	}
+
+	public function isBookable($id) {
+		$this->db->select("bookable");
+		$this->db->from("rooms");
+		$this->db->where("room_id", $id);
+
+		$query = $this->db->get();
+
+		if( $query->num_rows() == 1 ){
+			// One row, match!
+			return $query->row()->bookable == "1";
+		} else {
+			// None
+			return false;
 		}
 	}
 
