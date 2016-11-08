@@ -21,6 +21,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'id' => 'username',
 		'size' => '20',
 		'maxlength' => '20',
+		'minlength' => '4',
 		'tabindex' => $t,
 		'value' => $username,
 		'required' => 'required'
@@ -39,6 +40,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 		'name' => 'password1',
 		'id' => 'password1',
 		'size' => '20',
+		'minlength' => '6',
 		'maxlength' => '40',
 		'tabindex' => $t,
 		'value' => '',
@@ -51,7 +53,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
 
 
 <p>
-  <label for="password2" class="required">Password (again)</label>
+  <label for="password2" class="required">Confirm Password</label>
   <?php
 	#$password1 = @field($this->validation->email, $user->email);
 	echo form_password(array(
@@ -73,7 +75,7 @@ echo form_open('users/save', array('class' => 'cssform', 'id' => 'user_add'), ar
   <label for="authlevel" class="required">Type</label>
   <?php
 	$authlevel = @field($this->validation->authlevel, $user->authlevel);
-	$data = array('1' => 'Administrator', '2' => 'User');
+	$data = array('2' => 'User', '1' => 'Administrator');
 	echo form_dropdown(
 		'authlevel',
 		$data,

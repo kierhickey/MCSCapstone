@@ -146,33 +146,29 @@ class Users extends Controller {
 		#$this->load->library('validation');
 
 		// Validation rules
-		$vrules['user_id']				= 'required';
-		$vrules['username']   		= 'required|max_length[20]|min_length[1]';
-		$vrules['password1']			= 'max_length[64]|min_length[1]';
-		$vrules['password2']			= 'max_length[64]|min_length[1]|matches[password1]';
-		$vrules['authlevel']			= 'required';
-		$vrules['bquota']					= 'numeric|max_length[3]';
-		$vrules['email']          = 'max_length[255]|valid_email';
-		$vrules['firstname']			= 'max_length[20]';
-		$vrules['lastname']				= 'max_length[20]';
-		$vrules['displayname']		= 'max_length[20]';
-		$vrules['extension']			= 'max_length[10]';
+		$vrules['user_id']		    = 'required';
+		$vrules['username']   	    = 'required|max_length[20]|min_length[4]';
+		$vrules['password1']	    = 'max_length[64]|min_length[8]';
+		$vrules['password2']	    = 'max_length[64]|min_length[8]|matches[password1]';
+		$vrules['authlevel']	    = 'required';
+		$vrules['bquota']		    = 'numeric|max_length[3]';
+		$vrules['email']            = 'max_length[255]|valid_email';
+		$vrules['firstname']	    = 'max_length[20]';
+		$vrules['lastname']		    = 'max_length[20]';
+		$vrules['displayname']	    = 'max_length[20]';
 		$this->validation->set_rules($vrules);
 
 		// Name the validation fields if an error occurs
-		$vfields['user_id']					= 'User ID';
-		$vfields['username']				= 'Username';
-		$vfields['password1']				= 'Password';
-		$vfields['password2']				= 'Password confirmation';
-		$vfields['authlevel']				= 'User type';
-		$vfields['enabled']					= 'Enabled';
-		$vfields['bquota']					= 'Booking quota';
-		$vfields['email']						= 'Email address';
-		$vfields['firstname']				= 'First name';
-		$vfields['lastname']				= 'Last name';
-		$vfields['displayname']			= 'Display name';
-		$vfields['department_id']		= 'Department';
-		$vfields['ext']							= 'Extension';
+		$vfields['user_id']			= 'User ID';
+		$vfields['username']		= 'Username';
+		$vfields['password1']		= 'Password';
+		$vfields['password2']		= 'Password confirmation';
+		$vfields['authlevel']		= 'User type';
+		$vfields['enabled']			= 'Enabled';
+		$vfields['email']			= 'Email address';
+		$vfields['firstname']		= 'First name';
+		$vfields['lastname']		= 'Last name';
+		$vfields['displayname']		= 'Display name';
 		$this->validation->set_fields($vfields);
 
 		// Set the error delims to a nice styled red hint under the fields
@@ -191,19 +187,18 @@ class Users extends Controller {
 
 			// Validation succeeded!
 
-			$data['username'] 				= $this->input->post('username');
-			$data['authlevel'] 				= $this->input->post('authlevel');
-			$data['enabled'] 					= ($this->input->post('enabled') == '1') ? 1 : 0;
-			#$data['bquota']						= $this->input->post('bquota');
-			$data['email']						= $this->input->post('email');
-			$data['firstname']				= $this->input->post('firstname');
-			$data['lastname']					= $this->input->post('lastname');
-			$data['displayname']			= $this->input->post('displayname');
-			$data['department_id']		= $this->input->post('department_id');
-			$data['ext']							= $this->input->post('ext');
+			$data['username'] 		= $this->input->post('username');
+			$data['authlevel'] 		= $this->input->post('authlevel');
+			$data['enabled'] 		= $this->input->post('enabled') == '1' ? 1 : 0;
+			#$data['bquota']		= $this->input->post('bquota');
+			$data['email']			= $this->input->post('email');
+			$data['firstname']		= $this->input->post('firstname');
+			$data['lastname']		= $this->input->post('lastname');
+			$data['displayname']	= $this->input->post('displayname');
+
 			// Only update password if one was supplied
 			if($this->input->post('password1') && $this->input->post('password2')){
-				$data['password'] 			= sha1($this->input->post('password1'));
+				$data['password'] = sha1($this->input->post('password1'));
 			}
 
 			// Now see if we are editing or adding
@@ -232,7 +227,6 @@ class Users extends Controller {
 			// Go back to index
 			$this->session->set_flashdata('saved', $flashmsg);
 			redirect('users', 'redirect');
-
 		}
 
 	}
