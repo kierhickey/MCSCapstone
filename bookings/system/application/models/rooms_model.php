@@ -22,6 +22,7 @@ class Rooms_model extends Model{
 		$this->db->select(implode(", ", $columns));
 		$this->db->from("rooms");
 		$this->db->where("school_id", $schoolId);
+		$this->db->where("bookable", 1);
 
 		$query = $this->db->get();
 
