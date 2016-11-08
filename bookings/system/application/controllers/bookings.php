@@ -335,7 +335,7 @@ class Bookings extends Controller
             // Lookups we need if an admin user
             if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                 $body['days'] = $this->sessionProvider->days;
-                $body['rooms'] = $this->roomsProvider->Get(null, $this->school_id);
+                $body['rooms'] = $this->roomsProvider->getAllBasic();
                 $body['periods'] = $this->sessionProvider->Get();
                 $body['weeks'] = $this->weeksProvider->Get();
                 $body['users'] = $this->userProvider->Get();
@@ -509,6 +509,10 @@ class Bookings extends Controller
                 || $day < $todayDay) {
             $dateValid = false;
         }
+
+        $roomId = $this->input->post("room_id");
+
+        $roomIsBookable = $this->roomsProvider->isBookable($roomId);
 
         // Date is valid
         $dateValid = checkdate($month, $day, $year);

@@ -62,7 +62,7 @@ function toggle_recurring(){
   <label for="room_id" class="required">Room:</label>
   <?php
   foreach($rooms as $room){
-  	$roomlist[$room->room_id] = $room->name;
+  	$roomlist[$room->roomId] = $room->location . " - " . $room->name;
   }
 	$room_id = @field($this->validation->room_id, $booking['room_id']);
 	echo form_dropdown('room_id', $roomlist, $room_id, 'tabindex="'.$t.'"');
