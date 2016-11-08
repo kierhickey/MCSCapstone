@@ -138,9 +138,40 @@ class Bookings extends Controller
 
         $html = new Template("summary", "summary");
 
-        $summaryText = "This page presents a summary of information for "
-            ."export! You can filter by room, by person, or by both, and "
-            ."export information as it is displayed below!";
+      //  $summaryText = "This page presents a summary of information for "
+      //      ."export! You can filter by room, by person, or by both, and "
+      //      ."export information as it is displayed below!";
+        
+        
+      $summaryText ="  
+  
+
+<p>To view all confirmed bookings, across all rooms for a <strong> single  client </strong></p>
+<ul>
+    <li>Set the room list to 'All Rooms'</li>
+    <li>Set the User list to the Client name you wish to view</li>
+    <li>Click on the date you wish to view and a table will be generated below!</li>
+</ul>
+
+                      <p>To view all confirmed bookings, across <strong> all rooms and clients: </strong> </p>
+<ul>
+    <li>Set the room list to 'All Rooms'</li>
+    <li>Set the User list to 'No User'</li>
+    <li>Click on the date you wish to view and a table will be generated below!</li>
+</ul>
+
+
+<p>
+    <span class='tip-label'>Tip: </span><span class='tip-text'>To select multiple days, hold shift while clicking a start date, then end date!</span>
+</p>
+
+<p>
+    If you wish to print the Summary Table below, you can do so using the Printer Icon. </br> 
+    If you wish to generate a PDF invoice summary, click the Download arrow adjacent. 
+</p>
+
+";
+        
 
         $layout["title"] = "Summary";
         $layout["showtitle"] = "Summary";
