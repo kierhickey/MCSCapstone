@@ -17,7 +17,12 @@ $this->load->view('partials/iconbar', $icondata);
     <li>If you wish to print the table, you can either download a PDF view, or simply print this page!</li>
 </ul>
 <p>
-    <span class="tip-label">Tip: </span><span class="tip-text">To select multiple days, hold shift while clicking!</span>
+    <span class="tip-label">Tip: </span><span class="tip-text">To select multiple days, hold shift while clicking start date, then end date!</span>
+</p>
+
+<p>
+    If you wish to print the Summary Table below, you can do so using the Printer Icon. <br/> 
+    If you wish to generate a PDF invoice summary, click the Download arrow adjacent. 
 </p>
 
 <div class="calendar-container">
