@@ -5,15 +5,23 @@ function toggle_recurring(){
 	$('day_num').disabled = !$recurring;
 	//$('user_id').disabled = !$recurring;
 }
-</script><?php
-echo $this->session->flashdata('saved');
-echo form_open('bookings/save', array('id'=>'bookings_book', 'class'=>'cssform'), $hidden);
-$t = 1;
+</script>
+<?php
+	if ($errorMsg != NULL) {
+		echo $this->load->view("msgbox/error", $errorMsg, true);
+	}
+
+	echo $this->session->flashdata('saved');
+
+	echo form_open('bookings/save', array('id'=>'bookings_book', 'class'=>'cssform'));
+	$t = 1;
+
+	$bookingId = $booking["booking_id"];
 ?>
 
 
 <fieldset><legend accesskey="I" tabindex="<?php echo $t; $t++; ?>">Booking Information</legend>
-
+<input type="hidden" name="booking_id" value="<?php echo $bookingId ?>" />
 
 <p>
 	<label>Use:</label>
