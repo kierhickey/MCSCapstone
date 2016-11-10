@@ -488,10 +488,7 @@ class Bookings extends Controller
         $isLeapYear = false;
 
         // Reference Data
-        $today = new DateTime();
-        $todayYear = intval($today->format('Y'));
-        $todayMonth = intval($today->format('m'));
-        $todayDate = intval($today->format('d'));
+        $today = strtotime('0:00');
 
         $date = $this->input->post('date');
         $dateArr = explode("/", $date);
@@ -504,9 +501,7 @@ class Bookings extends Controller
         $day = intval($dateArr[0]);
 
         // Date isn't in the past
-        if ($year < $todayYear
-                || $month < $todayMonth
-                || $day < $todayDay) {
+        if ( strtotime($date) <= $today) {
             $dateValid = false;
         }
 
@@ -515,7 +510,9 @@ class Bookings extends Controller
         $roomIsBookable = $this->roomsProvider->isBookable($roomId);
 
         // Date is valid
-        $dateValid = checkdate($month, $day, $year);
+        if (!checkdate($month, $day, $year)) {
+            $dateValid = false;
+        }
 
         // End Date Validation
 
