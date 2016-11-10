@@ -347,11 +347,11 @@ class Bookings extends Controller
             $today = strtotime(date('Y-m-d'));
             $thedate = strtotime($uri['date']);
 
-            // if ($this->userauth->CheckAuthLevel(TEACHER, $this->authlevel)) {
-            if ($thedate < $today) {
-                $layout['body'] = $this->load->view('msgbox/error', 'You cannot make a booking in the past.', true);
+            if ($this->userauth->CheckAuthLevel(TEACHER, $this->authlevel)) {
+                if ($thedate < $today) {
+                    $layout['body'] = $this->load->view('msgbox/error', 'You cannot make a booking in the past.', true);
+                }
             }
-            // }
 
             // Now see if user is allowed to book in advance
             if ($this->userauth->CheckAuthLevel(TEACHER, $this->authlevel)) {
@@ -505,8 +505,8 @@ class Bookings extends Controller
 
         // Date isn't in the past
         if ($year < $todayYear
-                || $month < $todayMonth
-                || $day < $todayDay) {
+                && $month < $todayMonth
+                && $day < $todayDay) {
             $dateValid = false;
         }
 
