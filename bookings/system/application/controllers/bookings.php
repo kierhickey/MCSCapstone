@@ -494,14 +494,18 @@ class Bookings extends Controller
         $dateArr = explode("/", $date);
 
         // There are three parts of the date
-        $dateValid = count($dateArr) == 3;
+        if (count($dateArr) != 3) {
+            $dateValid = false;
+        }
 
         $year = intval($dateArr[2]);
         $month = intval($dateArr[1]);
         $day = intval($dateArr[0]);
 
         // Date isn't in the past
-        if ( strtotime($date) <= $today) {
+        $dateDate = strtotime("$month/$day/$year");
+
+        if ($dateDate <= $today) {
             $dateValid = false;
         }
 
