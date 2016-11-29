@@ -37,6 +37,7 @@ class Bookings extends Controller
         $this->load->model('weeks_model', 'weeksProvider');
         $this->load->model('users_model', 'userProvider');
         $this->load->model('bookings_model', 'bookingsProvider');
+        $this->load->model('school_model', 'schoolProvider');
 
         $school['users'] = $this->userProvider->Get();
         $school['days_list'] = $this->sessionProvider->days;
@@ -82,7 +83,14 @@ class Bookings extends Controller
     public function generatePdf() {
         $pdfGen = new PdfGenerator();
 
-        $pdfGen->generate($this->userProvider, $this->bookingsProvider);
+        $schoolInfo = $this->schoolProvider->GetInfo();
+
+        $pricing = [
+            "recurringPrice" => floatval($schoolInfo->recurringPrice),
+            "casualPrice" => floatval($schoolInfo->casualPrice)
+        ];
+
+        $pdfGen->generate($this->userProvider, $this->bookingsProvider, $pricing);
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
