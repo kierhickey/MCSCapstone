@@ -1113,10 +1113,12 @@ class Bookings_model extends Model
                 $targetProp = $exploded[1];
 
                 if ($targetObj !== null) {
-                    $replace = $targetObj->$targetProp;
+                    $replace = "";
 
-                    if ($replace == null) {
+                    if (is_array($targetObj)) {
                         $replace = $targetObj[$targetProp];
+                    } else {
+                        $replace = $targetObj->$targetProp;
                     }
 
                     $message = str_replace($key, $replace, $message);

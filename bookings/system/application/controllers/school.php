@@ -233,7 +233,7 @@ class School extends Controller
 
             $this->schoolProvider->edit('school_id', $this->session->userdata('school_id'), $data);
 
-            $this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'School Details have been updated.', true));
+            $this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'Business Details have been updated.', true));
             $this->session->close();
 
             redirect('dashboard', 'location');

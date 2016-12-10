@@ -493,37 +493,55 @@ class Bookings extends Controller
         // Date validation
         // Valid format: dd/mm/yyyy
         //
+        $academicYear = $this->weeksProvider->GetAcademicYear();
+
+        $academicYear = [
+            "start" => new DateTime($academicYear["date_start"]),
+            "end" => new DateTime($academicYear["date_end"])
+        ];
+
         $dateValid = true; //Assume innocent
-        $isLeapYear = false;
+        $dateFailReason = "";
 
         // Reference Data
-        $today = strtotime('0:00');
+        $today = new DateTime();
 
-        $date = $this->input->post('date');
-        $dateArr = explode("/", $date);
+        try {
+            $date = $this->input->post('date');
+            $dateArr = explode("/", $date);
 
-        // There are three parts of the date
-        if (count($dateArr) != 3) {
-            $dateValid = false;
-        }
+            // There are three parts of the date
+            if ($dateValid && count($dateArr) != 3) {
+                $dateValid = false;
+                $dateFailReason = "Invalid date format";
+            }
 
-        $year = intval($dateArr[2]);
-        $month = intval($dateArr[1]);
-        $day = intval($dateArr[0]);
+            $year = intval($dateArr[2]);
+            $month = intval($dateArr[1]);
+            $day = intval($dateArr[0]);
 
-        // Date isn't in the past
-        $dateDate = strtotime("$month/$day/$year");
+            $roomId = $this->input->post("room_id");
 
-        if ($dateDate <= $today) {
-            $dateValid = false;
-        }
+            // Date is valid
+            if ($dateValid && !checkdate($month, $day, $year)) {
+                $dateValid = false;
+                $dateFailReason = "Invalid date format";
+            }
 
-        $roomId = $this->input->post("room_id");
+            // Date isn't in the past
+            $dateDate = new DateTime("$month/$day/$year");
 
-        $roomIsBookable = $this->roomsProvider->isBookable($roomId);
+            if ($dateValid && $dateDate <= $today) {
+                $dateValid = false;
+                $dateFailReason = "Date is in the past";
+            }
 
-        // Date is valid
-        if (!checkdate($month, $day, $year)) {
+            //Date is within current academic year
+            if ($dateValid && ($dateDate < $academicYear["start"] || $dateDate > $academicYear["end"])) {
+                $dateValid = false;
+                $dateFailReason = "Date not within the currently configured business year.";
+            }
+        } catch (Exception $ex) {
             $dateValid = false;
         }
 
@@ -542,7 +560,7 @@ class Bookings extends Controller
             if ($booking_id != 'X' && $booking_id != false) {
                 return $this->Edit($booking_id);
             } else {
-                $this->errorMsg = "The date '$date' is not a valid date. Please specify a date in dd/mm/yyyy format";
+                $this->errorMsg = "The date '$date' is not a valid date. $dateFailReason.";
                 return $this->book();
             }
         } else { // Validation succeeded
