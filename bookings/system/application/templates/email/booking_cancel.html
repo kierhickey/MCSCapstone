@@ -1,0 +1,39 @@
+<html>
+    <body style="font-family: sans-serif; margin: 0; background: #eee;">
+        <div style="width: 600px; margin: auto;">
+            <div style="background-color: #9B9B9B; padding-left: 2px; padding-top: 2px;">
+                <table style="border-collapse: collapse; background: #fff; position: relative; right: 2px; bottom: 2px; width: 100%;">
+                    <tr>
+                        <td style="background-color: #4183D7; height: 80px; padding: 10px; font-size: 18pt; color: #fff">
+                            Booking Cancellation
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">
+                            A cancellation has been made by {{user.displayname}} ({{user.username}}).
+                            <table style="margin-left:40px;">
+                                <tr>
+                                    <td><strong>Booking Date</strong></td>
+                                    <td>{{booking.date}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Booking Start Time</strong></td>
+                                    <td>{{session.time_start}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Booking End Time</strong></td>
+                                    <td>{{session.time_end}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; background-color: #4183D7; color: #fff">
+                            Email sent by Melbourne Consulting Suites
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

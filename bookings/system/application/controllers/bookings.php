@@ -421,13 +421,14 @@ class Bookings extends Controller
         redirect($uri, 'location');
     }
 
-    public function cancel()
+    public function cancel($booking_id)
     {
-        // Get the booking ID from URI
-        $uri = $this->session->userdata('uri');
-        $booking_id = $this->uri->segment(3);
+        $booking = $this->bookingsProvider->getById($booking_id);
+        $user = $this->userProvider->Get($booking["user_id"]);
+        $to = $this->schoolProvider->get("admin_cancel_email", $this->school_id)["admin_cancel_email"];
+        $session = $this->sessionProvider->Get($booking["period_id"]);
 
-        if ($this->bookingsProvider->Cancel($this->school_id, $booking_id)) {
+        if ($this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session)) {
             $msg = $this->load->view('msgbox/info', 'The booking has been <strong>cancelled</strong>.', true);
         } else {
             $msg = $this->load->view('msgbox/error', 'An error occured cancelling the booking.', true);

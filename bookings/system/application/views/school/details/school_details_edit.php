@@ -15,7 +15,7 @@ $t = 1;
         echo form_input(array(
             'name' => 'schoolname',
             'id' => 'schoolname',
-            'size' => '30',
+            'size' => '40',
             'maxlength' => '255',
             'tabindex' => $t,
             'value' => $schoolname,
@@ -40,6 +40,10 @@ $t = 1;
         ));
         $t++;
         ?>
+    </p>
+    <p>
+        <label for="admin_cancel_email">Admin Cancellation Email</label>
+        <input type="email" name="admin-cancel-email" id="admin-cancel-email" size="40" value="<?php echo $info->admin_cancel_email ?>"/>
     </p>
     <?php echo @field($this->validation->website_error); ?>
 
@@ -202,12 +206,12 @@ $t++;
 <p>
     <label for="columns">Bookings columns</label>
     <?php
-    $columns = @field($this->validation->columns, $info->columns);
+    $columns = @field($this->validation->columns, $info->d_columns);
     ?>
     <select name="d_columns" id="d_columns" tabinde="<?php echo $t; $t++; ?>">
-        <option value="periods" class="day room">Sessions</option>
-        <option value="rooms" class="day">Rooms</option>
-        <option value="days" class="room">Days</option>
+        <option value="periods" class="day room" <?php if ($info->d_columns == "periods") echo "selected=\"selected\"" ?>>Sessions</option>
+        <option value="rooms" class="day" <?php if ($info->d_columns == "rooms") echo "selected=\"selected\"" ?>>Rooms</option>
+        <option value="days" class="room" <?php if ($info->d_columns == "days") echo "selected=\"selected\"" ?>>Days</option>
     </select>
     <?php
     /*$options = array('periods' => 'Periods', 'rooms' => 'Rooms', 'days' => 'Days');

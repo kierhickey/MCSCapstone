@@ -155,12 +155,9 @@ class School extends Controller
         //print_r($_POST);
 
         if ($this->validation->run() == false || !$this->validateCurrency($recurringPrice) || !$this->validateCurrency($casualPrice)) {
-            echo "Failed validation!";
-
             // Validation failed
             $this->details();
         } else {
-            echo "Didn't fail validation";
             if (!$this->upload->do_upload()) {
                 // Not uploaded
                 $error = $this->upload->display_errors('', '');
@@ -217,6 +214,7 @@ class School extends Controller
             $data['d_columns'] = $this->input->post('d_columns');
             $data['recurring_price'] = floatval($recurringPrice);
             $data['casual_price'] = floatval($casualPrice);
+            $data['admin_cancel_email'] = $this->input->post('admin-cancel-email');
 
             // Set no logo first, then if the upload succeeded then we set that
             if ($upload == true) {
