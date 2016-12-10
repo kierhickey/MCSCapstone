@@ -315,7 +315,6 @@ class Bookings extends Controller
         } else {
             // 12 segments means we have all info - adding a booking
             if ($seg_count == 12) {
-
                 // Create array of data from the URI
                 if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                     $booking['day_num'] = $uri['day'];

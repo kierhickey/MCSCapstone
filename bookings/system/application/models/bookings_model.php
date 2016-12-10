@@ -394,19 +394,21 @@ class Bookings_model extends Model
 
             $cell['body'] = '';
 
+            $cell['class'] = 'booking-cell ';
+
             if ($booking->date == null) {
                 // If no date set, then it's a static/timetable/recurring booking
                 if ($bookingDate >= $todaysDate) {
-                    $cell['class'] = 'static';
+                    $cell['class'] .= 'static';
                 } else {
-                    $cell['class'] = 'past-static';
+                    $cell['class'] .= 'past-static';
                 }
             } else {
                 // Date is set, it's a once off staff booking
                 if ($bookingDate >= $todaysDate) {
-                    $cell['class'] = 'staff';
+                    $cell['class'] .= 'casual';
                 } else {
-                    $cell['class'] = 'past-staff';
+                    $cell['class'] .= 'past-casual';
                 }
                 $cell['body'] = '';
             }
@@ -420,6 +422,8 @@ class Bookings_model extends Model
                 }
                 if($this->userauth->CheckAuthLevel(ADMINISTRATOR) || $this->session->userdata("user_id") == $booking->user_id){
                     $cell['body'] .= '<strong>'.$displayname.'</strong>';
+                } else {
+                    $cell['body'] .= '<em style="color: #d7d7d7;">Booked</em>';
                 }
                 $user = 1;
             }
@@ -454,7 +458,7 @@ class Bookings_model extends Model
                         $cell['body'] .= '<br />';
                     }
 
-                    $cell['body'] .= '<a onclick="if(!confirm(\''.$cancel_msg.'\')){return false;}" href="'.$cancel_url.'" title="Cancel this booking"><img src="webroot/images/ui/delete.gif" width="16" height="16" alt="Cancel" title="Cancel this booking" hspace="8" /></a>';
+                    $cell['body'] .= '<a onclick="return confirm(\''.$cancel_msg.'\')" href="'.$cancel_url.'" title="Cancel this booking"><img src="webroot/images/ui/delete.gif" width="16" height="16" alt="Cancel" title="Cancel this booking" hspace="8" /></a>';
                 }
 
             }
