@@ -1,26 +1,27 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 // API
-$route['api/bookings/summary']      = 'bookings/bookingsForPeriod';
-$route['api/users']                 = 'users/getAllBasic';
-$route['api/rooms']                 = 'rooms/getAllBasic';
-$route['api/bookings/paid']         = 'bookings/markAsPaid';
-$route['api/pdf']                   = 'bookings/generatePdf';
+$route['api/bookings/summary']          = 'bookings/bookingsForPeriod';
+$route['api/users']                     = 'users/getAllBasic';
+$route['api/rooms']                     = 'rooms/getAllBasic';
+$route['api/bookings/paid']             = 'bookings/markAsPaid';
+$route['api/pdf']                       = 'bookings/generatePdf';
 
-$route['settings']                  = 'school/details';
+$route['settings']                      = 'school/details';
 
 // Bookings
-$route['bookings']					= 'bookings/index';
-$route['summary']                   = 'bookings/summaryPage';
+$route['bookings']					    = 'bookings/index';
+$route['summary']                       = 'bookings/summaryPage';
+$route["bookings/cancel/(:num)/(:num)"] = 'bookings/cancel/$1/$2';
 
 // ClassroomBookings-specific
-$route['contact']					= 'site/contact';
-$route['faq']						= 'site/faq';
-$route['features']					= 'site/features';
+$route['contact']					    = 'site/contact';
+$route['faq']						    = 'site/faq';
+$route['features']					    = 'site/features';
 
 // School Management
-$route['dashboard']				    = 'school/manage';
-$route['default_controller']		= 'school';
+$route['dashboard']				        = 'school/manage';
+$route['default_controller']		    = 'school';
 
 // Help
 $route['help']						= 'help/index';

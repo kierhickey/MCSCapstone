@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/../../libraries/Model.php";
+require_once __DIR__."/../data/ResultState.class.php";
 
 class Bookings_model extends Model
 {
@@ -1235,51 +1236,64 @@ class Bookings_model extends Model
 
     public function Add($data)
     {
-        $date = $data['date'];
+        // Get date for dateDayNum
+        $date = $data["date"];
+
+        // Convert dates to appropriate strings
+        $data["date"] = $data["date"]->format('Y-m-d');
+        $data["start_date"] = $data["start_date"]->format('Y-m-d');
+        // Get the date string for use in query string
+        $dateString = $data["date"];
+
+        // Other info for query string
         $sessionId = $data['period_id'];
         $roomNumber = $data['room_id'];
-        $dateDayNum = (new DateTime($date))->format("N");
+        $dateDayNum = $date->format("N");
 
         $queryString = "SELECT COUNT(*) AS total
             FROM bookings
-            WHERE (date = '$date' OR day_num = $dateDayNum)
+            WHERE (date = '$dateString' OR day_num = $dateDayNum)
             AND period_id = $sessionId
             AND room_id = $roomNumber";
 
         $query = $this->db->query($queryString);
 
         if ($query == false) {
-            return false; // Query didn't work -- abort.
+            return new ResultState(false, "An error occurred while contacting the server."); // Query didn't work -- abort.
         }
 
         $result = $query->result_array()[0];
 
         if ($result["total"] > 0) {
-            return false; // A booking exists for that timeslot. Dun do eet.
+            return new ResultState(false, "A booking already exists for this timeslot."); // A booking exists for that timeslot. Dun do eet.
         }
 
-        // Run query to insert blank row
-        $this->db->insert('bookings', [
-            'booking_id' => null,
-            'start_date' => (new DateTime())->format('Y-m-d')
-        ]);
+        // Don't do that, that's a dumb idea.
+        //return $this->Edit($booking_id, $data);
 
-        // Get id of inserted record
-        $booking_id = $this->db->insert_id();
-        // Now call the edit function to update the actual data for this new row now we have the ID
-        return $this->Edit($booking_id, $data);
+        // Insert our entry
+        $result = $this->db->insert('bookings', $data);
+
+        if ($result != false) {
+            return new ResultState(true, "Booking created successfully.");
+        } else {
+            return new ResultState(false, "Could not create booking; an unexpected error occurred.");
+        }
     }
 
     public function Edit($booking_id, $data)
     {
+        // Where it's this booking_id
         $this->db->where('booking_id', $booking_id);
+        // Update the info.
         $this->db->set('school_id', $data['school_id']);
         $result = $this->db->update('bookings', $data);
+
         // Return bool on success
-        if ($result) {
-            return $booking_id;
+        if ($result != false) {
+            return new ResultState(true, sprintf("The booking on %s was updated successfully", $data['date']->format("d/m/Y")));
         } else {
-            return false;
+            return new ResultState(false, "An error occurred while updating your booking.");
         }
     }
 

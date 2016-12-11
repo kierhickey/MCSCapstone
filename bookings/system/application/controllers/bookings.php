@@ -375,6 +375,7 @@ class Bookings extends Controller
         $this->load->view('layout', $layout);
     }
 
+    // TODO: get this working to add start_date
     public function recurring()
     {
         foreach ($this->input->post('recurring') as $booking) {
@@ -388,10 +389,10 @@ class Bookings extends Controller
             $bookings[] = $booking;
         }
 
-        $errcount = 0;
+        $errReasons = [];
 
         foreach ($bookings as $booking) {
-            $data = array();
+            $data = [];
             $data['user_id'] = $this->input->post('user_id');
             $data['school_id'] = $this->school_id;
             $data['period_id'] = $booking['period'];
@@ -399,12 +400,16 @@ class Bookings extends Controller
             $data['notes'] = $this->input->post('notes');
             $data['week_id'] = $booking['week'];
             $data['day_num'] = $booking['day'];
-            if (!$this->bookingsProvider->Add($data)) {
-                ++$errcount;
+
+            $result = $this->bookingsProvider->Add($data);
+
+            if (!$result->getResult()) {
+                array_push($errReasons, DateHelper::GetDayString($data["day_num"]).": ".$result->getMessage());
             }
         }
         if ($errcount > 0) {
-            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made.', true);
+            $string = "<ul><li>".implode('</li><li>', $errReasons)."</li></ul>";
+            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; ', true);
         } else {
             $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
         }
@@ -500,6 +505,7 @@ class Bookings extends Controller
         ];
 
         $dateValid = true; //Assume innocent
+        $dateDate;
         $dateFailReason = "";
 
         // Reference Data
@@ -569,13 +575,13 @@ class Bookings extends Controller
             $data['period_id'] = $this->input->post('period_id');
             $data['room_id'] = $this->input->post('room_id');
             $data['notes'] = $this->input->post('notes');
+            $data['date'] = $dateDate;
+            $data["start_date"] = $dateDate;
 
             // Hmm.... now to see if it's a static booking or recurring or whatever... :-)
             if ($this->input->post('date')) {
                 // Once-only booking
-
                 $date_arr = explode('/', $this->input->post('date'));
-                $data['date'] = date('Y-m-d', mktime(0, 0, 0, $date_arr[1], $date_arr[0], $date_arr[2]));
                 $data['day_num'] = null;
                 $data['week_id'] = null;
             }
@@ -591,17 +597,19 @@ class Bookings extends Controller
             // Now see if we are editing or adding
             if ($booking_id == 'X') {
                 // No ID, adding new record
-                if (!$this->bookingsProvider->Add($data)) {
-                    $flashmsg = $this->load->view('msgbox/error', "Could not add the requested booking - a booking for this time has already been made.", true);
+                $result = $this->bookingsProvider->Add($data);
+                if (!$result->getResult()) {
+                    $flashmsg = $this->load->view('msgbox/error', $result->getMessage(), true);
                 } else {
-                    $flashmsg = $this->load->view('msgbox/info', 'The booking has been made.', true);
+                    $flashmsg = $this->load->view('msgbox/info', $result->getMessage(), true);
                 }
             } else {
                 // We have an ID, updating existing record
-                if (!$this->bookingsProvider->Edit($booking_id, $data)) {
-                    $flashmsg = $this->load->view('msgbox/error', sprintf($this->lang->line('dberror'), 'editing', 'booking'), true);
+                $result = $this->bookingsProvider->Edit($booking_id, $data);
+                if (!$result->getResult()) {
+                    $flashmsg = $this->load->view('msgbox/error', $result->getMessage(), true);
                 } else {
-                    $flashmsg = $this->load->view('msgbox/info', 'The booking has been updated.', true);
+                    $flashmsg = $this->load->view('msgbox/info', $result->getMessage(), true);
                 }
             }
 
