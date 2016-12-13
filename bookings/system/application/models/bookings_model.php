@@ -393,6 +393,24 @@ class Bookings_model extends Model
             // There's a booking for this ID, set var
             $booking = $data[$key];
 
+            $start_date = new DateTime($booking->start_date);
+
+            $emptyCell = "<td></td>";
+
+            if ($start_date >= $bookingDate) {
+                return $emptyCell;
+            }
+
+            $end_date = NULL;
+            if ($booking->end_date != NULL) {
+                $end_date = new DateTime($booking->end_date);
+
+                if ($end_date <= $bookingDate) {
+                    return $emptyCell;
+                }
+
+            }
+
             $cell['body'] = '';
 
             $cell['class'] = 'booking-cell ';
@@ -453,7 +471,11 @@ class Bookings_model extends Model
                         $cancel_msg = 'Are you sure you want to cancel this booking?\n\n(**) Please take caution, it is not your own booking!!';
                     }
 
-                    $cancel_url = site_url('bookings/cancel/'.$booking->booking_id);
+                    if ($booking->date != null) {
+                        $cancel_url = site_url('bookings/cancel/'.$booking->booking_id);
+                    } else {
+                        $cancel_url = site_url('bookings/cancel/'.$booking->booking_id."/".$booking_date_ymd);
+                    }
 
                     if (!isset($edit)) {
                         $cell['body'] .= '<br />';
@@ -817,7 +839,7 @@ class Bookings_model extends Model
                     $query_str = 'SELECT * FROM bookings '
                     ."WHERE school_id='$school_id' "
                     ."AND room_id='$room_id' "
-                    ."AND ((day_num=$day_num AND week_id=$this_week->week_id) OR date='$weekdates[$day_num]') ";
+                    ."AND ((day_num=$day_num AND week_id=$this_week->week_id AND start_date <= '$weekdates[$day_num]' AND end_date >= '$weekdates[$day_num]') OR date='$weekdates[$day_num]') ";
                     $query = $this->db->query($query_str);
                     $results = $query->result();
                     if ($query->num_rows() > 0) {
@@ -882,10 +904,9 @@ class Bookings_model extends Model
                         ."WHERE school_id='$school_id' "
                         ."AND room_id='$room_id' "
                         ."AND period_id='$period->period_id' "
-                        ."AND ( (week_id=$this_week->week_id) OR (date >= '$weekdates[1]' AND date <= '$weekdates[7]' ) )"
+                        ."AND ( (week_id=$this_week->week_id AND start_date <= '$weekdates[7]' AND (end_date >= '$weekdates[7]' OR end_date IS NULL)) OR (date >= '$weekdates[1]' AND date <= '$weekdates[7]' ) )"
                         ."ORDER BY -date DESC"; // Orders asc with nulls last
                     //."AND ((day_num=$day_num AND week_id=$this_week->week_id) OR date='$date_ymd') ";
-                    //
                     $query = $this->db->query($query_str);
                     $results = $query->result();
 
@@ -1142,7 +1163,7 @@ class Bookings_model extends Model
      * @param [type] $school_id  [description]
      * @param [type] $booking_id [description]
      */
-    public function Cancel($school_id, $adminEmail, $user, $booking, $session)
+    public function Cancel($school_id, $adminEmail, $user, $booking, $session, $endDate = NULL)
     {
         if ($school_id == null) {
             $school_id = $this->session->userdata('school_id');
@@ -1150,20 +1171,34 @@ class Bookings_model extends Model
 
         $bookingId = $booking['booking_id'];
 
-        $query_str = 'DELETE FROM bookings '
-        ."WHERE school_id=$school_id AND booking_id=$bookingId LIMIT 1";
+        if ($endDate == NULL) {
+            $query_str = "DELETE
+                          FROM bookings
+                          WHERE school_id = $school_id
+                          AND booking_id = $bookingId";
+        } else {
+            $endDateStr = $endDate->format('Y-m-d');
+            $query_str = "UPDATE bookings
+                          SET end_date = '$endDateStr'
+                          WHERE school_id = $school_id
+                          AND booking_id = $bookingId";
+        }
 
         $query = $this->db->query($query_str);
 
         if ($query !== false) {
             if ($adminEmail != "" && $adminEmail != NULL) {
                 $this->sendCancellationNotificationEmail($adminEmail, $user, $booking, $session);
-            } else {
             }
-            return true;
+
+            if ($endDate == null) {
+                return new ResultState(true, "The booking was successfully cancelled.");
+            } else {
+                return new ResultState(true, sprintf("The booking was successfully cancelled from %s onwards.", $endDate->format('d/m/Y')));
+            }
         }
 
-        return false;
+        return new ResultState(false, "An error occurred while contacting the database.");
     }
 
     public function BookingStyle($school_id)
@@ -1234,8 +1269,57 @@ class Bookings_model extends Model
         return $row;
     }
 
+    public function AddRecurring($data) {
+        // Convert date to appropriate string
+        $data["start_date"] = $data["start_date"]->format('Y-m-d');
+        if (isset($data['date'])) {
+            unset($data['date']);
+        }
+
+        // Other info for query string
+        $sessionId = $data['period_id'];
+        $roomNumber = $data['room_id'];
+        $dateDayNum = $data['day_num'];
+
+        $queryString = "SELECT COUNT(*) AS total
+                        FROM bookings
+                        WHERE (date = '$dateString' OR day_num = $dateDayNum)
+                        AND end_date >= NOW()
+                        AND start_date <= NOW()
+                        AND period_id = $sessionId
+                        AND room_id = $roomNumber";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return new ResultState(false, "An error occurred while contacting the server."); // Query didn't work -- abort.
+        }
+
+        $result = $query->result_array()[0];
+
+        if ($result["total"] > 0) {
+            return new ResultState(false, "A booking already exists for this timeslot."); // A booking exists for that timeslot. Dun do eet.
+        }
+
+        // Don't do that, that's a dumb idea.
+        //return $this->Edit($booking_id, $data);
+
+        // Insert our entry
+        $result = $this->db->insert('bookings', $data);
+
+        if ($result != false) {
+            return new ResultState(true, "Booking created successfully.");
+        } else {
+            return new ResultState(false, "Could not create booking; an unexpected error occurred.");
+        }
+    }
+
     public function Add($data)
     {
+        if ($data['recurring'] == 1) {
+            return AddRecurring($data);
+        }
+
         // Get date for dateDayNum
         $date = $data["date"];
 
@@ -1248,11 +1332,13 @@ class Bookings_model extends Model
         // Other info for query string
         $sessionId = $data['period_id'];
         $roomNumber = $data['room_id'];
-        $dateDayNum = $date->format("N");
+        $dateDayNum = $date->format('N');
 
         $queryString = "SELECT COUNT(*) AS total
             FROM bookings
             WHERE (date = '$dateString' OR day_num = $dateDayNum)
+            AND end_date >= NOW()
+            AND start_date <= NOW()
             AND period_id = $sessionId
             AND room_id = $roomNumber";
 

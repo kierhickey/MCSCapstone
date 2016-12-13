@@ -113,7 +113,9 @@ else
 
 function debug_log($data) {
 	global $logpath;
-	error_log(json_encode($data) . "\n", 3, $logpath);
+	$now = new DateTime();
+	$error = sprintf("[%s] %s%s", $now->format('Y-m-d H:i:s'), json_encode($data, JSON_PRETTY_PRINT), "\n");
+	error_log($error, 3, $logpath);
 }
 
 /*

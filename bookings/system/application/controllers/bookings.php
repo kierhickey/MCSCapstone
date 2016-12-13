@@ -400,8 +400,9 @@ class Bookings extends Controller
             $data['notes'] = $this->input->post('notes');
             $data['week_id'] = $booking['week'];
             $data['day_num'] = $booking['day'];
+            $data['start_date'] = new DateTime($booking['date']);
 
-            $result = $this->bookingsProvider->Add($data);
+            $result = $this->bookingsProvider->AddRecurring($data);
 
             if (!$result->getResult()) {
                 array_push($errReasons, DateHelper::GetDayString($data["day_num"]).": ".$result->getMessage());
@@ -425,17 +426,25 @@ class Bookings extends Controller
         redirect($uri, 'location');
     }
 
-    public function cancel($booking_id)
+    public function cancel($booking_id, $endDateString = NULL)
     {
         $booking = $this->bookingsProvider->getById($booking_id);
         $user = $this->userProvider->Get($booking["user_id"]);
         $to = $this->schoolProvider->get("admin_cancel_email", $this->school_id)["admin_cancel_email"];
         $session = $this->sessionProvider->Get($booking["period_id"]);
+        $result = false;
 
-        if ($this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session)) {
-            $msg = $this->load->view('msgbox/info', 'The booking has been <strong>cancelled</strong>.', true);
+        if ($endDateString == null) {
+            $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session);
         } else {
-            $msg = $this->load->view('msgbox/error', 'An error occured cancelling the booking.', true);
+            $endDate = new DateTime($endDateString);
+            $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session, $endDate);
+        }
+
+        if ($result->getResult()) {
+            $msg = $this->load->view('msgbox/info', $result->getMessage(), true);
+        } else {
+            $msg = $this->load->view('msgbox/error', $result->getMessage(), true);
         }
 
         // Set the response message, and go to the bookings page
@@ -579,17 +588,17 @@ class Bookings extends Controller
             $data["start_date"] = $dateDate;
 
             // Hmm.... now to see if it's a static booking or recurring or whatever... :-)
-            if ($this->input->post('date')) {
+
+            $recurring = false;
+
+            if (!$this->input->post('recurring')) {
                 // Once-only booking
                 $date_arr = explode('/', $this->input->post('date'));
                 $data['day_num'] = null;
                 $data['week_id'] = null;
-            }
-
-            // If week_id and day_num are specified, its recurring
-            if ($this->input->post('recurring') && ($this->input->post('week_id') && $this->input->post('day_num'))) {
+            } else {
                 // Recurring
-                $data['date'] = null;
+                $recurring = true;
                 $data['day_num'] = $this->input->post('day_num');
                 $data['week_id'] = $this->input->post('week_id');
             }
@@ -597,7 +606,11 @@ class Bookings extends Controller
             // Now see if we are editing or adding
             if ($booking_id == 'X') {
                 // No ID, adding new record
-                $result = $this->bookingsProvider->Add($data);
+                if ($recurring) {
+                    $result = $this->bookingsProvider->AddRecurring($data);
+                } else {
+                    $result = $this->bookingsProvider->Add($data);
+                }
                 if (!$result->getResult()) {
                     $flashmsg = $this->load->view('msgbox/error', $result->getMessage(), true);
                 } else {
