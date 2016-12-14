@@ -1,3 +1,12 @@
+<script>
+	$('body').on('click', '.check-all', function () {
+		var targetDay = $(this).attr('id');
+
+		console.log('.day_' + targetDay);
+
+		$('.day_' + targetDay).prop('checked', this.checked);
+	});
+</script>
 <div class="bookings_week" style="<?php echo $style ?>">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>

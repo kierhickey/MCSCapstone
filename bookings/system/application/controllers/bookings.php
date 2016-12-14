@@ -375,10 +375,17 @@ class Bookings extends Controller
         $this->load->view('layout', $layout);
     }
 
-    // TODO: get this working to add start_date
+    public function multibook() {
+        if (isset($_POST['recurringBookings'])) {
+            $this->recurring();
+        } else {
+            $this->saveMulti();
+        }
+    }
+
     public function recurring()
     {
-        foreach ($this->input->post('recurring') as $booking) {
+        foreach ($this->input->post('multi') as $booking) {
             $arr = explode('/', $booking);
             $max = count($arr);
 
@@ -408,7 +415,7 @@ class Bookings extends Controller
                 array_push($errReasons, DateHelper::GetDayString($data["day_num"]).": ".$result->getMessage());
             }
         }
-        if ($errcount > 0) {
+        if (count($errReasons) > 0) {
             $string = "<ul><li>".implode('</li><li>', $errReasons)."</li></ul>";
             $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; ', true);
         } else {
@@ -476,6 +483,57 @@ class Bookings extends Controller
         $layout['body'] = $this->load->view('bookings/bookings_book', $body, true);
 
         $this->load->view('layout', $layout);
+    }
+
+    public function saveMulti() {
+        foreach ($this->input->post('multi') as $booking) {
+            $arr = explode('/', $booking);
+            $max = count($arr);
+
+            $booking = array();
+            for ($i = 0; $i < count($arr); $i = $i + 2) {
+                $booking[$arr[$i]] = $arr[$i + 1];
+            }
+            $bookings[] = $booking;
+        }
+
+        $errors = [];
+
+        foreach ($bookings as $booking) {
+            $dateString = $booking['date'];
+            $dateDate = new DateTime($dateString);
+
+            $data = [];
+            $data['school_id'] = $this->school_id;
+            $data['period_id'] = $booking['period'];
+            $data['room_id'] = $booking['room'];
+            $data['user_id'] = $this->input->post('user_id');
+            $data['date'] = $dateDate;
+            $data["start_date"] = $dateDate;
+            $data['notes'] = $this->input->post('notes');
+
+            debug_log($data);
+
+            $result = $this->bookingsProvider->Add($data);
+
+            if (!$result->getResult()) {
+                array_push($errors, $dateString.": ".$result->getMessage());
+            }
+        }
+        if (count($errors) > 0) {
+            $string = "<ul><li>".implode('</li><li>', $errors)."</li></ul>";
+            $flashmsg = $this->load->view('msgbox/error', ['message' => "One or more bookings could not be made; ".$string], true);
+        } else {
+            $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
+        }
+
+        // Go back to index
+        $this->session->set_flashdata('saved', $flashmsg);
+
+        $uri = $this->session->userdata('uri');
+        $uri = ($uri) ? $uri : 'bookings';
+
+        redirect($uri, 'location');
     }
 
     /**

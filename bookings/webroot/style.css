@@ -278,7 +278,7 @@ p.breadcrumbs {
 
 /* Base class */
 
-p.msgbox {
+.msgbox {
     background-position: 4px 4px;
     background-repeat: no-repeat;
     width: 320px;
@@ -292,7 +292,7 @@ p.msgbox {
 
 /* ERROR */
 
-p.msgbox.error {
+.msgbox.error {
     background-image: url(i_error.gif);
     background-color: #FBE6F2;
     border-color: #D893A1;

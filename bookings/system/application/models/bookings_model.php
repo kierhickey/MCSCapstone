@@ -386,6 +386,7 @@ class Bookings_model extends Model
         $bookingDate = DateTime::createFromFormat('Y-m-d', $booking_date_ymd);
         $todaysDate = new DateTime();
         $tomorrowsDate = $todaysDate->add(new DateInterval('P1D'));
+        $dayNum = $bookingDate->format('N');
 
         // Check if there is a booking
         if (isset($data[$key])) {
@@ -393,27 +394,33 @@ class Bookings_model extends Model
             // There's a booking for this ID, set var
             $booking = $data[$key];
 
+            $cell['body'] = '';
+
+            $cell['class'] = 'booking-cell ';
+
             $start_date = new DateTime($booking->start_date);
-
-            $emptyCell = "<td></td>";
-
-            if ($start_date >= $bookingDate) {
-                return $emptyCell;
-            }
 
             $end_date = NULL;
             if ($booking->end_date != NULL) {
                 $end_date = new DateTime($booking->end_date);
-
-                if ($end_date <= $bookingDate) {
-                    return $emptyCell;
-                }
-
             }
 
-            $cell['body'] = '';
+            if ($start_date >= $bookingDate && ($end_date == NULL || $end_date <= $todaysDate)) {
+                if ($bookingDate >= $todaysDate) {
+                    // No bookings
+                    $book_url = site_url('bookings/book/'.$url);
+                    $cell['class'] = 'free';
+                    $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
 
-            $cell['class'] = 'booking-cell ';
+                    if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+                        $cell['body'] .= "<input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' />";
+                    }
+                } else {
+                    $cell['class'] = 'past-free';
+                    $cell['body'] = '';
+                }
+                return $this->load->view('bookings/table/bookingcell', $cell, true);
+            }
 
             if ($booking->date == null) {
                 // If no date set, then it's a static/timetable/recurring booking
@@ -496,7 +503,7 @@ class Bookings_model extends Model
                 $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
 
                 if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-                    $cell['body'] .= '<input type="checkbox" name="recurring[]" value="'.$url.'" />';
+                    $cell['body'] .= "<input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' />";
                 }
             } else {
                 $cell['class'] = 'past-free';
@@ -631,24 +638,23 @@ class Bookings_model extends Model
             // If we are day at a time, it is easy!
             // = get me any holidays where this day is anywhere in it
             $sql = "SELECT *
-            FROM holidays
-            WHERE date_start <= '{$date_ymd}'
-            AND date_end >= '{$date_ymd}' ";
+                    FROM holidays
+                    WHERE date_start <= '{$date_ymd}'
+                    AND date_end >= '{$date_ymd}'";
         } else {
             // If we are room/week at a time, little bit more complex
             $week_start = date('Y-m-d', strtotime($this_week->date));
             $week_end = date('Y-m-d', strtotime('+'.count($school['days_list']).' days', strtotime($this_week->date)));
 
             $sql = "SELECT *
-            FROM holidays
-            WHERE
-            /* Starts before this week, ends this week */
-            (date_start <= '$week_start' AND date_end <= '$week_end')
-            /* Starts this week, ends this week */
-            OR (date_start >= '$week_start' AND date_end <= '$week_end')
-            /* Starts this week, ends after this week */
-            OR (date_start >= '$week_start' AND date_end >= '$week_end')
-            ";
+                    FROM holidays
+                    WHERE
+                    /* Starts before this week, ends this week */
+                    (date_start <= '$week_start' AND date_end <= '$week_end')
+                    /* Starts this week, ends this week */
+                    OR (date_start >= '$week_start' AND date_end <= '$week_end')
+                    /* Starts this week, ends after this week */
+                    OR (date_start >= '$week_start' AND date_end >= '$week_end')";
         }
 
         $query = $this->db->query($sql);
@@ -753,7 +759,7 @@ class Bookings_model extends Model
         $col_width = sprintf('%s%%', round(100 / ($count[$cols] + 1)));
 
         // Open form
-        $html .= '<form name="bookings" method="POST" action="'.site_url('bookings/recurring').'">';
+        $html .= '<form name="bookings" method="POST" action="'.site_url('bookings/multibook').'">';
         $html .= form_hidden('room_id', $room_id);
 
         // Here goes, start table
@@ -777,6 +783,8 @@ class Bookings_model extends Model
                 $day['width'] = $col_width;
                 $day['name'] = $dayofweek;
                 $day['date'] = date('d/m', strtotime("+".($i - 1)." days", strtotime($week_start)));
+                $day['dayNum'] = $i;
+                $day['isAdmin'] = $this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel);
                 $html .= $this->load->view('bookings/table/headings/days', $day, true);
             }
             break;
@@ -1272,6 +1280,8 @@ class Bookings_model extends Model
     public function AddRecurring($data) {
         // Convert date to appropriate string
         $data["start_date"] = $data["start_date"]->format('Y-m-d');
+
+        // If we still have the 'date' value -> get rid of it.
         if (isset($data['date'])) {
             unset($data['date']);
         }
@@ -1337,14 +1347,15 @@ class Bookings_model extends Model
         $queryString = "SELECT COUNT(*) AS total
             FROM bookings
             WHERE (date = '$dateString' OR day_num = $dateDayNum)
-            AND end_date >= NOW()
-            AND start_date <= NOW()
+            AND end_date > '$dateString'
+            AND start_date <= '$dateString'
             AND period_id = $sessionId
             AND room_id = $roomNumber";
 
         $query = $this->db->query($queryString);
 
         if ($query == false) {
+            debug_log($queryString);
             return new ResultState(false, "An error occurred while contacting the server."); // Query didn't work -- abort.
         }
 
