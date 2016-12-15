@@ -26,6 +26,101 @@ class Bookings_model extends Model
         return is_null($result);
     }
 
+    public function markRecurringAsUnpaid($bookingId, $date = NULL, $note = "") {
+        if (!$this->isRecurring($bookingId)) { // We can throw it to the other method.
+            return $this->markAsPaid($bookingId, $note);
+        }
+
+        // Check if paid exists :)
+        $queryString = "SELECT COUNT(*) as total FROM payments WHERE booking_id = $bookingId AND for_date = '$date'";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Invalid query - bad booking id?",
+                "queryString" => $queryString
+            ];
+        }
+
+        $num = $query->result_array()[0]["total"];
+
+        if ($num < 1) { // Already paid
+            return [
+                "status" => 200,
+                "message" => "Booking not paid."
+            ];
+        }
+
+        // A payment entry -- delete it
+        $queryString = "DELETE FROM payments
+        WHERE booking_id = $bookingId AND for_date = '$date'";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Failed to mark as paid."
+            ];
+        }
+
+        return [
+            "status" => 200,
+            "message" => "Booking succesfully marked as paid."
+        ];
+    }
+
+    public function markAsUnpaid($bookingId, $note = "") {
+        if ($this->isRecurring($bookingId)) {
+            return [
+                "status" => 400,
+                "message" => "Attempted to mark recurring booking as paid without target date."
+            ];
+        }
+
+        // Check if payment exists.
+        $queryString = "SELECT COUNT(*) as total FROM payments WHERE booking_id = $bookingId";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Invalid query - bad booking id?",
+                "queryString" => $queryString
+            ];
+        }
+
+        $num = $query->result_array()[0]["total"];
+
+        if ($num != 1) { // Already paid
+            return [
+                "status" => 200,
+                "message" => "Booking not paid.",
+                "count" => $num
+            ];
+        }
+
+        // A payment entries -- make one
+        $queryString = "DELETE FROM payments WHERE booking_id = $bookingId";
+
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return [
+                "status" => 500,
+                "error" => "Failed to mark as unpaid."
+            ];
+        }
+
+        return [
+            "status" => 200,
+            "message" => "Booking succesfully marked as unpaid."
+        ];
+    }
+
     public function markRecurringPaid($bookingId, $date = NULL, $note = "") {
         if (!$this->isRecurring($bookingId)) { // We can throw it to the other method.
             return $this->markAsPaid($bookingId, $note);

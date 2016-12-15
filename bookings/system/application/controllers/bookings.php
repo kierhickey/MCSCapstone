@@ -45,6 +45,40 @@ class Bookings extends Controller
         $this->school = $school;
     }
 
+    private function _markAsUnpaid($bookingId) {
+        if (isset($_POST["forDate"])) {
+            return $this->bookingsProvider->markRecurringAsUnpaid($bookingId, $_POST["forDate"]);
+        }
+
+        return $this->bookingsProvider->markAsUnpaid($bookingId);
+    }
+
+    public function markAsUnpaid() {
+        header('Content-Type: application/json');
+
+        if (!$this->userauth->CheckAuthLevel( ADMINISTRATOR )) {
+            echo json_encode([
+                "status" => 403,
+                "message" => "You do not have the required elevation to access the requested resource."
+            ]);
+            return;
+        }
+
+        if (!isset($_POST["bookingId"])) {
+            echo json_encode([
+                "status" => 400,
+                "message" => "The request made to the server was invalid."
+            ]);
+            return;
+        }
+
+        $result = $this->_markAsUnpaid($_POST["bookingId"]);
+
+        echo json_encode([
+            "responseData" => $result
+        ]);
+    }
+
     private function _markAsPaid($bookingId) {
         if (isset($_POST["forDate"])) {
             return $this->bookingsProvider->markRecurringPaid($bookingId, $_POST["forDate"]);

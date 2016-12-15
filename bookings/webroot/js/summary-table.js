@@ -98,7 +98,7 @@ var SummaryTable = function (config) {
 
     var getModalMessage = function(booking) {
         return "Are you sure you wish to mark the booking on " + _dateAsReadable(new Date(booking.bookingDate)) +
-            " for the session at " + booking.bookingStart + " as paid?";
+            " for the session at " + booking.bookingStart + " as " + (booking.paid ? "unpaid" : "paid") + "?";
     }
 
     var _dateRangeAsReadable = function(startDate, endDate) {
@@ -172,16 +172,13 @@ var SummaryTable = function (config) {
                                     $.ajax({
                                         data: data,
                                         method: "POST",
-                                        url: "/bookings/api/bookings/paid",
+                                        url: "/bookings/api/bookings/" + (booking.paid ? "unpaid" : "paid"),
                                         success: function (response) {
-                                            $("#" + booking.bookingId + " .booking-paid-toggle").text("Paid");
+                                            booking.paid = !booking.paid;
+                                            $("#" + booking.bookingId + " .booking-paid-toggle").text((booking.paid ? "Paid" : "Not Paid"));
                                         },
                                         error: function (response) {
-                                            if (response.status == 404) {
-                                                throw "404 Not Found Exception";
-                                            } else {
-                                                console.log(response);
-                                            }
+                                            console.log(response);
                                         }
                                     })
                                 },

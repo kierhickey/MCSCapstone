@@ -5,6 +5,7 @@ $route['api/bookings/summary']          = 'bookings/bookingsForPeriod';
 $route['api/users']                     = 'users/getAllBasic';
 $route['api/rooms']                     = 'rooms/getAllBasic';
 $route['api/bookings/paid']             = 'bookings/markAsPaid';
+$route['api/bookings/unpaid']           = 'bookings/markAsUnpaid';
 $route['api/pdf']                       = 'bookings/generatePdf';
 
 $route['settings']                      = 'school/details';
