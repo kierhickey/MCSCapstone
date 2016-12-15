@@ -223,6 +223,10 @@ var SummaryTable = function (config) {
                     text: booking.bookingStart
                 }),
                 $("<td></td>", {
+                    class: "booking-recurring booking-cell",
+                    text: booking.isRecurring
+                }),
+                $("<td></td>", {
                     class: "booking-end booking-cell",
                     text: booking.bookingEnd
                 }),
@@ -471,7 +475,7 @@ var SummaryTable = function (config) {
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: me.showPaidColumn ? 8 : 7,
+                                    colspan: me.showPaidColumn ? 9 : 8,
                                     class: me.headerCls + "-inner",
                                     html: [
                                         $("<span></span>", {
@@ -521,6 +525,10 @@ var SummaryTable = function (config) {
                                     $("<th></th>", {
                                         class: "header-start header-cell",
                                         text: "Start Time"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-recurring header-cell",
+                                        text: "Recurring"
                                     }),
                                     $("<th></th>", {
                                         class: "header-end header-cell",

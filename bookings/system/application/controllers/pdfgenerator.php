@@ -25,11 +25,12 @@ class PdfGenerator {
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>User</th>
+                    <th style='width: 120px;'>User</th>
                     <th>Location</th>
                     <th>Room</th>
-                    <th>Session</th>
+                    <th style='width: 130px;'>Session</th>
                     <th>Price</th>
+                    <th style='width: 70px;'>Recurring</th>
                     <th>Paid</th>
                 </tr>
             </thead><tbody>";
@@ -74,6 +75,7 @@ class PdfGenerator {
             $price = $entry["price"];
             $location = $entry["location"];
             $room = $entry["roomName"];
+            $recurring = $entry['isRecurring'] ? "Yes" : "No";
             $paid = $entry["paid"] ? "P" : "NP";
 
             $tr = "<tr>";
@@ -95,8 +97,9 @@ class PdfGenerator {
                 <td>$displayName</td>
                 <td>$location</td>
                 <td>$room</td>
-                <td>$session</td>
+                <td style='width: 120px;'>$session</td>
                 <td>$price.00</td>
+                <td style='width: 70px;'>$recurring</td>
                 <td>$paid</td>
             </tr>";
 
