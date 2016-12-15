@@ -81,7 +81,13 @@ echo form_open('weeks/save', array('class' => 'cssform', 'id' => 'week_add'), ar
 <fieldset><legend accesskey="D" tabindex="6">Week Dates</legend>
 
 <div>Please select the week-commencing (Monday) dates within the current business year that this week applies to.</div>
-
+<input type="checkbox" class="check-all" /> <strong class="check-all-text">Check All</strong>
+<script type="text/javascript">
+	$(".check-all").change(function() {
+		$('input:checkbox').not(this).prop('checked', this.checked);
+		$('.check-all-text').text(this.checked ? "Uncheck All" : "Check All");
+	});
+</script>
 <!-- <p>
   <label for="try_automatic">Fill in automatically</label>
   <?php

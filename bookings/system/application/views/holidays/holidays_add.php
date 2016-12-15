@@ -4,6 +4,8 @@ if( !isset($holiday_id) ){
 }
 $errorstr = $this->validation->error_string;
 
+echo $this->session->flashdata("error");
+
 echo form_open('holidays/save', array('class' => 'cssform', 'id' => 'holiday_add'), array('holiday_id' => $holiday_id) );
 ?>
 
@@ -29,7 +31,11 @@ echo form_open('holidays/save', array('class' => 'cssform', 'id' => 'holiday_add
 <p>
   <label for="date_start" class="required">Start Date</label>
   <?php
-	$date_start = date("d/m/Y", strtotime(@field($this->validation->date_start, $holiday->date_start, date("Y-m-d"))));
+	if ($holiday != NULL) {
+		$date_start = date("d/m/Y", strtotime(@field($this->validation->date_start, $holiday->date_start, date("Y-m-d"))));
+	} else {
+		$date_start = date("d/m/Y", strtotime("now"));
+	}
 	echo form_input(array(
 		'name' => 'date_start',
 		'id' => 'date_start',
@@ -47,7 +53,11 @@ echo form_open('holidays/save', array('class' => 'cssform', 'id' => 'holiday_add
 <p>
   <label for="date_end" class="required">End Date</label>
   <?php
-	$date_end = date("d/m/Y", strtotime(@field($this->validation->date_end, $holiday->date_end, date("Y-m-d"))));
+	if ($holiday != NULL) {
+		$date_end = date("d/m/Y", strtotime(@field($this->validation->date_end, $holiday->date_end, date("Y-m-d"))));
+	} else {
+		$date_end = date("d/m/Y", strtotime("now"));
+	}
 	echo form_input(array(
 		'name' => 'date_end',
 		'id' => 'date_end',
@@ -67,7 +77,7 @@ echo form_open('holidays/save', array('class' => 'cssform', 'id' => 'holiday_add
 
 
 <div class="submit" style="border-top:0px;">
-  <?php echo form_submit(array('value' => 'Save', 'tabindex' => '5')) ?> 
-	&nbsp;&nbsp; 
+  <?php echo form_submit(array('value' => 'Save', 'tabindex' => '5')) ?>
+	&nbsp;&nbsp;
 	<?php echo anchor('holidays', 'Cancel', array('tabindex' => '6')) ?>
 </div>

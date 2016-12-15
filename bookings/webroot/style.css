@@ -278,7 +278,7 @@ p.breadcrumbs {
 
 /* Base class */
 
-p.msgbox {
+.msgbox {
     background-position: 4px 4px;
     background-repeat: no-repeat;
     width: 320px;
@@ -292,7 +292,7 @@ p.msgbox {
 
 /* ERROR */
 
-p.msgbox.error {
+.msgbox.error {
     background-image: url(i_error.gif);
     background-color: #FBE6F2;
     border-color: #D893A1;
@@ -694,16 +694,18 @@ table.bookings td {
     font-family: tahoma, verdana, sans-serif;
 }
 
+table.bookings .booking-cell {
+    box-shadow: 1px 1px 3px #939393;
+}
+
 table.bookings td.free {
     background: #fff;
-    border: 1px solid #ccc;
     /*#D3E6CF;  /*#C7F2BC;*/
     color: #000;
 }
 
 table.bookings td.past-free {
     background: #ccc;
-    border: 1px solid #ccc;
     /*#D3E6CF;  /*#C7F2BC;*/
     color: #000;
 }
@@ -712,30 +714,26 @@ table.bookings td.past-free {
 /* Free period */
 
 table.bookings td.static {
-    background: #E68A73;
+    background: #F9690E;
     color: #fff;
-    border: 1px solid #E68A73;
 }
 
 table.bookings td.past-static {
-    background: #d0a499;
+    background: #d4956d;
     color: #fff;
-    border: 1px solid #E68A73;
 }
 
 
 /* Timetabled lesson */
 
-table.bookings td.staff {
-    background: #3082BF;
+table.bookings td.casual {
+    background: #22A7F0;
     color: #fff;
-    border: 1px solid #3082BF;
 }
 
-table.bookings td.past-staff {
-    background: #779cb7;
+table.bookings td.past-casual {
+    background: #73a8c6;
     color: #fff;
-    border: 1px solid #3082BF;
 }
 
 

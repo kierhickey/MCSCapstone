@@ -32,7 +32,7 @@
 |---------------------------------------------------------------
 |
 | If you want this front controller to use a different "application"
-| folder then the default one you can set its name here. The folder 
+| folder then the default one you can set its name here. The folder
 | can also be renamed or relocated anywhere on your server.
 | For more info please see the user guide:
 | http://www.codeigniter.com/user_guide/general/managing_apps.html
@@ -81,6 +81,12 @@ define('EXT', '.'.pathinfo(__FILE__, PATHINFO_EXTENSION));
 define('FCPATH', __FILE__);
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 define('BASEPATH', $system_folder.'/');
+define('LOG_FOLDER', $system_folder."/logs");
+
+/**
+ * Custom constant definition
+ */
+define("BOOKING_CANCEL_SUBJECT", "Booking Cancellation - {{user.displayName}}");
 
 if (is_dir($application_folder))
 {
@@ -96,13 +102,29 @@ else
 	define('APPPATH', BASEPATH.$application_folder.'/');
 }
 
+/**
+ * Debug function
+ */
+ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$logpath = "C:\\Temp\\debug.log";
+ } else {
+	$logpath = "/var/tmp/debug.log";
+ }
+
+function debug_log($data) {
+	global $logpath;
+	$now = new DateTime();
+	$error = sprintf("[%s] %s%s", $now->format('Y-m-d H:i:s'), json_encode($data, JSON_PRETTY_PRINT), "\n");
+	error_log($error, 3, $logpath);
+}
+
 /*
 |---------------------------------------------------------------
 | DEFINE E_STRICT
 |---------------------------------------------------------------
 |
 | Some older versions of PHP don't support the E_STRICT constant
-| so we need to explicitly define it otherwise the Exception class 
+| so we need to explicitly define it otherwise the Exception class
 | will generate errors.
 |
 */

@@ -1,1 +1,3 @@
-<p class="msgbox error"><?php echo $vars; ?></p>
+<div class="msgbox error">
+    <?php echo $message; ?>
+</div>

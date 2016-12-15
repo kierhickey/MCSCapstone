@@ -37,6 +37,7 @@ class Bookings extends Controller
         $this->load->model('weeks_model', 'weeksProvider');
         $this->load->model('users_model', 'userProvider');
         $this->load->model('bookings_model', 'bookingsProvider');
+        $this->load->model('school_model', 'schoolProvider');
 
         $school['users'] = $this->userProvider->Get();
         $school['days_list'] = $this->sessionProvider->days;
@@ -82,7 +83,14 @@ class Bookings extends Controller
     public function generatePdf() {
         $pdfGen = new PdfGenerator();
 
-        $pdfGen->generate($this->userProvider, $this->bookingsProvider);
+        $schoolInfo = $this->schoolProvider->GetInfo();
+
+        $pricing = [
+            "recurringPrice" => floatval($schoolInfo->recurringPrice),
+            "casualPrice" => floatval($schoolInfo->casualPrice)
+        ];
+
+        $pdfGen->generate($this->userProvider, $this->bookingsProvider, $pricing);
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
@@ -307,7 +315,6 @@ class Bookings extends Controller
         } else {
             // 12 segments means we have all info - adding a booking
             if ($seg_count == 12) {
-
                 // Create array of data from the URI
                 if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                     $booking['day_num'] = $uri['day'];
@@ -368,9 +375,17 @@ class Bookings extends Controller
         $this->load->view('layout', $layout);
     }
 
+    public function multibook() {
+        if (isset($_POST['recurringBookings'])) {
+            $this->recurring();
+        } else {
+            $this->saveMulti();
+        }
+    }
+
     public function recurring()
     {
-        foreach ($this->input->post('recurring') as $booking) {
+        foreach ($this->input->post('multi') as $booking) {
             $arr = explode('/', $booking);
             $max = count($arr);
 
@@ -381,10 +396,10 @@ class Bookings extends Controller
             $bookings[] = $booking;
         }
 
-        $errcount = 0;
+        $errReasons = [];
 
         foreach ($bookings as $booking) {
-            $data = array();
+            $data = [];
             $data['user_id'] = $this->input->post('user_id');
             $data['school_id'] = $this->school_id;
             $data['period_id'] = $booking['period'];
@@ -392,12 +407,17 @@ class Bookings extends Controller
             $data['notes'] = $this->input->post('notes');
             $data['week_id'] = $booking['week'];
             $data['day_num'] = $booking['day'];
-            if (!$this->bookingsProvider->Add($data)) {
-                ++$errcount;
+            $data['start_date'] = new DateTime($booking['date']);
+
+            $result = $this->bookingsProvider->AddRecurring($data);
+
+            if (!$result->getResult()) {
+                array_push($errReasons, DateHelper::GetDayString($data["day_num"]).": ".$result->getMessage());
             }
         }
-        if ($errcount > 0) {
-            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made.', true);
+        if (count($errReasons) > 0) {
+            $string = "<ul><li>".implode('</li><li>', $errReasons)."</li></ul>";
+            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; ', true);
         } else {
             $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
         }
@@ -413,16 +433,25 @@ class Bookings extends Controller
         redirect($uri, 'location');
     }
 
-    public function cancel()
+    public function cancel($booking_id, $endDateString = NULL)
     {
-        // Get the booking ID from URI
-        $uri = $this->session->userdata('uri');
-        $booking_id = $this->uri->segment(3);
+        $booking = $this->bookingsProvider->getById($booking_id);
+        $user = $this->userProvider->Get($booking["user_id"]);
+        $to = $this->schoolProvider->get("admin_cancel_email", $this->school_id)["admin_cancel_email"];
+        $session = $this->sessionProvider->Get($booking["period_id"]);
+        $result = false;
 
-        if ($this->bookingsProvider->Cancel($this->school_id, $booking_id)) {
-            $msg = $this->load->view('msgbox/info', 'The booking has been <strong>cancelled</strong>.', true);
+        if ($endDateString == null) {
+            $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session);
         } else {
-            $msg = $this->load->view('msgbox/error', 'An error occured cancelling the booking.', true);
+            $endDate = new DateTime($endDateString);
+            $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session, $endDate);
+        }
+
+        if ($result->getResult()) {
+            $msg = $this->load->view('msgbox/info', $result->getMessage(), true);
+        } else {
+            $msg = $this->load->view('msgbox/error', $result->getMessage(), true);
         }
 
         // Set the response message, and go to the bookings page
@@ -456,6 +485,57 @@ class Bookings extends Controller
         $this->load->view('layout', $layout);
     }
 
+    public function saveMulti() {
+        foreach ($this->input->post('multi') as $booking) {
+            $arr = explode('/', $booking);
+            $max = count($arr);
+
+            $booking = array();
+            for ($i = 0; $i < count($arr); $i = $i + 2) {
+                $booking[$arr[$i]] = $arr[$i + 1];
+            }
+            $bookings[] = $booking;
+        }
+
+        $errors = [];
+
+        foreach ($bookings as $booking) {
+            $dateString = $booking['date'];
+            $dateDate = new DateTime($dateString);
+
+            $data = [];
+            $data['school_id'] = $this->school_id;
+            $data['period_id'] = $booking['period'];
+            $data['room_id'] = $booking['room'];
+            $data['user_id'] = $this->input->post('user_id');
+            $data['date'] = $dateDate;
+            $data["start_date"] = $dateDate;
+            $data['notes'] = $this->input->post('notes');
+
+            debug_log($data);
+
+            $result = $this->bookingsProvider->Add($data);
+
+            if (!$result->getResult()) {
+                array_push($errors, $dateString.": ".$result->getMessage());
+            }
+        }
+        if (count($errors) > 0) {
+            $string = "<ul><li>".implode('</li><li>', $errors)."</li></ul>";
+            $flashmsg = $this->load->view('msgbox/error', ['message' => "One or more bookings could not be made; ".$string], true);
+        } else {
+            $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
+        }
+
+        // Go back to index
+        $this->session->set_flashdata('saved', $flashmsg);
+
+        $uri = $this->session->userdata('uri');
+        $uri = ($uri) ? $uri : 'bookings';
+
+        redirect($uri, 'location');
+    }
+
     /**
      * Saves the booking. If an ID is specified in the POST request, edit the existing booking.
      * @return String The result of attempting to save the booking.
@@ -484,37 +564,56 @@ class Bookings extends Controller
         // Date validation
         // Valid format: dd/mm/yyyy
         //
+        $academicYear = $this->weeksProvider->GetAcademicYear();
+
+        $academicYear = [
+            "start" => new DateTime($academicYear["date_start"]),
+            "end" => new DateTime($academicYear["date_end"])
+        ];
+
         $dateValid = true; //Assume innocent
-        $isLeapYear = false;
+        $dateDate;
+        $dateFailReason = "";
 
         // Reference Data
-        $today = strtotime('0:00');
+        $today = new DateTime();
 
-        $date = $this->input->post('date');
-        $dateArr = explode("/", $date);
+        try {
+            $date = $this->input->post('date');
+            $dateArr = explode("/", $date);
 
-        // There are three parts of the date
-        if (count($dateArr) != 3) {
-            $dateValid = false;
-        }
+            // There are three parts of the date
+            if ($dateValid && count($dateArr) != 3) {
+                $dateValid = false;
+                $dateFailReason = "Invalid date format";
+            }
 
-        $year = intval($dateArr[2]);
-        $month = intval($dateArr[1]);
-        $day = intval($dateArr[0]);
+            $year = intval($dateArr[2]);
+            $month = intval($dateArr[1]);
+            $day = intval($dateArr[0]);
 
-        // Date isn't in the past
-        $dateDate = strtotime("$month/$day/$year");
+            $roomId = $this->input->post("room_id");
 
-        if ($dateDate <= $today) {
-            $dateValid = false;
-        }
+            // Date is valid
+            if ($dateValid && !checkdate($month, $day, $year)) {
+                $dateValid = false;
+                $dateFailReason = "Invalid date format";
+            }
 
-        $roomId = $this->input->post("room_id");
+            // Date isn't in the past
+            $dateDate = new DateTime("$month/$day/$year");
 
-        $roomIsBookable = $this->roomsProvider->isBookable($roomId);
+            if ($dateValid && $dateDate <= $today) {
+                $dateValid = false;
+                $dateFailReason = "Date is in the past";
+            }
 
-        // Date is valid
-        if (!checkdate($month, $day, $year)) {
+            //Date is within current academic year
+            if ($dateValid && ($dateDate < $academicYear["start"] || $dateDate > $academicYear["end"])) {
+                $dateValid = false;
+                $dateFailReason = "Date not within the currently configured business year.";
+            }
+        } catch (Exception $ex) {
             $dateValid = false;
         }
 
@@ -533,7 +632,7 @@ class Bookings extends Controller
             if ($booking_id != 'X' && $booking_id != false) {
                 return $this->Edit($booking_id);
             } else {
-                $this->errorMsg = "The date '$date' is not a valid date. Please specify a date in dd/mm/yyyy format";
+                $this->errorMsg = "The date '$date' is not a valid date. $dateFailReason.";
                 return $this->book();
             }
         } else { // Validation succeeded
@@ -543,21 +642,21 @@ class Bookings extends Controller
             $data['period_id'] = $this->input->post('period_id');
             $data['room_id'] = $this->input->post('room_id');
             $data['notes'] = $this->input->post('notes');
+            $data['date'] = $dateDate;
+            $data["start_date"] = $dateDate;
 
             // Hmm.... now to see if it's a static booking or recurring or whatever... :-)
-            if ($this->input->post('date')) {
-                // Once-only booking
 
+            $recurring = false;
+
+            if (!$this->input->post('recurring')) {
+                // Once-only booking
                 $date_arr = explode('/', $this->input->post('date'));
-                $data['date'] = date('Y-m-d', mktime(0, 0, 0, $date_arr[1], $date_arr[0], $date_arr[2]));
                 $data['day_num'] = null;
                 $data['week_id'] = null;
-            }
-
-            // If week_id and day_num are specified, its recurring
-            if ($this->input->post('recurring') && ($this->input->post('week_id') && $this->input->post('day_num'))) {
+            } else {
                 // Recurring
-                $data['date'] = null;
+                $recurring = true;
                 $data['day_num'] = $this->input->post('day_num');
                 $data['week_id'] = $this->input->post('week_id');
             }
@@ -565,17 +664,23 @@ class Bookings extends Controller
             // Now see if we are editing or adding
             if ($booking_id == 'X') {
                 // No ID, adding new record
-                if (!$this->bookingsProvider->Add($data)) {
-                    $flashmsg = $this->load->view('msgbox/error', "Could not add the requested booking - a booking for this time has already been made.", true);
+                if ($recurring) {
+                    $result = $this->bookingsProvider->AddRecurring($data);
                 } else {
-                    $flashmsg = $this->load->view('msgbox/info', 'The booking has been made.', true);
+                    $result = $this->bookingsProvider->Add($data);
+                }
+                if (!$result->getResult()) {
+                    $flashmsg = $this->load->view('msgbox/error', $result->getMessage(), true);
+                } else {
+                    $flashmsg = $this->load->view('msgbox/info', $result->getMessage(), true);
                 }
             } else {
                 // We have an ID, updating existing record
-                if (!$this->bookingsProvider->Edit($booking_id, $data)) {
-                    $flashmsg = $this->load->view('msgbox/error', sprintf($this->lang->line('dberror'), 'editing', 'booking'), true);
+                $result = $this->bookingsProvider->Edit($booking_id, $data);
+                if (!$result->getResult()) {
+                    $flashmsg = $this->load->view('msgbox/error', $result->getMessage(), true);
                 } else {
-                    $flashmsg = $this->load->view('msgbox/info', 'The booking has been updated.', true);
+                    $flashmsg = $this->load->view('msgbox/info', $result->getMessage(), true);
                 }
             }
 

@@ -2,6 +2,6 @@
 <tr>
 <td width="25%" align="right" valign="middle"><strong>Legend:</strong></td>
 <td class="free" width="25%" align="center">Available session</td>
-<td class="staff" width="25%" align="center">Booking</td>
+<td class="casual" width="25%" align="center">Booking</td>
 <td class="static" width="25%" align="center">Recurring Booking</td>
 </tr></table>

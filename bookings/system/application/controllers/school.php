@@ -30,7 +30,7 @@ class School extends Controller
         // Load models etc.
         //$this->load->script('gradient');
         $this->load->helper('file');
-        $this->load->model('school_model', 'M_school', true);
+        $this->load->model('school_model', 'schoolProvider', true);
     }
 
     public function installed()
@@ -84,12 +84,29 @@ class School extends Controller
                 redirect('dashboard', 'location');
             }
         }
-        $body['info'] = $this->M_school->GetInfo();
+        $body['info'] = $this->schoolProvider->GetInfo();
         $layout['title'] = 'Business Information';
         $layout['showtitle'] = $layout['title'];
         $layout['body'] = $this->load->view('school/details/school_details_edit.php', $body, true);
         $this->load->view('layout', $layout);
     }
+
+    private function validateCurrency($val) {
+        $dollarsAndCents = explode('.', $val);
+        $dollars = $dollarsAndCents[0];
+        $cents = $dollarsAndCents[1];
+
+        if (strlen($cents) > 2) {
+            return false;
+        }
+
+        if (!is_numeric($dollars) || !is_numeric($cents)) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
     * Controller function to handle a submitted form.
     */
@@ -132,10 +149,12 @@ class School extends Controller
 
         $this->validation->set_error_delimiters('<p class="hint error"><span>', '</span></p>');
 
+        $recurringPrice = $this->input->post("recurringPrice");
+        $casualPrice = $this->input->post("casualPrice");
+
         //print_r($_POST);
 
-        if ($this->validation->run() == false) {
-
+        if ($this->validation->run() == false || !$this->validateCurrency($recurringPrice) || !$this->validateCurrency($casualPrice)) {
             // Validation failed
             $this->details();
         } else {
@@ -193,6 +212,9 @@ class School extends Controller
             $data['bia'] = (int) $this->input->post('bia');
             $data['displaytype'] = $this->input->post('displaytype');
             $data['d_columns'] = $this->input->post('d_columns');
+            $data['recurring_price'] = floatval($recurringPrice);
+            $data['casual_price'] = floatval($casualPrice);
+            $data['admin_cancel_email'] = $this->input->post('admin-cancel-email');
 
             // Set no logo first, then if the upload succeeded then we set that
             if ($upload == true) {
@@ -201,7 +223,7 @@ class School extends Controller
 
             // If user clicked the 'delete logo' button on an edit, delete logo
             if ($this->input->post('logo_delete') != null) {
-                $this->M_school->delete_logo($this->school_id);
+                $this->schoolProvider->delete_logo($this->school_id);
             }
 
             // If colour is empty then set the default so Gradient still works
@@ -209,9 +231,9 @@ class School extends Controller
                 $data['colour'] = '468ED8';
             }
 
-            $this->M_school->edit('school_id', $this->session->userdata('school_id'), $data);
+            $this->schoolProvider->edit('school_id', $this->session->userdata('school_id'), $data);
 
-            $this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'School Details have been updated.', true));
+            $this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'Business Details have been updated.', true));
             $this->session->close();
 
             redirect('dashboard', 'location');

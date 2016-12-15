@@ -42,7 +42,7 @@ $bookingId = $booking["booking_id"];
 
 	<?php if($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)){ ?>
 		<p>
-			<label>Date:</label>
+			<label class="required">Date:</label>
 			<?php
 			$date = @field($this->validation->date, $booking['date']);
 			$input['name'] = 'date';
@@ -51,6 +51,7 @@ $bookingId = $booking["booking_id"];
 			$input['maxlength'] = '10';
 			$input['tabindex'] = $t;
 			$input['value'] = $date;
+			$input['required'] = 'required';
 			echo form_input($input);
 			unset($input);
 			$t++;
@@ -61,12 +62,12 @@ $bookingId = $booking["booking_id"];
 		<p>
 			<label for="room_id" class="required">Room:</label>
 			<?php
-			foreach($rooms as $room){
-				$roomlist[$room->roomId] = $room->location . " - " . $room->name;
-			}
-			$room_id = @field($this->validation->room_id, $booking['room_id']);
-			echo form_dropdown('room_id', $roomlist, $room_id, 'tabindex="'.$t.'"');
-			$t++;
+				foreach($rooms as $room){
+					$roomlist[$room->roomId] = $room->location . " - " . $room->name;
+				}
+				$room_id = @field($this->validation->room_id, $booking['room_id']);
+				echo form_dropdown('room_id', $roomlist, $room_id, "tabindex='$t' required='required'");
+				$t++;
 			?>
 		</p>
 		<?php echo @field($this->validation->room_id_error); ?>
@@ -79,7 +80,7 @@ $bookingId = $booking["booking_id"];
 				$periodlist[$period->period_id] = $period->name . ' ('.date('G:i', strtotime($period->time_start)).' - '.date('G:i', strtotime($period->time_end)).')';
 			}
 			$period_id = @field($this->validation->period_id, $booking['period_id']);
-			echo form_dropdown('period_id', $periodlist, $period_id, 'tabindex="'.$t.'"');
+			echo form_dropdown('period_id', $periodlist, $period_id, "tabindex='$t' required='required'");
 			$t++;
 			?>
 		</p>
@@ -89,13 +90,12 @@ $bookingId = $booking["booking_id"];
 		<p>
 			<label for="user_id">User:</label>
 			<?php
-			$userlist['0'] = '(None)';
 			foreach($users as $user){
 				if( $user->displayname == '' ){ $user->displayname = $user->username; }
 				$userlist[$user->user_id] = $user->displayname;		#@field($user->displayname, $user->username);
 			}
 			$user_id = @field($this->validation->user_id, $booking['user_id'], $this->session->userdata('user_id'));
-			echo form_dropdown('user_id', $userlist, $user_id, 'id="user_id" tabindex="'.$t.'"');
+			echo form_dropdown('user_id', $userlist, $user_id, "id='user_id' tabindex='$t'");
 			$t++;
 			?>
 		</p>

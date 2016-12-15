@@ -40,6 +40,27 @@ class DateHelper {
         return $dow;
     }
 
+    public static function GetDayString($dow) {
+        switch($dow) {
+            case DayOfWeek::MONDAY:
+                return "Monday";
+            case DayOfWeek::TUESDAY:
+                return "Tuesday";
+            case DayOfWeek::WEDNESDAY:
+                return "Wednesday";
+            case DayOfWeek::THURSDAY:
+                return "Thursday";
+            case DayOfWeek::FRIDAY:
+                return "Friday";
+            case DayOfWeek::SATURDAY:
+                return "Saturday";
+            case DayOfWeek::SUNDAY:
+                return "Sunday";
+            default:
+                return "ERROR";
+        }
+    }
+
     /**
      * Gets all of the dates for the given DayOfWeek
      * @param DateTime $startDate The lower bounds
