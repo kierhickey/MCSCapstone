@@ -466,13 +466,6 @@ var Calendar = function (config) {
     me.render = function () {
         if (me.rendered) return me.update();
 
-        if (!me.filterEnabled) {
-            console.log("Filter is off!");
-        };
-        if (me.filterEnabled){
-            console.log("Filter is on!");
-        };
-
         var userFilterSelect = $("<select></select>", {
             class: "calendar-filter",
             name: "user",

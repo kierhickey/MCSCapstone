@@ -85,7 +85,6 @@
                         roomId: e.roomId === "" ? null : e.roomId
                     },
                     success: function (response) {
-                        console.log(response);
                         summaryTable.setStartDate(e.startDate.curr);
                         summaryTable.setEndDate(e.endDate.curr);
                         summaryTable.setBookings(response.responseData);
@@ -102,6 +101,11 @@
         var calendar = new Calendar(config);
 
         calendar.render();
+        summaryTable.render();
+
+        var today = new Date();
+
+        calendar.setDateRange(today.getFullYear(), today.getMonth(), today.getDate(), today.getDate());
     };
 
 })(jQuery);

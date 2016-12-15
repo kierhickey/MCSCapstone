@@ -75,7 +75,6 @@ class Bookings extends Controller
         $result = $this->_markAsPaid($_POST["bookingId"]);
 
         echo json_encode([
-            "requestData" => $_POST,
             "responseData" => $result
         ]);
     }
@@ -122,12 +121,6 @@ class Bookings extends Controller
         $filteredBookings = $this->getBookingsForPeriod($startDate, $endDate, $userId, $roomId);
 
         $response = [
-            "requestData" => [
-                "userId" => $userId,
-                "roomId" => $roomId,
-                "startDate" => $startDate,
-                "endDate" => $endDate
-            ],
             "responseData" => $filteredBookings
         ];
 
