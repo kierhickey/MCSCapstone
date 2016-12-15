@@ -260,7 +260,7 @@ class Users extends Controller {
 			$body['action'] = 'users/delete';
 			$body['id'] = $user_id;
 			$body['cancel'] = 'users';
-			$body['text'] = 'If you delete this user, all of their bookings and room owenership information will also be deleted.';
+			$body['text'] = 'If you delete this user, all of their bookings and room ownership information will also be deleted.';
 			// Load page
 			$row = $this->crud->Get('users', 'user_id', $user_id);
 			if($row){
