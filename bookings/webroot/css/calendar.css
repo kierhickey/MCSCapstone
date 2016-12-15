@@ -32,6 +32,7 @@
 .calendar-filter {
     height: 24px;
     margin-left: 5px;
+    width: 100px;
     border: none;
     background-color: #fff;
 }
