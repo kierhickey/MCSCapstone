@@ -57,7 +57,7 @@ class Users extends Controller {
 
 		$body['pagelinks'] = $this->pagination->create_links();
 		// Get list of rooms from database
-		$body['users'] = $this->crud->Get('users', NULL, NULL, $this->school_id, 'authlevel asc, enabled asc, username asc', $pages['per_page'], $start_at );
+		$body['users'] = $this->crud->Get('users', NULL, NULL, $this->school_id, 'enabled asc, username asc', $pages['per_page'], $start_at );
 		#$body['users'] = $this->userProvider->Get();	//$this->session->userdata('school_id'));
 
 		// Set main layout
