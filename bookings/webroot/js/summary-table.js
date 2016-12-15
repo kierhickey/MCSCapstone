@@ -485,25 +485,13 @@ var SummaryTable = function (config) {
                                             class: "header-button",
                                             html: $("<img/>", {
                                                 class: "header-button-icon",
-                                                src: "webroot/images/ui/material/download-white-x24.svg"
+                                                src: "webroot/images/ui/material/print-white-x24.svg"
                                             }),
                                             on: {
                                                 click: function () {
                                                     var form = me.createPdfForm();
 
                                                     form.submit();
-                                                }
-                                            }
-                                        }),
-                                        $("<div></div>", {
-                                            class: "header-button",
-                                            html: $("<img/>", {
-                                                class: "header-button-icon",
-                                                src: "webroot/images/ui/material/print-white-x24.svg"
-                                            }),
-                                            on: {
-                                                click: function () {
-                                                    window.print();
                                                 }
                                             }
                                         })
