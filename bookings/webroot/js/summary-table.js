@@ -408,6 +408,7 @@ var SummaryTable = function (config) {
                 class: "pdf-form",
                 method: "post",
                 action: "api/pdf",
+                target: "_blank",
                 html: [
                     $("<input/>", {
                         type: "hidden",
