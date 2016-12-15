@@ -83,14 +83,7 @@ class Bookings extends Controller
     public function generatePdf() {
         $pdfGen = new PdfGenerator();
 
-        $schoolInfo = $this->schoolProvider->GetInfo();
-
-        $pricing = [
-            "recurringPrice" => floatval($schoolInfo->recurringPrice),
-            "casualPrice" => floatval($schoolInfo->casualPrice)
-        ];
-
-        $pdfGen->generate($this->userProvider, $this->bookingsProvider, $pricing);
+        $pdfGen->generate($this->userProvider, $this->bookingsProvider);
     }
 
     public function getBookingsForPeriod($startDate, $endDate, $userId, $roomId) {
@@ -400,6 +393,7 @@ class Bookings extends Controller
 
         foreach ($bookings as $booking) {
             $data = [];
+            $data['price'] = $this->schoolProvider->get('recurring_price', $this->schoolId)['recurring_price'];
             $data['user_id'] = $this->input->post('user_id');
             $data['school_id'] = $this->school_id;
             $data['period_id'] = $booking['period'];
@@ -504,6 +498,7 @@ class Bookings extends Controller
             $dateDate = new DateTime($dateString);
 
             $data = [];
+            $data['price'] = $this->schoolProvider->get('casual_price', $this->schoolId)['casual_price'];
             $data['school_id'] = $this->school_id;
             $data['period_id'] = $booking['period'];
             $data['room_id'] = $booking['room'];
@@ -511,8 +506,6 @@ class Bookings extends Controller
             $data['date'] = $dateDate;
             $data["start_date"] = $dateDate;
             $data['notes'] = $this->input->post('notes');
-
-            debug_log($data);
 
             $result = $this->bookingsProvider->Add($data);
 
@@ -637,6 +630,7 @@ class Bookings extends Controller
             }
         } else { // Validation succeeded
             // Data that goes into database regardless of booking type
+            $prices = $this->schoolProvider->get(['casual_price', 'recurring_price'], $this->schoolId);
             $data['user_id'] = $this->input->post('user_id');
             $data['school_id'] = $this->school_id;
             $data['period_id'] = $this->input->post('period_id');
@@ -654,11 +648,13 @@ class Bookings extends Controller
                 $date_arr = explode('/', $this->input->post('date'));
                 $data['day_num'] = null;
                 $data['week_id'] = null;
+                $data['price'] = $prices['casual_price'];
             } else {
                 // Recurring
                 $recurring = true;
                 $data['day_num'] = $this->input->post('day_num');
                 $data['week_id'] = $this->input->post('week_id');
+                $data['price'] = $prices['recurring_price'];
             }
 
             // Now see if we are editing or adding

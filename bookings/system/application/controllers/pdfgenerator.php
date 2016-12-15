@@ -17,21 +17,7 @@ class PdfGenerator {
 
     public function __construct() {}
 
-    public function sortDate($a, $b) {
-        $aDateTemp = explode("-", $a->bookingDate);
-        $aDay = intval($aDateTemp[2]);
-        $aMonth = intval($aDateTemp[1]);
-        $aYear = intval($aDateTemp[0]);
-
-        $bDateTemp = explode("-", $b->bookingDate);
-        $bDay = intval($bDateTemp[2]);
-        $bMonth = intval($bDateTemp[1]);
-        $bYear = intval($bDateTemp[0]);
-
-        return ($aYear >= $bYear) && ($aMonth >= $bMonth) && ($aDay > $bDay);
-    }
-
-    public function loadHtmlContent($pdf, $userProvider, $bookingsProvider, $pricing) {
+    public function loadHtmlContent($pdf, $userProvider, $bookingsProvider) {
         $pdf->setBasePath(__DIR__."/../views/pdfsummary/");
 
         $htmlSummaryTable = "<table class='summary-table'>";
@@ -85,7 +71,7 @@ class PdfGenerator {
             $displayName = $entry["displayName"];
             $dateString = $date->format("d/m/Y");
             $session = $entry["bookingStart"] . " &ndash; " . $entry["bookingEnd"];
-            $price = $entry["isRecurring"] == true ? $pricing["recurringPrice"] : $pricing["casualPrice"];
+            $price = $entry["price"];
             $location = $entry["location"];
             $room = $entry["roomName"];
             $paid = $entry["paid"] ? "P" : "NP";
@@ -137,7 +123,7 @@ class PdfGenerator {
         $pdf->loadHtml($htmlHeader.$htmlSummaryTable.$htmlFooter);
     }
 
-    public function generate($userProvider, $bookingsProvider, $pricing) {
+    public function generate($userProvider, $bookingsProvider) {
         // Create PDF
         $pdf = new Dompdf();
 

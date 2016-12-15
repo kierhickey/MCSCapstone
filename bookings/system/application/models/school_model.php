@@ -20,12 +20,17 @@ class School_model extends Model{
 		}
 	}
 
-	public function get($info, $schoolId) {
+	public function get($info, $schoolId = null) {
 		if (is_array($info)) {
 			$info = implode(", ", $info);
 		}
 
+		if ($schoolId == null) {
+			$schoolId = $this->session->userdata('school_id');
+		}
+
 		$queryStr = "SELECT $info FROM school WHERE school_id = $schoolId LIMIT 1";
+		debug_log($queryStr);
 		$query = $this->db->query($queryStr);
 
 		if ($query != false) {

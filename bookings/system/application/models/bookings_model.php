@@ -28,7 +28,7 @@ class Bookings_model extends Model
 
     public function markRecurringPaid($bookingId, $date = NULL, $note = "") {
         if (!$this->isRecurring($bookingId)) { // We can throw it to the other method.
-            return markAsPaid($bookingId, $note);
+            return $this->markAsPaid($bookingId, $note);
         }
 
         // Check if paid exists :)
@@ -288,6 +288,7 @@ class Bookings_model extends Model
         ,(case when b.date IS NULL then 'true'
             when b.date IS NOT NULL then 'false'
         end) AS isRecurring
+        ,b.price
         ,(case when b.date is NOT NULL then
             (
                 case when (SELECT COUNT(*) FROM payments WHERE booking_id = b.booking_id) = 1 then 'true'
@@ -1355,7 +1356,6 @@ class Bookings_model extends Model
         $query = $this->db->query($queryString);
 
         if ($query == false) {
-            debug_log($queryString);
             return new ResultState(false, "An error occurred while contacting the server."); // Query didn't work -- abort.
         }
 
