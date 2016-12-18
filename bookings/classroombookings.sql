@@ -9,19 +9,22 @@ CREATE TABLE `academicyears` (
 
 DROP TABLE IF EXISTS `bookings`;
 CREATE TABLE `bookings` (
-  `booking_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
-  `school_id` int(6) unsigned DEFAULT NULL,
-  `period_id` int(6) unsigned DEFAULT NULL,
-  `week_id` int(6) unsigned DEFAULT NULL,
-  `day_num` int(1) unsigned DEFAULT NULL,
-  `room_id` int(6) unsigned DEFAULT NULL,
-  `user_id` int(6) unsigned DEFAULT NULL,
-  `date` date DEFAULT NULL,
-  `start_date` date NOT NULL,
-  `notes` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `cancelled` tinyint(1) unsigned DEFAULT '0',
-  PRIMARY KEY (`booking_id`),
-  KEY `school_id` (`school_id`,`period_id`,`room_id`,`user_id`)
+    `booking_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
+    `school_id` int(6) unsigned DEFAULT NULL,
+    `period_id` int(6) unsigned DEFAULT NULL,
+    `week_id` int(6) unsigned DEFAULT NULL,
+    `day_num` int(1) unsigned DEFAULT NULL,
+    `room_id` int(6) unsigned DEFAULT NULL,
+    `user_id` int(6) unsigned DEFAULT NULL,
+    `date` date DEFAULT NULL,
+    `start_date` date NOT NULL,
+    `end_date` date DEFAULT NULL,
+    `notes` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `cancelled` tinyint(1) unsigned DEFAULT '0',
+    `price` decimal(10,0) NOT NULL,
+    `paid` tinyint(1) DEFAULT '0',
+    PRIMARY KEY (`booking_id`),
+    KEY `school_id` (`school_id`,`period_id`,`room_id`,`user_id`)
 );
 
 
@@ -116,15 +119,18 @@ CREATE TABLE `roomvalues` (
 
 DROP TABLE IF EXISTS `school`;
 CREATE TABLE `school` (
-  `school_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `website` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `colour` char(6) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `logo` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `bia` int(3) unsigned DEFAULT '0',
-  `d_columns` enum('periods','rooms','days') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `displaytype` enum('room','day') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`school_id`)
+    `school_id` int(6) unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `website` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `colour` char(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `logo` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `bia` int(3) unsigned DEFAULT '0',
+    `d_columns` enum('periods','rooms','days') CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `displaytype` enum('room','day') CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+    `recurring_price` decimal(10,0) NOT NULL DEFAULT '10',
+    `casual_price` decimal(10,0) NOT NULL DEFAULT '15',
+    `admin_cancel_email` varchar(256) NOT NULL,
+    PRIMARY KEY (`school_id`)
 );
 
 
