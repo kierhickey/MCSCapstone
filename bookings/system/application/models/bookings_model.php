@@ -298,6 +298,17 @@ class Bookings_model extends Model
 
             foreach ($bookingsForDate as $bookingDate) {
                 $bookingCopy = $booking;
+
+                // If the booking has ended
+                if ($booking["end_date"] != NULL && $booking["end_date"] <= $bookingDate) {
+                    continue;
+                }
+
+                // Or if the booking hasn't started
+                if ($booking["start_date"] != NULL && $booking["start_date"] > $bookingDate) {
+                    continue;
+                }
+
                 $date = $bookingDate->format("Y-m-d");
                 $roomId = $booking["roomId"];
 
@@ -375,6 +386,8 @@ class Bookings_model extends Model
         end) AS displayName
         ,b.date AS bookingDate
         ,b.day_num AS dayNum
+        ,b.start_date
+        ,b.end_date
         ,p.time_start AS bookingStart
         ,p.time_end AS bookingEnd
         ,b.room_id as roomId
@@ -406,6 +419,8 @@ class Bookings_model extends Model
             OR b.date IS NULL
         )
         AND b.cancelled != 1
+        AND (b.start_date <= '$endDate' OR b.start_date IS NULL)
+        AND (b.end_date >= '$startDate' OR b.end_date IS NULL)
         ORDER BY b.date asc, r.location, p.time_start";
 
         $query = $this->db->query($queryString);
