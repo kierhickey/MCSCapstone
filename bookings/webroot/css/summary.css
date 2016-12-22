@@ -23,6 +23,10 @@
     background-color: #509ed7;
 }
 
+.col-recurring {
+    max-width: 80px;
+}
+
 .booking-row:nth-child(even) {
     background-color: #eee;
 }

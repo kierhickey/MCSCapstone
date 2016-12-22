@@ -194,13 +194,19 @@ var SummaryTable = function (config) {
             ]
         });
 
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
         return $("<tr></tr>", {
             class: "booking-row",
             id: booking.bookingId,
             html: [
                 $("<td></td>", {
-                    class: "booking-username booking-cell",
+                    class: "booking-date booking-cell",
                     text: _formatDate(new Date(booking.bookingDate))
+                }),
+                $("<td></td>", {
+                    class: "booking-day booking-cell",
+                    text: days[(new Date(booking.bookingDate)).getDay()]
                 }),
                 $("<td></td>", {
                     class: "booking-username booking-cell",
@@ -211,11 +217,11 @@ var SummaryTable = function (config) {
                     text: booking.displayname
                 }),
                 $("<td></td>", {
-                    class: "booking-end booking-cell",
+                    class: "booking-location booking-cell",
                     text: booking.location
                 }),
                 $("<td></td>", {
-                    class: "booking-end booking-cell",
+                    class: "booking-room booking-cell",
                     text: booking.roomName
                 }),
                 $("<td></td>", {
@@ -223,12 +229,12 @@ var SummaryTable = function (config) {
                     text: booking.bookingStart
                 }),
                 $("<td></td>", {
-                    class: "booking-recurring booking-cell",
-                    text: booking.isRecurring
-                }),
-                $("<td></td>", {
                     class: "booking-end booking-cell",
                     text: booking.bookingEnd
+                }),
+                $("<td></td>", {
+                    class: "booking-recurring booking-cell",
+                    text: booking.isRecurring ? "Yes" : "No"
                 }),
                 (showPaidCol ? paidCol : "")
             ]
@@ -467,15 +473,51 @@ var SummaryTable = function (config) {
                 text: "Paid"
             });
 
+            var paidColCol = $("<col/>", {
+                class: "col-paid"
+            });
+
             var summTable = $("<table></table>", {
                 class: me.cls,
                 html: [
+                    $('<colgroup></colgroup>', {
+                        html: [
+                            $("<col/>", {
+                                class: 'col-date'
+                            }),
+                            $("<col/>", {
+                                class: 'col-day'
+                            }),
+                            $("<col/>", {
+                                class: 'col-username'
+                            }),
+                            $("<col/>", {
+                                class: 'col-displayname'
+                            }),
+                            $("<col/>", {
+                                class: 'col-location'
+                            }),
+                            $("<col/>", {
+                                class: 'col-room'
+                            }),
+                            $("<col/>", {
+                                class: 'col-start'
+                            }),
+                            $("<col/>", {
+                                class: 'col-end'
+                            }),
+                            $("<col/>", {
+                                class: 'col-recurring'
+                            }),
+                            me.showPaidColumn ? paidColCol : ""
+                        ]
+                    }),
                     $("<thead></thead>", {
                         class: me.headerCls,
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: me.showPaidColumn ? 9 : 8,
+                                    colspan: me.showPaidColumn ? 10 : 9,
                                     class: me.headerCls + "-inner",
                                     html: [
                                         $("<span></span>", {
@@ -507,6 +549,10 @@ var SummaryTable = function (config) {
                                         text: "Date"
                                     }),
                                     $("<th></th>", {
+                                        class: "header-day header-cell",
+                                        text: "Day"
+                                    }),
+                                    $("<th></th>", {
                                         class: "header-username header-cell",
                                         text: "Username"
                                     }),
@@ -527,12 +573,12 @@ var SummaryTable = function (config) {
                                         text: "Start Time"
                                     }),
                                     $("<th></th>", {
-                                        class: "header-recurring header-cell",
-                                        text: "Recurring"
-                                    }),
-                                    $("<th></th>", {
                                         class: "header-end header-cell",
                                         text: "End Time"
+                                    }),
+                                    $("<th></th>", {
+                                        class: "header-recurring header-cell",
+                                        text: "Recurring"
                                     }),
                                     me.showPaidColumn ? paidCol : ""
                                 ]
