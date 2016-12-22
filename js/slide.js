@@ -25,25 +25,6 @@ $(function() {
         callback: {
             loaded: function (number) {
                 $('.slidesjs-pagination, .slidesjs-navigation').hide(0);
-
-                $(".loading-bar").animate({
-                    "width": (slideNavWidth - 60) + "px"
-                }, 7000, "linear");
-            },
-            complete: function () {
-                $(".loading-bar").stop();
-
-                $(".loading-bar").css("width", "0px");
-
-                $(".loading-bar").animate({
-                    "width": (slideNavWidth - 60) + "px"
-                }, 7000, "linear");
-
-                var pluginInstance = $('.slides').data('plugin_slidesjs');
-
-                tmt = setTimeout(function() {
-                    pluginInstance.play(true);
-                }, 7000);
             }
         }
     });

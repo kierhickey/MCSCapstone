@@ -39,9 +39,9 @@
 .slide-nav {
     width: 940px;
     height: 30px;
-    margin-top: -1px;
-    background-color: #5c6065;
+    margin-top: -31px;
     position: relative;
+    z-index: 99999999;
 }
 
 .slides-next, .slides-prev {
@@ -50,15 +50,16 @@
     top: 0;
     width: 30px;
     height: 30px;
-    background-color: #454a50;
+    background-color: rgba(69, 74, 80, 0.3);
     text-align: center;
     line-height: 30px;
-    color: #F1F1F1;
-    transition: color 0.2s ease;
+    color: rgba(241, 241, 241, 0.3);
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .slides-next:hover, .slides-prev:hover {
     text-decoration: none;
+    background-color: rgba(69, 74, 80, 1);
     color: #E87E04;
 }
 
