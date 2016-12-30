@@ -700,16 +700,18 @@ table.bookings .booking-cell {
 
 table.bookings td.free {
     background: #fff;
-    /*#D3E6CF;  /*#C7F2BC;*/
     color: #000;
 }
 
 table.bookings td.past-free {
     background: #ccc;
-    /*#D3E6CF;  /*#C7F2BC;*/
     color: #000;
 }
 
+table.bookings td.today-free {
+    background: #e0e0e0;
+    color: #000;
+}
 
 /* Free period */
 

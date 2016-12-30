@@ -243,7 +243,7 @@ var SummaryTable = function (config) {
 
     var sorts = [];
 
-    var props = ["username", "displayname", "bookingStart", "bookingEnd", "bookingDate", "roomName", "location", "paid"];
+    var props = ["username", "displayname", "bookingStart", "bookingEnd", "bookingDate", "roomName", "location", "paid", "day"];
 
     for (var i = 0; i < props.length; i++) {
         // Create closure to prevent only the last property working
@@ -333,7 +333,6 @@ var SummaryTable = function (config) {
 
                 $(header).addClass("asc");
             }
-
 
             switch (sortTarget) {
                 case "start":

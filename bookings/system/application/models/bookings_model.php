@@ -492,11 +492,11 @@ class Bookings_model extends Model
     return $table;
     }
 
-    public function BookingCell($data, $key, $rooms, $users, $room_id, $url, $booking_date_ymd = '', $holidays = array())
+    public function BookingCell($data, $key, $rooms, $users, $room_id, $url, $booking_date_ymd = '', $holidays = array(), $time_start = null)
     {
-        $bookingDate = DateTime::createFromFormat('Y-m-d', $booking_date_ymd);
+        $bookingDate = DateTime::createFromFormat('Y-m-d H:i:s', $booking_date_ymd . ' ' . $time_start);
         $todaysDate = new DateTime();
-        $tomorrowsDate = $todaysDate->add(new DateInterval('P1D'));
+        $tomorrowsDate = (new DateTime())->add(new DateInterval('P1D'));
         $dayNum = $bookingDate->format('N');
 
         // Check if there is a booking
@@ -510,14 +510,14 @@ class Bookings_model extends Model
             $cell['class'] = 'booking-cell ';
 
             $start_date = new DateTime($booking->start_date);
-
             $end_date = NULL;
+
             if ($booking->end_date != NULL) {
                 $end_date = new DateTime($booking->end_date);
             }
 
-            if ($start_date >= $bookingDate && ($end_date == NULL || $end_date <= $todaysDate)) {
-                if ($bookingDate >= $todaysDate) {
+            if ($start_date >= $bookingDate && ($end_date == NULL || $end_date <= $bookingDate)) {
+                if ($bookingDate >= $tomorrowsDate) {
                     // No bookings
                     $book_url = site_url('bookings/book/'.$url);
                     $cell['class'] = 'free';
@@ -535,14 +535,14 @@ class Bookings_model extends Model
 
             if ($booking->date == null) {
                 // If no date set, then it's a static/timetable/recurring booking
-                if ($bookingDate >= $todaysDate) {
+                if ($bookingDate >= $tomorrowsDate) {
                     $cell['class'] .= 'static';
                 } else {
                     $cell['class'] .= 'past-static';
                 }
             } else {
                 // Date is set, it's a once off staff booking
-                if ($bookingDate >= $todaysDate) {
+                if ($bookingDate >= $tomorrowsDate) {
                     $cell['class'] .= 'casual';
                 } else {
                     $cell['class'] .= 'past-casual';
@@ -607,7 +607,7 @@ class Bookings_model extends Model
             $cell['class'] = 'holiday';
             $cell['body'] = $holidays[$booking_date_ymd][0]->name;
         } else {
-            if ($bookingDate >= $todaysDate) {
+            if ($bookingDate >= $tomorrowsDate) {
                 // No bookings
                 $book_url = site_url('bookings/book/'.$url);
                 $cell['class'] = 'free';
@@ -992,7 +992,7 @@ class Bookings_model extends Model
                         $school['days_bitmask']->reverse_mask($period->days);
                         if ($school['days_bitmask']->bit_isset($day_num)) {
                             // Bookable
-                            $html .= $this->BookingCell($bookings, $period->period_id, $rooms, $users, $room_id, $url, $booking_date_ymd, $holiday_dates);
+                            $html .= $this->BookingCell($bookings, $period->period_id, $rooms, $users, $room_id, $url, $booking_date_ymd, $holiday_dates, $period->time_start);
                         } else {
                             // Period not bookable on this day, do not show or allow any bookings
                             $html .= '<td align="center">&nbsp;</td>';
@@ -1064,7 +1064,7 @@ class Bookings_model extends Model
                         $school['days_bitmask']->reverse_mask($period->days);
                         if ($school['days_bitmask']->bit_isset($day_num)) {
                             // Bookable
-                            $html .= $this->BookingCell($bookings, $day_num, $rooms, $users, $room_id, $url, $booking_date_ymd, $holiday_dates);
+                            $html .= $this->BookingCell($bookings, $day_num, $rooms, $users, $room_id, $url, $booking_date_ymd, $holiday_dates, $period->time_start);
                         } else {
                             // Period not bookable on this day, do not show or allow any bookings
                             $html .= '<td align="center">&nbsp;</td>';
@@ -1141,7 +1141,7 @@ class Bookings_model extends Model
                         $school['days_bitmask']->reverse_mask($period->days);
                         if ($school['days_bitmask']->bit_isset($day_num)) {
                             // Bookable
-                            $html .= $this->BookingCell($bookings, $period->period_id, $rooms, $users, $room->room_id, $url, $date_ymd, $holiday_dates);
+                            $html .= $this->BookingCell($bookings, $period->period_id, $rooms, $users, $room->room_id, $url, $date_ymd, $holiday_dates, $period->time_start);
                         } else {
                             // Period not bookable on this day, do not show or allow any bookings
                             $html .= '<td align="center">&nbsp;</td>';
@@ -1197,7 +1197,7 @@ class Bookings_model extends Model
                         $school['days_bitmask']->reverse_mask($period->days);
                         if ($school['days_bitmask']->bit_isset($day_num)) {
                             // Bookable
-                            $html .= $this->BookingCell($bookings, $room->room_id, $rooms, $users, $room->room_id, $url, $date_ymd, $holiday_dates);
+                            $html .= $this->BookingCell($bookings, $room->room_id, $rooms, $users, $room->room_id, $url, $date_ymd, $holiday_dates, $period->time_start);
                         } else {
                             // Period not bookable on this day, do not show or allow any bookings
                             $html .= '<td align="center">&nbsp;</td>';
