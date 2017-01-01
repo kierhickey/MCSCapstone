@@ -462,7 +462,25 @@ class Bookings extends Controller
         $session = $this->sessionProvider->Get($booking["period_id"]);
         $result = false;
 
-        if ($booking["user_id"] != $this->session->userdata('user_id') && !$this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+        // Check cancel date against 24 hrs from now;
+        $now = new DateTime('now');
+        $tomorrow = (new DateTime('now'))->add(new DateInterval("P1D"));
+
+        if ($booking["date"] == null) {
+            $cancelDate = DateTime::createFromFormat('Y-m-d H:i:s', $endDateString . ' '. $session->time_start);
+        } else {
+            $cancelDate = DateTime::createFromFormat('Y-m-d H:i:s', $booking["date"] . ' '. $session->time_start);
+        }
+
+        if ($cancelDate <= $tomorrow) {
+            // Can't cancel
+            // // Can't cancel
+            $message = $cancelDate >= $now
+                ? "You cannot cancel within 24 hours of the scheduled booking time."
+                : "You cannot cancel a booking in the past.";
+
+            $msg = $this->load->view("msgbox/error", $message, true);
+        } else if ($booking["user_id"] != $this->session->userdata('user_id') && !$this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
             // User isn't properly auth'd
             $msg = $this->load->view('msgbox/error', "You do not have permission to delete this booking.", true);
         } else {
@@ -489,6 +507,61 @@ class Bookings extends Controller
         }
 
         redirect($uri, 'redirect');
+    }
+
+    public function cancelXhr($booking_id, $endDateString = NULL) {
+        $booking = $this->bookingsProvider->getById($booking_id);
+        $user = $this->userProvider->Get($booking["user_id"]);
+        $to = $this->schoolProvider->get("admin_cancel_email", $this->school_id)["admin_cancel_email"];
+        $session = $this->sessionProvider->Get($booking["period_id"]);
+        $result = null;
+        $status = 200;
+
+        // Check cancel date against 24 hrs from now;
+        $now = new DateTime('now');
+        $tomorrow = (new DateTime('now'))->add(new DateInterval("P1D"));
+
+        if ($booking["date"] == null) {
+            $cancelDate = DateTime::createFromFormat('Y-m-d H:i:s', $endDateString . ' '. $session->time_start);
+        } else {
+            $cancelDate = DateTime::createFromFormat('Y-m-d H:i:s', $booking["date"] . ' '. $session->time_start);
+        }
+
+        if ($cancelDate <= $tomorrow) {
+            // Can't cancel
+            $message = $cancelDate >= $now
+                ? "You cannot cancel within 24 hours of the scheduled booking time."
+                : "You cannot cancel a booking in the past.";
+            $result = new ResultState(false, $message);
+            header("HTTP/1.1 400 Bad Request");
+            $status = 400;
+        } else if ($booking["user_id"] != $this->session->userdata('user_id') && !$this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+            // User isn't properly auth'd
+            $result = new ResultState(false, "You do not have permission to delete this booking.");
+            header("HTTP/1.1 400 Bad Request");
+            $status = 400;
+        } else {
+            // User is properly auth'd -- user that made booking, or an admin
+            if ($endDateString == null) {
+                $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session);
+            } else {
+                $endDate = new DateTime($endDateString);
+                $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session, $endDate);
+            }
+
+            if (!$result->getResult()) {
+                header ("HTTP/1.1 500 Internal Server Error");
+                $status = 500;
+            }
+        }
+
+        // Set the response message, and go to the bookings page
+        $this->session->set_flashdata('saved', $msg);
+        header("Content-Type: application/json");
+        echo json_encode([
+            "status" => $status,
+            "message" => $result->getMessage()
+        ]);
     }
 
     public function edit()

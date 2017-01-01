@@ -39,7 +39,7 @@ var Modal = function (config) {
                     class: "modal-button ok",
                     text: "Ok",
                     on: {
-                        click: function (event) {config.ok(modalObj);} || defaultButtonHandler
+                        click: config.ok ? function (event) {config.ok(modalObj);} : defaultButtonHandler
                     }
                 });
             case ButtonType.Cancel:
@@ -47,7 +47,7 @@ var Modal = function (config) {
                     class: "modal-button cancel",
                     text: "Cancel",
                     on: {
-                        click: function (event) {config.cancel(modalObj);} || defaultButtonHandler
+                        click: config.cancel ? function (event) {config.cancel(modalObj);} : defaultButtonHandler
                     }
                 });
             case ButtonType.Yes:
@@ -55,7 +55,7 @@ var Modal = function (config) {
                     class: "modal-button yes",
                     text: "Yes",
                     on: {
-                        click: function (event) {config.yes(modalObj);} || defaultButtonHandler
+                        click: config.yes ? function (event) {config.yes(modalObj);} : defaultButtonHandler
                     }
                 });
             case ButtonType.No:
@@ -63,7 +63,7 @@ var Modal = function (config) {
                     class: "modal-button no",
                     text: "No",
                     on: {
-                        click: function (event) {config.no(modalObj);} || defaultButtonHandler
+                        click: config.no ? function (event) {config.no(modalObj);} : defaultButtonHandler
                     }
                 });
             default:

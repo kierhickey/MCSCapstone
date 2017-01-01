@@ -142,7 +142,7 @@ var SummaryTable = function (config) {
         return startDayName + " the " + sD + "<sup>" + startSuffix + "</sup>" + " to " + endDayName + " the " + eD + "<sup>" + endSuffix + "</sup>" + " of " + monthName + ", " + y;
     }
 
-    var createRow = function (booking, showPaidCol) {
+    var createRow = function (summTable, booking, showPaidCol) {
         var paidCol = $("<td></td>", {
             class: "booking-paid booking-cell",
             html: [
@@ -178,7 +178,13 @@ var SummaryTable = function (config) {
                                             $("#" + booking.bookingId + " .booking-paid-toggle").text((booking.paid ? "Paid" : "Not Paid"));
                                         },
                                         error: function (response) {
-                                            console.log(response);
+                                            response = JSON.parse(response.responseText);
+
+                                            var modal = new Modal({
+                                                title: "Error",
+                                                message: response.message,
+                                                type: ModalType.Ok
+                                            })
                                         }
                                     })
                                 },
@@ -195,6 +201,11 @@ var SummaryTable = function (config) {
         });
 
         var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+        var fullDate = new Date(booking.bookingDate + ' ' + booking.bookingStart);
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1); // Today plus one
+        var canCancel = fullDate > tomorrow;
 
         return $("<tr></tr>", {
             class: "booking-row",
@@ -236,7 +247,36 @@ var SummaryTable = function (config) {
                     class: "booking-recurring booking-cell",
                     text: booking.isRecurring ? "Yes" : "No"
                 }),
-                (showPaidCol ? paidCol : "")
+                (showPaidCol ? paidCol : ""),
+                $("<td></td>", {
+                    class: "booking-cancel booking-cell",
+                    html: $("<img/>", {
+                        src: "webroot/images/ui/delete.gif",
+                        alt: "Delete",
+                        class: canCancel ? "active" : "inactive",
+                        on: {
+                            click: function (event) {
+                                if (!canCancel) return false;
+
+                                var modal = new Modal({
+                                    type: ModalType.YesNo,
+                                    title: "Cancel Booking",
+                                    message: "Are you sure that you'd like to cancel this booking?",
+                                    yes: function (modal) {
+                                        modal.close();
+                                        summTable.removeBooking(booking.bookingId);
+                                    },
+                                    no: function (modal) {
+                                        modal.close();
+                                    }
+                                });
+
+                                modal.show();
+                                return true;
+                            }
+                        }
+                    })
+                })
             ]
         });
     }
@@ -284,11 +324,64 @@ var SummaryTable = function (config) {
             });
         },
 
-        setBookings(bookings) {
+        setBookings: function(bookings) {
             var me = this;
 
             me.bookings = bookings || [];
             me.update();
+        },
+
+        removeBooking: function (bookingId) {
+            var me = this;
+            var booking = $.grep(me.bookings, function (book) {
+                return book.bookingId === bookingId
+            })[0];
+
+            var cancelUrl = "/bookings/bookings/cancelXhr/";
+            cancelUrl += booking.bookingId;
+
+            if (booking.isRecurring) {
+                cancelUrl += "/";
+                cancelUrl += booking.bookingDate
+            }
+
+            $.ajax({
+                method: "POST",
+                url: cancelUrl,
+                success: function (data) {
+                    $.each(me.bookings, function (index) {
+                        if (me.bookings[index].bookingId === bookingId) {
+                            me.bookings.splice(index, 1);
+                            return false;
+                        }
+                    });
+
+                    $('#' + bookingId)
+                        .children('td')
+                        .wrapInner('<div class="td-slider" />')
+                        .children(".td-slider")
+                        .animate({
+                            height: "0px",
+                            opacity: 0
+                        }, {
+                            duration: 400,
+                            done: function () {
+                                me.update()
+                            }
+                        });
+                    },
+                    error: function (data) {
+                        data = JSON.parse(data.responseText);
+
+                        var modal = new Modal({
+                            title: "Error",
+                            message: "An error occurred: " + data.message,
+                            type: ModalType.Ok
+                        });
+
+                        modal.show();
+                    }
+            })
         },
 
         getRows: function() {
@@ -296,14 +389,14 @@ var SummaryTable = function (config) {
             var rows = [];
 
             for (var i = 0; i < me.bookings.length; i++) {
-                rows.push(createRow(me.bookings[i], me.showPaidColumn));
+                rows.push(createRow(me, me.bookings[i], me.showPaidColumn));
             }
 
             if (rows.length === 0) {
                 rows.push($("<tr></tr>", {
                     html: $("<td></td>", {
                         class: "summary-empty",
-                        colspan: me.showPaidColumn ? 8 : 7,
+                        colspan: me.showPaidColumn ? 11 : 10,
                         text: me.emptyText
                     })
                 }));
@@ -318,6 +411,8 @@ var SummaryTable = function (config) {
             var classes = e.target.classList;
             var sortTarget = classes[0].match(/header-(.*)/)[1];
             var asc = true;
+
+            if (classes.contains('header-cancel')) return;
 
             if (classes.contains("asc")) {
                 $(header).removeClass("asc");
@@ -473,6 +568,7 @@ var SummaryTable = function (config) {
             });
 
             var paidColCol = $("<col/>", {
+                span: "1",
                 class: "col-paid"
             });
 
@@ -482,33 +578,46 @@ var SummaryTable = function (config) {
                     $('<colgroup></colgroup>', {
                         html: [
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-date'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-day'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-username'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-displayname'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-location'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-room'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-start'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-end'
                             }),
                             $("<col/>", {
+                                span: "1",
                                 class: 'col-recurring'
                             }),
-                            me.showPaidColumn ? paidColCol : ""
+                            me.showPaidColumn ? paidColCol : "",
+                            $("<col/>", {
+                                span: "1",
+                                class: "col-cancel"
+                            })
                         ]
                     }),
                     $("<thead></thead>", {
@@ -516,7 +625,7 @@ var SummaryTable = function (config) {
                         html: [
                             $("<tr></tr>", {
                                 html: $("<th></th>", {
-                                    colspan: me.showPaidColumn ? 10 : 9,
+                                    colspan: me.showPaidColumn ? 11 : 10,
                                     class: me.headerCls + "-inner",
                                     html: [
                                         $("<span></span>", {
@@ -579,7 +688,11 @@ var SummaryTable = function (config) {
                                         class: "header-recurring header-cell",
                                         text: "Recurring"
                                     }),
-                                    me.showPaidColumn ? paidCol : ""
+                                    me.showPaidColumn ? paidCol : "",
+                                    $("<th></th>", {
+                                        class: "header-cancel header-cell",
+                                        text: "Cancel"
+                                    })
                                 ]
                             })
                         ]

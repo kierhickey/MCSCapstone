@@ -7,7 +7,15 @@
     border-collapse: collapse;
     margin-top: 50px;
     box-shadow: 1px 1px 3px #a3a3a3;
-    table-layout: fixed;
+}
+
+img.active {
+    opacity: 1;
+    cursor: pointer;
+}
+
+img.inactive {
+    opacity: 0.4;
 }
 
 .summary-date {
@@ -23,8 +31,24 @@
     background-color: #509ed7;
 }
 
+.booking-date, .booking-day, .booking-username, .booking-displayname, .booking-location, .booking-room {
+    text-align: left!important;
+}
+
+.booking-start, .booking-end {
+    text-align: right!important;
+}
+
 .col-recurring {
-    max-width: 80px;
+    width: 65px;
+}
+
+.col-paid {
+    width: 70px;
+}
+
+.col-cancel {
+    width: 50px;
 }
 
 .booking-row:nth-child(even) {
