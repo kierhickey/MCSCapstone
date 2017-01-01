@@ -438,7 +438,7 @@ class Bookings extends Controller
         }
         if (count($errReasons) > 0) {
             $string = "<ul><li>".implode('</li><li>', $errReasons)."</li></ul>";
-            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; ', true);
+            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; '.$string, true);
         } else {
             $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
         }
@@ -462,17 +462,23 @@ class Bookings extends Controller
         $session = $this->sessionProvider->Get($booking["period_id"]);
         $result = false;
 
-        if ($endDateString == null) {
-            $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session);
+        if ($booking["user_id"] != $this->session->userdata('user_id') && !$this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+            // User isn't properly auth'd
+            $msg = $this->load->view('msgbox/error', "You do not have permission to delete this booking.", true);
         } else {
-            $endDate = new DateTime($endDateString);
-            $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session, $endDate);
-        }
+            // User is properly auth'd -- user that made booking, or an admin
+            if ($endDateString == null) {
+                $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session);
+            } else {
+                $endDate = new DateTime($endDateString);
+                $result = $this->bookingsProvider->Cancel($this->school_id, $to, $user, $booking, $session, $endDate);
+            }
 
-        if ($result->getResult()) {
-            $msg = $this->load->view('msgbox/info', $result->getMessage(), true);
-        } else {
-            $msg = $this->load->view('msgbox/error', $result->getMessage(), true);
+            if ($result->getResult()) {
+                $msg = $this->load->view('msgbox/info', $result->getMessage(), true);
+            } else {
+                $msg = $this->load->view('msgbox/error', $result->getMessage(), true);
+            }
         }
 
         // Set the response message, and go to the bookings page

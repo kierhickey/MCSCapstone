@@ -3,7 +3,7 @@
     /**
      * ResultState is used to give more meaning than simply returning true or false.
      */
-    class ResultState {
+    class ResultState implements JsonSerializable {
         private $result = false;
         private $message = "";
 
@@ -21,6 +21,13 @@
          */
         public function getResult() {
             return $this->result;
+        }
+
+        public function jsonSerialize() {
+            return [
+                "result" => $this->getResult(),
+                "message" => $this->getMessage()
+            ];
         }
 
         /**

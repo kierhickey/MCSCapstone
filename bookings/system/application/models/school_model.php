@@ -30,7 +30,6 @@ class School_model extends Model{
 		}
 
 		$queryStr = "SELECT $info FROM school WHERE school_id = $schoolId LIMIT 1";
-		debug_log($queryStr);
 		$query = $this->db->query($queryStr);
 
 		if ($query != false) {
