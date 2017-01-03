@@ -293,14 +293,14 @@ class Weeks extends Controller {
 		// Set the error delims to a nice styled red hint under the fields
 		$this->validation->set_error_delimiters('<p class="hint error"><span>', '</span></p>');
 
-    if ($this->validation->run() == FALSE){
+        if ($this->validation->run() == FALSE){
 
 			return $this->academicyear();
 
-    } else {
+        } else {
 
 			// Validation succeeded!
-			$date_format = "Y-m-d";
+			$date_format = "d-m-Y";
 
 			$start_date = explode('/', $this->input->post('date_start'));
 			$end_date = explode('/', $this->input->post('date_end'));
@@ -309,8 +309,14 @@ class Weeks extends Controller {
 			$data['date_start']		=	sprintf("%s-%s-%s", $start_date[2], $start_date[1], $start_date[0]);
 			$data['date_end']			= sprintf("%s-%s-%s", $end_date[2], $end_date[1], $end_date[0]);
 
-			$this->M_weeks->SaveAcademicYear($data);
-			$this->session->set_flashdata('saved', $this->load->view('msgbox/info', 'The Academic Year dates have been updated.', True) );
+			$result = $this->M_weeks->SaveAcademicYear($data);
+
+            if ($result) {
+                $msg = $this->load->view('msgbox/info', 'The Academic Year dates have been updated.', True);
+            } else {
+                $msg = $this->load->view('msgbox/info', 'The Academic Year dates failed to update.', True);
+            }
+			$this->session->set_flashdata('saved', $msg);
 
 		}
 

@@ -558,6 +558,7 @@ class Bookings extends Controller
         // Set the response message, and go to the bookings page
         $this->session->set_flashdata('saved', $msg);
         header("Content-Type: application/json");
+        
         echo json_encode([
             "status" => $status,
             "message" => $result->getMessage()

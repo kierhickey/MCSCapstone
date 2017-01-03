@@ -9,7 +9,7 @@ echo form_open('weeks/saveacademicyear', array('class' => 'cssform', 'id' => 'sa
 <p>
   <label for="date_start" class="required">Start date:</label>
   <?php
-	$date_start = @field($this->validation->date_start, date("d/m/Y", strtotime($academicyear->date_start)));
+	$date_start = @field($this->validation->date_start, date("d/m/Y", strtotime($academicyear["date_start"])));
 	#echo $date_start;
 	echo form_input(array(
 		'name' => 'date_start',
@@ -28,7 +28,7 @@ echo form_open('weeks/saveacademicyear', array('class' => 'cssform', 'id' => 'sa
 <p>
   <label for="date_end" class="required">End date:</label>
   <?php
-	$date_end = @field($this->validation->date_end, date("d/m/Y", strtotime($academicyear->date_end)));
+	$date_end = @field($this->validation->date_end, date("d/m/Y", strtotime($academicyear["date_end"])));
 	echo form_input(array(
 		'name' => 'date_end',
 		'id' => 'date_end',
