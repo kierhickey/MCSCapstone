@@ -222,8 +222,8 @@ class Weeks_model extends Model{
 		// Set date format
 		$date_format = "Y-m-d";
 
-		$ay_start = strtotime($AcademicYear->date_start);	//mktime(0,0,0,9,4,2006);
-		$ay_end = strtotime($AcademicYear->date_end);	//mktime(0,0,0,7,20,2007);
+		$ay_start = strtotime($AcademicYear["date_start"]);	//mktime(0,0,0,9,4,2006);
+		$ay_end = strtotime($AcademicYear["date_end"]);	//mktime(0,0,0,7,20,2007);
 
 		#echo "Start: $ay_start, End: $ay_end";
 
