@@ -521,11 +521,13 @@ class Bookings_model extends Model
                     // No bookings
                     $book_url = site_url('bookings/book/'.$url);
                     $cell['class'] = 'free';
-                    $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
 
                     if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-                        $cell['body'] .= "<input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' />";
+                        $cell['body'] .= "<label style='color: #4183D7;'><input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' /> Book</label>";
+                    } else {
+                        $cell['body'] .= '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
                     }
+
                 } else {
                     $cell['class'] = 'past-free';
                     $cell['body'] = '';
@@ -611,10 +613,10 @@ class Bookings_model extends Model
                 // No bookings
                 $book_url = site_url('bookings/book/'.$url);
                 $cell['class'] = 'free';
-                $cell['body'] = '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
-
                 if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
-                    $cell['body'] .= "<input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' />";
+                    $cell['body'] .= "<label style='color: #4183D7;'><input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' /> Book</label>";
+                } else {
+                    $cell['body'] .= '<a href="'.$book_url.'"><img src="webroot/images/ui/accept.gif" width="16" height="16" alt="Book" title="Book" hspace="4" align="absmiddle" />Book</a>';
                 }
             } else {
                 $cell['class'] = 'past-free';
