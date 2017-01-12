@@ -210,6 +210,7 @@ var SummaryTable = function (config) {
         return $("<tr></tr>", {
             class: "booking-row",
             id: booking.bookingId,
+            "data-instance": booking.bookingDate.replace(/\-/g, ""),
             html: [
                 $("<td></td>", {
                     class: "booking-date booking-cell",
@@ -264,7 +265,7 @@ var SummaryTable = function (config) {
                                     message: "Are you sure that you'd like to cancel this booking?",
                                     yes: function (modal) {
                                         modal.close();
-                                        summTable.removeBooking(booking.bookingId);
+                                        summTable.removeBooking(booking.bookingId, booking.bookingDate);
                                     },
                                     no: function (modal) {
                                         modal.close();
@@ -331,10 +332,10 @@ var SummaryTable = function (config) {
             me.update();
         },
 
-        removeBooking: function (bookingId) {
+        removeBooking: function (bookingId, bookingDate) {
             var me = this;
             var booking = $.grep(me.bookings, function (book) {
-                return book.bookingId === bookingId
+                return book.bookingId === bookingId && book.bookingDate === bookingDate;
             })[0];
 
             var cancelUrl = "/bookings/bookings/cancelXhr/";
