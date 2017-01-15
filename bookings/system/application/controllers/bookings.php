@@ -405,42 +405,46 @@ class Bookings extends Controller
 
     public function recurring()
     {
-        foreach ($this->input->post('multi') as $booking) {
-            $arr = explode('/', $booking);
-            $max = count($arr);
+        if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+            foreach ($this->input->post('multi') as $booking) {
+                $arr = explode('/', $booking);
+                $max = count($arr);
 
-            $booking = array();
-            for ($i = 0; $i < count($arr); $i = $i + 2) {
-                $booking[$arr[$i]] = $arr[$i + 1];
+                $booking = array();
+                for ($i = 0; $i < count($arr); $i = $i + 2) {
+                    $booking[$arr[$i]] = $arr[$i + 1];
+                }
+                $bookings[] = $booking;
             }
-            $bookings[] = $booking;
-        }
 
-        $errReasons = [];
+            $errReasons = [];
 
-        foreach ($bookings as $booking) {
-            $data = [];
-            $data['price'] = $this->schoolProvider->get('recurring_price', $this->schoolId)['recurring_price'];
-            $data['user_id'] = $this->input->post('user_id');
-            $data['school_id'] = $this->school_id;
-            $data['period_id'] = $booking['period'];
-            $data['room_id'] = $booking['room'];
-            $data['notes'] = $this->input->post('notes');
-            $data['week_id'] = $booking['week'];
-            $data['day_num'] = $booking['day'];
-            $data['start_date'] = new DateTime($booking['date']);
+            foreach ($bookings as $booking) {
+                $data = [];
+                $data['price'] = $this->schoolProvider->get('recurring_price', $this->schoolId)['recurring_price'];
+                $data['user_id'] = $this->input->post('user_id');
+                $data['school_id'] = $this->school_id;
+                $data['period_id'] = $booking['period'];
+                $data['room_id'] = $booking['room'];
+                $data['notes'] = $this->input->post('notes');
+                $data['week_id'] = $booking['week'];
+                $data['day_num'] = $booking['day'];
+                $data['start_date'] = new DateTime($booking['date']);
 
-            $result = $this->bookingsProvider->AddRecurring($data);
+                $result = $this->bookingsProvider->AddRecurring($data);
 
-            if (!$result->getResult()) {
-                array_push($errReasons, DateHelper::GetDayString($data["day_num"]).": ".$result->getMessage());
+                if (!$result->getResult()) {
+                    array_push($errReasons, DateHelper::GetDayString($data["day_num"]).": ".$result->getMessage());
+                }
             }
-        }
-        if (count($errReasons) > 0) {
-            $string = "<ul><li>".implode('</li><li>', $errReasons)."</li></ul>";
-            $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; '.$string, true);
+            if (count($errReasons) > 0) {
+                $string = "<ul><li>".implode('</li><li>', $errReasons)."</li></ul>";
+                $flashmsg = $this->load->view('msgbox/error', 'One or more bookings could not be made; '.$string, true);
+            } else {
+                $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
+            }
         } else {
-            $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
+            $flashmsg = $this->load->view('msgbox/error', "You do not have the correct privileges to make this booking.");
         }
 
         $this->session->set_userdata('notes', $data['notes']);
@@ -558,7 +562,7 @@ class Bookings extends Controller
         // Set the response message, and go to the bookings page
         $this->session->set_flashdata('saved', $msg);
         header("Content-Type: application/json");
-        
+
         echo json_encode([
             "status" => $status,
             "message" => $result->getMessage()
@@ -587,44 +591,48 @@ class Bookings extends Controller
     }
 
     public function saveMulti() {
-        foreach ($this->input->post('multi') as $booking) {
-            $arr = explode('/', $booking);
-            $max = count($arr);
+        if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
+            foreach ($this->input->post('multi') as $booking) {
+                $arr = explode('/', $booking);
+                $max = count($arr);
 
-            $booking = array();
-            for ($i = 0; $i < count($arr); $i = $i + 2) {
-                $booking[$arr[$i]] = $arr[$i + 1];
+                $booking = array();
+                for ($i = 0; $i < count($arr); $i = $i + 2) {
+                    $booking[$arr[$i]] = $arr[$i + 1];
+                }
+                $bookings[] = $booking;
             }
-            $bookings[] = $booking;
-        }
 
-        $errors = [];
+            $errors = [];
 
-        foreach ($bookings as $booking) {
-            $dateString = $booking['date'];
-            $dateDate = new DateTime($dateString);
+            foreach ($bookings as $booking) {
+                $dateString = $booking['date'];
+                $dateDate = new DateTime($dateString);
 
-            $data = [];
-            $data['price'] = $this->schoolProvider->get('casual_price', $this->schoolId)['casual_price'];
-            $data['school_id'] = $this->school_id;
-            $data['period_id'] = $booking['period'];
-            $data['room_id'] = $booking['room'];
-            $data['user_id'] = $this->input->post('user_id');
-            $data['date'] = $dateDate;
-            $data["start_date"] = $dateDate;
-            $data['notes'] = $this->input->post('notes');
+                $data = [];
+                $data['price'] = $this->schoolProvider->get('casual_price', $this->schoolId)['casual_price'];
+                $data['school_id'] = $this->school_id;
+                $data['period_id'] = $booking['period'];
+                $data['room_id'] = $booking['room'];
+                $data['user_id'] = $this->input->post('user_id');
+                $data['date'] = $dateDate;
+                $data["start_date"] = $dateDate;
+                $data['notes'] = $this->input->post('notes');
 
-            $result = $this->bookingsProvider->Add($data);
+                $result = $this->bookingsProvider->Add($data);
 
-            if (!$result->getResult()) {
-                array_push($errors, $dateString.": ".$result->getMessage());
+                if (!$result->getResult()) {
+                    array_push($errors, $dateString.": ".$result->getMessage());
+                }
             }
-        }
-        if (count($errors) > 0) {
-            $string = "<ul><li>".implode('</li><li>', $errors)."</li></ul>";
-            $flashmsg = $this->load->view('msgbox/error', ['message' => "One or more bookings could not be made; ".$string], true);
+            if (count($errors) > 0) {
+                $string = "<ul><li>".implode('</li><li>', $errors)."</li></ul>";
+                $flashmsg = $this->load->view('msgbox/error', ['message' => "One or more bookings could not be made; ".$string], true);
+            } else {
+                $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
+            }
         } else {
-            $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
+            $flashmsg = $this->load->view('msgbox/error', ['message' => "You do not have the correct privileges to make this booking."], true);
         }
 
         // Go back to index

@@ -494,10 +494,14 @@ class Bookings_model extends Model
 
     public function BookingCell($data, $key, $rooms, $users, $room_id, $url, $booking_date_ymd = '', $holidays = array(), $time_start = null)
     {
+        // Misc vars yo
         $bookingDate = DateTime::createFromFormat('Y-m-d H:i:s', $booking_date_ymd . ' ' . $time_start);
         $todaysDate = new DateTime();
         $tomorrowsDate = (new DateTime())->add(new DateInterval('P1D'));
         $dayNum = $bookingDate->format('N');
+        // Can we...
+        $canBook = $bookingDate >= $todaysDate;
+        $canCancel = $bookingDate >= $tomorrowsDate;
 
         // Check if there is a booking
         if (isset($data[$key])) {
@@ -517,7 +521,7 @@ class Bookings_model extends Model
             }
 
             if ($start_date >= $bookingDate && ($end_date == NULL || $end_date <= $bookingDate)) {
-                if ($bookingDate >= $tomorrowsDate) {
+                if ($canCancel) {
                     // No bookings
                     $book_url = site_url('bookings/book/'.$url);
                     $cell['class'] = 'free';
@@ -584,7 +588,7 @@ class Bookings_model extends Model
             || ($user_id == $booking->user_id)
             || (($user_id == $rooms[$room_id]->user_id) && ($booking->date != null))) {
 
-                if ($bookingDate >= $tomorrowsDate) {
+                if ($canCancel) {
                     $cancel_msg = 'Are you sure you want to cancel this booking?';
 
                     if ($user_id != $booking->user_id) {
@@ -609,10 +613,11 @@ class Bookings_model extends Model
             $cell['class'] = 'holiday';
             $cell['body'] = $holidays[$booking_date_ymd][0]->name;
         } else {
-            if ($bookingDate >= $tomorrowsDate) {
+            if ($canBook) {
                 // No bookings
                 $book_url = site_url('bookings/book/'.$url);
                 $cell['class'] = 'free';
+
                 if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                     $cell['body'] .= "<label style='color: #4183D7;'><input class='day_$dayNum' type='checkbox' name='multi[]' value='$url' /> Book</label>";
                 } else {
@@ -1392,17 +1397,32 @@ class Bookings_model extends Model
 
     public function AddRecurring($data) {
         // Convert date to appropriate string
-        $data["start_date"] = $data["start_date"]->format('Y-m-d');
+        $startDate = $data["start_date"]->format('Y-m-d');
+        $todaysDate = new DateTime();
+        // Other info for query string
+        $sessionId = $data['period_id'];
+        $roomNumber = $data['room_id'];
+        $dateDayNum = $data['day_num'];
+        // Other misc
+        $period_time;
+
+        $queryString = "SELECT * FROM periods WHERE period_id = $sessionId";
+        $query = $this->db->query($queryString);
+        $period = $query->result_array()[0];
+
+
+        $periodTime = $period["time_start"];
+        $bookingTime = DateTime::createFromFormat('Y-m-d H:i:s', "$startDate $periodTime");
+        $data['start_date'] = $bookingTime->format('Y-m-d');
+
+        if ($bookingTime < $todaysDate) {
+            return new ResultState(false, "The booking date cannot be in the past.");
+        }
 
         // If we still have the 'date' value -> get rid of it.
         if (isset($data['date'])) {
             unset($data['date']);
         }
-
-        // Other info for query string
-        $sessionId = $data['period_id'];
-        $roomNumber = $data['room_id'];
-        $dateDayNum = $data['day_num'];
 
         $queryString = "SELECT COUNT(*) AS total
                         FROM bookings
@@ -1423,9 +1443,6 @@ class Bookings_model extends Model
         if ($result["total"] > 0) {
             return new ResultState(false, "A booking already exists for this timeslot."); // A booking exists for that timeslot. Dun do eet.
         }
-
-        // Don't do that, that's a dumb idea.
-        //return $this->Edit($booking_id, $data);
 
         // Insert our entry
         $result = $this->db->insert('bookings', $data);
