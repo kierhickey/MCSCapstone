@@ -519,7 +519,6 @@ class Bookings_model extends Model
             if ($booking->end_date != NULL) {
                 $end_date = new DateTime($booking->end_date);
             }
-
             if ($start_date >= $bookingDate && ($end_date == NULL || $end_date <= $bookingDate)) {
                 if ($canCancel) {
                     // No bookings
@@ -1041,6 +1040,11 @@ class Bookings_model extends Model
                             // Our sorting assures that actual bookings (non-recurring) get prioritised.
                             if ($row->date != null) {
                                 $this_daynum = date('w', strtotime($row->date));
+
+                                if ($this_daynum == 0) {
+                                    $this_daynum = 7;
+                                }
+
                                 $bookings[$this_daynum] = $row;
                             } else if ($bookings[$row->day_num] == NULL) {
                                 $bookings[$row->day_num] = $row;
@@ -1061,7 +1065,10 @@ class Bookings_model extends Model
 
                     foreach ($school['days_list'] as $day_num => $day_name) {
                         $booking_date_ymd = $weekdates[$day_num];
-
+                        debug_log([
+                            "daynum" => $day_num,
+                            "dayname" => $day_name
+                        ]);
                         //$html .= '<td align="center" valign="middle">BOOK</td>';
 
                         $url = 'period/%s/room/%s/day/%s/week/%s/date/%s';
@@ -1427,7 +1434,7 @@ class Bookings_model extends Model
         $queryString = "SELECT COUNT(*) AS total
                         FROM bookings
                         WHERE (date = '$dateString' OR day_num = $dateDayNum)
-                        AND end_date >= NOW()
+                        AND (end_date >= NOW() || end_date IS NULL)
                         AND start_date <= NOW()
                         AND period_id = $sessionId
                         AND room_id = $roomNumber";
@@ -1477,7 +1484,7 @@ class Bookings_model extends Model
         $queryString = "SELECT COUNT(*) AS total
             FROM bookings
             WHERE (date = '$dateString' OR day_num = $dateDayNum)
-            AND end_date > '$dateString'
+            AND (end_date > '$dateString' OR end_date IS null)
             AND start_date <= '$dateString'
             AND period_id = $sessionId
             AND room_id = $roomNumber";

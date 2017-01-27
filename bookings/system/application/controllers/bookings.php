@@ -627,12 +627,12 @@ class Bookings extends Controller
             }
             if (count($errors) > 0) {
                 $string = "<ul><li>".implode('</li><li>', $errors)."</li></ul>";
-                $flashmsg = $this->load->view('msgbox/error', ['message' => "One or more bookings could not be made; ".$string], true);
+                $flashmsg = $this->load->view('msgbox/error', "One or more bookings could not be made; ".$string, true);
             } else {
                 $flashmsg = $this->load->view('msgbox/info', 'The bookings were created successfully.', true);
             }
         } else {
-            $flashmsg = $this->load->view('msgbox/error', ['message' => "You do not have the correct privileges to make this booking."], true);
+            $flashmsg = $this->load->view('msgbox/error', "You do not have the correct privileges to make this booking.", true);
         }
 
         // Go back to index
