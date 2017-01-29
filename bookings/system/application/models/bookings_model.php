@@ -288,6 +288,7 @@ class Bookings_model extends Model
         }
 
         $expandedRecurring = [];
+        $_skipped = [];
 
         foreach ($recurringBookings as $booking) {
             $dow = $booking["dayNum"];
@@ -298,14 +299,16 @@ class Bookings_model extends Model
 
             foreach ($bookingsForDate as $bookingDate) {
                 $bookingCopy = $booking;
+                $thisEndDate = DateTime::createFromFormat('Y-m-d', $booking["end_date"]);
+                $thisStartDate = DateTime::createFromFormat('Y-m-d', $booking["start_date"]);
 
                 // If the booking has ended
-                if ($booking["end_date"] != NULL && $booking["end_date"] <= $bookingDate) {
+                if ($booking["end_date"] != NULL && $thisEndDate <= $bookingDate) {
                     continue;
                 }
 
                 // Or if the booking hasn't started
-                if ($booking["start_date"] != NULL && $booking["start_date"] > $bookingDate) {
+                if ($booking["start_date"] != NULL && $thisStartDate > $bookingDate) {
                     continue;
                 }
 
@@ -1065,10 +1068,6 @@ class Bookings_model extends Model
 
                     foreach ($school['days_list'] as $day_num => $day_name) {
                         $booking_date_ymd = $weekdates[$day_num];
-                        debug_log([
-                            "daynum" => $day_num,
-                            "dayname" => $day_name
-                        ]);
                         //$html .= '<td align="center" valign="middle">BOOK</td>';
 
                         $url = 'period/%s/room/%s/day/%s/week/%s/date/%s';
