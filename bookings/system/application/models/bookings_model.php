@@ -1410,6 +1410,7 @@ class Bookings_model extends Model
         $roomNumber = $data['room_id'];
         $dateDayNum = $data['day_num'];
         // Other misc
+        $dateString = $data['start_date'];
         $period_time;
 
         $queryString = "SELECT * FROM periods WHERE period_id = $sessionId";
@@ -1433,8 +1434,8 @@ class Bookings_model extends Model
         $queryString = "SELECT COUNT(*) AS total
                         FROM bookings
                         WHERE (date = '$dateString' OR day_num = $dateDayNum)
-                        AND (end_date >= NOW() || end_date IS NULL)
-                        AND start_date <= NOW()
+                        AND (end_date > '$dateString' || end_date IS NULL)
+                        AND start_date <= '$dateString'
                         AND period_id = $sessionId
                         AND room_id = $roomNumber";
 
