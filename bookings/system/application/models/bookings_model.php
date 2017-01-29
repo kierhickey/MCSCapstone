@@ -1256,6 +1256,13 @@ class Bookings_model extends Model
         $regex = "/\{\{([^\}]*)\}\}/";
         $matches = [];
         $result = preg_match_all($regex, $message, $matches);
+        $headers = ['Content-type: text/html; charset=iso-8859-1' . "\r\n"];
+
+        if ((!isset($booking["date"]) || trim($booking["date"]) === '')) {
+            $booking["relevantDate"] = $booking["end_date"];
+        } else {
+            $booking["relevantDate"] = $booking["date"];
+        }
 
         $myObjs = [
             "user" => $user,
@@ -1281,12 +1288,15 @@ class Bookings_model extends Model
 
                     $message = str_replace($key, $replace, $message);
                 } else {
+                    debug_log(["skipped" => $key]);
                     $message = str_replace($key, "", $message);
                 }
             }
         }
 
-        mail($adminEmail, BOOKING_CANCEL_SUBJECT, $message);
+        debug_log(["cancelemail" => $message]);
+
+        mail($adminEmail, str_replace("{{user.displayName}}", $user->displayName, BOOKING_CANCEL_SUBJECT), $message, $headers);
     }
 
     /**
@@ -1314,6 +1324,7 @@ class Bookings_model extends Model
                           SET end_date = '$endDateStr'
                           WHERE school_id = $school_id
                           AND booking_id = $bookingId";
+            $booking["end_date"] = $endDateStr;
         }
 
         $query = $this->db->query($query_str);
