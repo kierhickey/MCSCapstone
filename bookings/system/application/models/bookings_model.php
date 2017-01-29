@@ -1288,13 +1288,10 @@ class Bookings_model extends Model
 
                     $message = str_replace($key, $replace, $message);
                 } else {
-                    debug_log(["skipped" => $key]);
                     $message = str_replace($key, "", $message);
                 }
             }
         }
-
-        debug_log(["cancelemail" => $message]);
 
         mail($adminEmail, str_replace("{{user.displayName}}", $user->displayName, BOOKING_CANCEL_SUBJECT), $message, $headers);
     }

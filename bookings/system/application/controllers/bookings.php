@@ -460,6 +460,13 @@ class Bookings extends Controller
 
     public function cancel($booking_id, $endDateString = NULL)
     {
+        // Stuff for correct post-cancel redirect
+        $referer = $_SERVER["HTTP_REFERER"];
+
+        $protocol = !empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== 'off' || $_SERVER["SERVER_PORT"] == 443 ? "https://" : "http://";
+        $host = $_SERVER["HTTP_HOST"].'/';
+        $webRoot = "bookings";
+
         $booking = $this->bookingsProvider->getById($booking_id);
         $user = $this->userProvider->Get($booking["user_id"]);
         $to = $this->schoolProvider->get("admin_cancel_email", $this->school_id)["admin_cancel_email"];
@@ -506,8 +513,15 @@ class Bookings extends Controller
         // Set the response message, and go to the bookings page
         $this->session->set_flashdata('saved', $msg);
 
+        // Set our referer position in current website
+        if (strpos($referer, $host) !== false) {
+            $referer = str_replace($protocol.$host.$webRoot."/", "", $referer);
+        } else {
+            $referer = 'bookings';
+        }
+
         if ($uri == null) {
-            $uri = 'bookings';
+            $uri = $referer;
         }
 
         redirect($uri, 'redirect');
