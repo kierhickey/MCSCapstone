@@ -358,36 +358,35 @@ class Bookings extends Controller
             $body["errorMsg"] = $this->errorMsg;
 
             $this->errorMsg = NULL;
+            $periods = $this->sessionProvider->Get();
 
             // Lookups we need if an admin user
             if ($this->userauth->CheckAuthLevel(ADMINISTRATOR, $this->authlevel)) {
                 $body['days'] = $this->sessionProvider->days;
                 $body['rooms'] = $this->roomsProvider->getAllBasic();
-                $body['periods'] = $this->sessionProvider->Get();
+                $body['periods'] = $periods;
                 $body['weeks'] = $this->weeksProvider->Get();
                 $body['users'] = $this->userProvider->Get();
             }
 
             $layout['body'] = $this->load->view('bookings/bookings_book', $body, true);
 
+            $relevantPeriod = null;
+
+            foreach ($periods as $period) {
+                if ($period->period_id == $booking['period_id']) {
+                    $relevantPeriod = $period;
+                    break;
+                }
+            }
+
             // Check that the date selected is not in the past
-            $today = strtotime(date('Y-m-d'));
-            $thedate = strtotime($uri['date']);
+            $today = new DateTime();
+            $thedate = DateTime::createFromFormat('d/m/Y H:i:s',$booking['date'].' '.$relevantPeriod->time_start);
 
             if ($this->userauth->CheckAuthLevel(TEACHER, $this->authlevel)) {
                 if ($thedate < $today) {
                     $layout['body'] = $this->load->view('msgbox/error', 'You cannot make a booking in the past.', true);
-                }
-            }
-
-            // Now see if user is allowed to book in advance
-            if ($this->userauth->CheckAuthLevel(TEACHER, $this->authlevel)) {
-                $bia = (int) $this->_booking_advance($this->school_id);
-                if ($bia > 0) {
-                    $date_forward = strtotime("+$bia days", $today);
-                    if ($thedate > $date_forward) {
-                        $layout['body'] = $this->load->view('msgbox/error', 'You can only book '.$bia.' days in advance.', true);
-                    }
                 }
             }
         }
