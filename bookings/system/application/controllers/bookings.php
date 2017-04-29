@@ -382,7 +382,8 @@ class Bookings extends Controller
 
             // Check that the date selected is not in the past
             $today = new DateTime();
-            $thedate = DateTime::createFromFormat('d/m/Y H:i:s',$booking['date'].' '.$relevantPeriod->time_start);
+            $dateString = $booking['date'].' '.$relevantPeriod->time_start;
+            $thedate = DateTime::createFromFormat('d/m/Y H:i:s', $dateString);
 
             if ($this->userauth->CheckAuthLevel(TEACHER, $this->authlevel)) {
                 if ($thedate < $today) {
@@ -698,10 +699,28 @@ class Bookings extends Controller
 
         // Reference Data
         $today = new DateTime();
+        $periods = $this->sessionProvider->Get();
+        $relevantPeriod = null;
+
+        foreach ($periods as $period) {
+            if ($period->period_id == $booking['period_id']) {
+                $relevantPeriod = $period;
+                break;
+            }
+        }
 
         try {
             $date = $this->input->post('date');
             $dateArr = explode("/", $date);
+            $periodId = $this->input->post('period_id');
+            $relevantPeriod = null;
+
+            foreach ($periods as $period) {
+                if ($period->period_id == $periodId) {
+                    $relevantPeriod = $period;
+                    break;
+                }
+            }
 
             // There are three parts of the date
             if ($dateValid && count($dateArr) != 3) {
@@ -722,9 +741,11 @@ class Bookings extends Controller
             }
 
             // Date isn't in the past
-            $dateDate = new DateTime("$month/$day/$year");
+            $periodStart = $relevantPeriod->time_start;
+            $dateString = "$day/$month/$year $periodStart";
+            $dateDate = DateTime::createFromFormat('d/m/Y H:i:s', $dateString);
 
-            if ($dateValid && $dateDate <= $today) {
+            if ($dateValid && $dateDate < $today) {
                 $dateValid = false;
                 $dateFailReason = "Date is in the past";
             }
@@ -747,6 +768,7 @@ class Bookings extends Controller
             if ($booking_id != 'X' && $booking_id != false) {
                 return $this->Edit($booking_id);
             } else {
+                $this->errorMsg = "Validation failed for some reason...";
                 return $this->book();
             }
         } else if (!$dateValid) {
