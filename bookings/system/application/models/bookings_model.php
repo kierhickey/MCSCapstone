@@ -1418,7 +1418,6 @@ class Bookings_model extends Model
         $roomNumber = $data['room_id'];
         $dateDayNum = $data['day_num'];
         // Other misc
-        $dateString = $data['start_date'];
         $period_time;
 
         $queryString = "SELECT * FROM periods WHERE period_id = $sessionId";
@@ -1441,9 +1440,9 @@ class Bookings_model extends Model
 
         $queryString = "SELECT COUNT(*) AS total
                         FROM bookings
-                        WHERE (date = '$dateString' OR day_num = $dateDayNum)
-                        AND (end_date > '$dateString' || end_date IS NULL)
-                        AND start_date <= '$dateString'
+                        WHERE (date = '$startDate' OR day_num = $dateDayNum)
+                        AND (end_date > '$startDate' OR end_date IS NULL)
+                        AND start_date <= '$startDate'
                         AND period_id = $sessionId
                         AND room_id = $roomNumber";
 
@@ -1457,6 +1456,46 @@ class Bookings_model extends Model
 
         if ($result["total"] > 0) {
             return new ResultState(false, "A booking already exists for this timeslot."); // A booking exists for that timeslot. Dun do eet.
+        }
+
+        // We need to query out anything ahead of our current recurring booking
+        // so that we can force an end date to prevent dupes from showing up
+        $queryString = "SELECT start_date
+                        FROM bookings
+                        WHERE (date = '$startDate' OR day_num = $dateDayNum)
+                        AND (end_date > '$startDate' OR end_date IS NULL)
+                        AND (start_date > '$startDate')
+                        AND period_id = $sessionId
+                        AND room_id = $roomNumber";
+        $query = $this->db->query($queryString);
+
+        if ($query == false) {
+            return new ResultState(false, "An error occurred while contacting the server."); // Query didn't work -- abort.
+        }
+
+        // Grab our results
+        $results = $query->result_array();
+
+        // If there are any results
+        if (count($results) > 0) {
+            // Grabs this booking's date
+            $bookingsDate = DateTime::createFromFormat('Y-m-d', $startDate);
+            $lowestDateAfter = null;
+
+            // And for each result
+            foreach ($results as $result) {
+                $resultDate = DateTime::createFromFormat('Y-m-d', $result['start_date']);
+                // If the result date is after our booking's date and
+                //  a) the lowest date after is null or,
+                //  b) the lowest date after is greater than the result date
+                if ($resultDate > $bookingsDate && ($lowestDateAfter == null || $lowestDateAfter > $resultDate)) {
+                    // Set our lowest date after to the current result's date
+                    $lowestDateAfter = $resultDate;
+                }
+            }
+
+            // Set our end date.
+            $data['end_date'] = $lowestDateAfter->format('Y-m-d');
         }
 
         // Insert our entry

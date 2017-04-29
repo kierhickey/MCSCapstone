@@ -789,10 +789,9 @@ class Bookings extends Controller
             $data['date'] = $dateDate;
             $data["start_date"] = $dateDate;
 
-            // Hmm.... now to see if it's a static booking or recurring or whatever... :-)
-
             $recurring = false;
 
+            // Recurring or casual
             if (!$this->input->post('recurring')) {
                 // Once-only booking
                 $date_arr = explode('/', $this->input->post('date'));
